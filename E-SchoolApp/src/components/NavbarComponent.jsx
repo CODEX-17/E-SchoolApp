@@ -6,6 +6,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useNavigateStore } from '../stores/useNavigateStore';
 import { IoNotifications } from "react-icons/io5";
 import axios from 'axios';
+import generateFullname from '../utils/generateFullname';
 
 const NavbarComponent = () => {
   const navigate = useNavigate()
@@ -87,13 +88,13 @@ const NavbarComponent = () => {
                     </span>
                     <div className={style.vertical}>
                       <p>Name:</p>
-                      <h1>{fullname}</h1>
+                      <h1>{generateFullname()}</h1>
                       <p>Email:</p>
                       <h2>{accountCurrent?.email}</h2>
                     </div>
                 </div>
                 <div className='d-flex w-100 gap-2 align-items-center justify-content-center mt-2'>
-                    <button className={style.btnManageAcct} onClick={() => handleManageAccount('manageAccount')}>Manage account</button>
+                    <button className={style.btnManageAcct} onClick={() => handleManageAccount('manageAccount')}>Manage Account</button>
                     <button className={style.btnLogout} onClick={handleLogout}>Sign out</button>
                 </div>
                   

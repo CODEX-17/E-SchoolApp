@@ -12,12 +12,13 @@ const later = require('later');
 const Agenda = require('agenda');
 const agenda = new Agenda();
 
+const accountRoutes = require('./Routes/classesRoutes')
 
 
 const corsOptions = {
-    origin: '*', // Replace with the origin of your React app
-    credentials: true, // Enable credentials (if needed)
-};
+    origin: '*', 
+    credentials: true,
+}
 
 //middleware//
 const app = express()
@@ -29,7 +30,7 @@ app.use(express.static('uploads'))
 const server = http.createServer(app)
 const io = socketIO(server, {
     cors: {
-      origin: 'http://localhost:5173', // Replace with the origin of your React app
+      origin: 'http://localhost:5173',
       methods: ['GET', 'POST'],
       credentials: true,
     },
@@ -41,6 +42,9 @@ const db = mysql.createConnection({
     password: '',
     database: 'e-school-app'
 })
+
+app.use('/accounts', accountRoutes)
+
 
 const getSchedule = () => {
     const query = "SELECT * FROM schedule"

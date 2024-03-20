@@ -1,10 +1,10 @@
 @font-face {
-    font-family: sanBold;
-    src: url('../assets/fonts/sanBold.ttf');
+    font-family: normal;
+    src: url('../assets/fonts/Montserrat-Regular.ttf');
 }
 @font-face {
-    font-family: sanSemi;
-    src: url('../assets/fonts/sanSemi.ttf');
+    font-family: bold;
+    src: url('../assets/fonts/Montserrat-Bold.ttf');
 }
 
 * {
@@ -12,12 +12,12 @@
     padding: 0;
 }
 
-
 .navbar {
     background-color: #0c9cec;
     height: 50px;
     width: 100%;
     display: flex;
+    font-family: normal;
 }
 
 .left, .right {
@@ -128,22 +128,23 @@
 }
 
 .vertical h1 {
-    font-size: 1em;
-    font-family: sanBold;
+    font-size: 10pt;
+    font-family: bold;
     margin: 0;
     user-select: none;
 }
 
 .vertical h2 {
-    font-size: 0.7em;
-    font-family: sanBold;
+    font-size: 8pt;
+    font-family: bold;
     user-select: none;
+    margin: 0;
 }
 
 .vertical p {
     color: #3E3F40;
-    font-family: sanSemi;
-    font-size: 0.5em;
+    font-family: normal;
+    font-size: 5pt;
     margin: 0;
     user-select: none;
 }
@@ -151,13 +152,13 @@
 .btnLogout {
     background-color: #0c9cec;
     color: white;
-    font-family: sanBold;
+    font-family: bold;
     border: none;
     padding: 2%;
     width: 40%;
     height: 100%;
     font-size: 8pt;
-    border-radius: 10px;
+    border-radius: 5px;
     user-select: none;
 }
 
@@ -167,13 +168,13 @@
 
 .btnManageAcct {
   color: #0c9cec;
-  font-family: sanBold;
+  font-family: bold;
   border: 1px solid #0c9cec;
   padding: 2%;
   width: 40%;
   height: 100%;
   font-size: 7pt;
-  border-radius: 10px;
+  border-radius: 5px;
   user-select: none;
   background-color: transparent;
 }

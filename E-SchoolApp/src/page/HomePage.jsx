@@ -32,6 +32,7 @@ import { useBankStore } from '../stores/useBankStore'
 import { useSubjectsStore } from '../stores/useSubjectsStore'
 import io from 'socket.io-client';
 import FriendsPage from './FriendsPage'
+import getClassesByAccount from '../utils/getClassesByAccount'
 const socket = io.connect('http://localhost:5000');
 
 const HomePage = () => {
@@ -50,12 +51,20 @@ const HomePage = () => {
   const { getScore } = useScoreStore()
   const { getBank } = useBankStore()
   const { getSubjects } = useSubjectsStore()
+
+  const [classesList, setClassesList] = useState([])
   const currentUser = JSON.parse(localStorage.getItem('user'))
 
   const navigate = useNavigate()
   
-  useEffect(() => {
-   
+  useEffect(async () =>  {
+
+    axios.get('http://localhost:5000/accounts/getClassesByAccount/' + acctID)
+    .then((res) => {
+        setClassesList(res.data)
+    })
+    .catch((err) => console.error(err))
+
     getSubjects()
     getBank()
     getScore()
@@ -134,16 +143,6 @@ const HomePage = () => {
             {routeChoose === 'manageAccount' && <ManageAccout/>}
             {routeChoose === 'file' && <FilePage/>}
             {routeChoose === 'friends' && <FriendsPage/>}
-
-            {/* { 
-              isToastOpen && (
-                <div className={style.toast}>
-                  <img src={logo} width={30} alt="logo" />
-                  <h1 className={style.toastTitle}>{toastMessage}</h1>
-                  <button type="button" className="btn-close btn-close-white me-2 m-auto"></button>
-                </div>
-              )
-            } */}
             
           </div>
         </div>

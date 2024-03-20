@@ -45,6 +45,8 @@
 }
 
 
+
+
 .exitTrapNotif {
     animation: pop 0.5s ease;
     background-color: #ffffff;
@@ -380,9 +382,22 @@ form .modalContent input {
 #imageContainer {
     width: 80px;
     height: 80px;
-    border-radius: 80px;
+    border-radius: 50%;
     text-align: center;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+#defaultClassPic {
+    width: 80px;
+    height: 80px;
+    color: white;
+    display: flex;
+    font-size: 20pt;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    background-color: #099AED;
 }
 
 .classCard h1 {

@@ -58,11 +58,20 @@ const [allMembers, setmembersList] = useState(JSON.parse(localStorage.getItem('m
 const [userAccount, setuserAccount] = useState(JSON.parse(localStorage.getItem('user')))
 const [userClasses, setuserClasses] = useState(null)
 
+const [classesList, setClassesList] = useState([])
 
 const notif = new Howl({ src: [notifSound]})
 const errSound = new Howl({ src: [erroSound]})
 
 useEffect(() => {
+
+    const acctID = userAccount.acctID
+    axios.get('http://localhost:5000/accounts/getClassesByAccount/' + acctID)
+    .then((res) => {
+        setClassesList(res.data)
+    })
+    .catch((err) => console.error(err))
+
     getClass()
     getMembers()
 
@@ -219,16 +228,13 @@ const backToHomePage = (choose) => {
     setshowPreview(choose)
 }
 
-const generatePic = (id) => {
-    if (id === 'none') {
-        return logo
+const generatePic = (filename) => {
+
+    if (filename) {
+        return 'http://localhost:5000/' + filename
     }else {
-        const allimages = JSON.parse(localStorage.getItem('images'))
-        const filter = allimages.filter((images) => images.imageID === id).map((img) => img.data)
-        const url = 'http://localhost:5000/'
-        return url+filter[0]
+        return '/banner.jpg'
     }
-    
 }
 
 const generateUniqueId = () => {
@@ -391,7 +397,6 @@ const handleFileSubmit = (e) => {
 }
 
 
-
   return (
     <>
         {
@@ -524,14 +529,20 @@ const handleFileSubmit = (e) => {
                                         <h2 id={style.classListLabel}>Class List</h2>
                                         <div className={style.horizontalList}>
                                                 {
-                                                    userClasses? (
-                                                        userClasses.filter((cls) => cls.hidden === 'false').map((cls, index) => (   
+                                                    classesList? (
+                                                        classesList.filter((data) => data.hidden === 'false').map((data, index) => (   
                                                             <div className={style.classCard} key={index}>
-                                                                <AiFillEyeInvisible size={20} className={style.btnVisible} title='Hide class' onClick={() => handleHideClass(cls.classCode, cls.membersID, 'true')}/>
-                                                                <div className={style.mainPoint} onClick={() => handleOpenClass(cls.className, cls.classCode, cls.membersID, cls.imageID, cls.classID, cls.classDesc)}>
-                                                                    <img src={generatePic(cls.imageID)} alt='class photo' id={style.imageContainer}/>
-                                                                    <h1>{cls.className}</h1>
-                                                                    <p>{cls.classDesc}</p>
+                                                                <AiFillEyeInvisible size={20} className={style.btnVisible} title='Hide class' onClick={() => handleHideClass(data.classCode, data.membersID, 'true')}/>
+                                                                <div className={style.mainPoint} onClick={() => handleOpenClass(data.className, data.classCode, data.membersID, data.imageID, data.classID, data.classDesc)}>
+                                                                    {
+                                                                        data.name !== 'default' ? (
+                                                                            <img src={generatePic(data.name)} alt='class photo' id={style.imageContainer}/>
+                                                                        ):(
+                                                                           <div id={style.defaultClassPic}>{data.className.substring(0, 1).toUpperCase()}</div> 
+                                                                        )
+                                                                    }
+                                                                    <h1>{data.className}</h1>
+                                                                    <p>{data.classDesc}</p>
                                                                 </div>
                                                             </div>
                                                         ))

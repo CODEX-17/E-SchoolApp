@@ -40,11 +40,6 @@
     -moz-border-radius: 20px 0px 0px 20px;
   }
 
-.left img {
-    width: 100%;
-    height: 100%;
-    border-radius: 20px;
-}
 
 .right {
     display: flex;
@@ -77,24 +72,6 @@
 .right img {
   width: 200px;
 }
-
-#title {
-    font-family: sanBold;
-    font-size: 5em;
-    margin: 0;
-    animation: bounce 2s infinite;
-    user-select: none;
-}
-
-#subtitle {
-    margin-top: -20px;
-    margin-right: -100px;
-    font-family: sanSemi;
-    font-size: 15pt;
-    color: #3E3F40;
-    user-select: none;
-}
-
 
 form {
     display: flex;
@@ -193,23 +170,23 @@ form {
 }
 
 
-.footer {
-    position: absolute;
-    width: 100%;
-    bottom: 0;
-    font-size: 10pt;
-    color: white;
-    letter-spacing: 2px;
-    font-family: normal;
-    text-align: center;
-    animation: fade 2s ease-in; 
-}
-
 .errorMessage {
   margin-top: 20px;
   color: red;
   font-family: normal;
   animation: shake 1s ease-in; 
+}
+
+@media (max-width: 960px) {
+  .content {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .left {
+    flex: 50%;
+    display: none;
+  }
 }
 
 @keyframes shake {
