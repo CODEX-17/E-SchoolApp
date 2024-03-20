@@ -21,7 +21,7 @@ import { useClassStore } from '../stores/useClassStore'
 
 const LoginPage = () => {
 
-const navigate = useNavigate()
+  const navigate = useNavigate()
 
   const { routeChoose } = useNavigateStore()
   const { getImages } = useImageStore()
@@ -130,14 +130,10 @@ const handleEmail = (e) => {
     <div className={style.container}>
         <div className={style.content}>
             <div className={style.left}>
-                <img src={urlImage? logoBlue : logoWhite} alt="logo" width={400} onMouseEnter={handleHoverLogo}/>
             </div>
             <div className={style.right}>
-                <div className={style.top}>
-                    <h1 id={style.title}>LOGIN</h1>
-                    <p id={style.subtitle}>you account</p>
-                </div>
-                <div className={style.bot}>
+                <img src='/sign-in-text.png' alt='sign in text' />
+            
                     <form action="" className='form' onSubmit={handleSubmit}>
                         <div className={style.inputDiv}>
                             <input type="email" placeholder='Email' onChange={handleEmail} required/>
@@ -146,14 +142,11 @@ const handleEmail = (e) => {
                                 <label id={style.label} htmlFor="checkbox">Show password?</label>
                                 <input id={style.checkbox} type="checkbox" name='checkbox' checked={isChecked} onChange={handleShowPass}/>
                              </div>
-                            <button className={style.btn} type="submit">Login</button>
+                            <button className={style.btn} type="submit">Sign in</button>
                         </div>
                         { error && <p className={style.errorMessage}>You've Incorrect Password!</p>}
                     </form>
-                </div>
-            </div>
-            <div className={style.footer}>
-                    @All Right Reserved 2023
+                <h2 id={style.mark}>@All Right Reserved 2024</h2>
             </div>
         </div>
     </div>
