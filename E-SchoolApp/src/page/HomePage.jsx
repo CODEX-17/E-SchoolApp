@@ -52,18 +52,12 @@ const HomePage = () => {
   const { getBank } = useBankStore()
   const { getSubjects } = useSubjectsStore()
 
-  const [classesList, setClassesList] = useState([])
+  
   const currentUser = JSON.parse(localStorage.getItem('user'))
 
   const navigate = useNavigate()
   
-  useEffect(async () =>  {
-
-    axios.get('http://localhost:5000/accounts/getClassesByAccount/' + acctID)
-    .then((res) => {
-        setClassesList(res.data)
-    })
-    .catch((err) => console.error(err))
+  useEffect(() =>  {
 
     getSubjects()
     getBank()
@@ -102,13 +96,8 @@ const HomePage = () => {
       })
     }
 
-    
 
   },[])
-
-  useEffect(() => {
-   
-    },[])
 
   const getClassesAll = () => {
     axios.get('http://localhost:5000/getClass')

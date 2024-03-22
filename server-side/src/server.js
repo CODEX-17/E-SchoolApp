@@ -14,7 +14,6 @@ const agenda = new Agenda();
 
 const accountRoutes = require('./Routes/classesRoutes')
 
-
 const corsOptions = {
     origin: '*', 
     credentials: true,
@@ -43,7 +42,7 @@ const db = mysql.createConnection({
     database: 'e-school-app'
 })
 
-app.use('/accounts', accountRoutes)
+app.use('/classes', accountRoutes)
 
 
 const getSchedule = () => {

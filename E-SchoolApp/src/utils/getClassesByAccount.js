@@ -1,10 +1,23 @@
-import axios from "axios"
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 
-export default (acctID) => {
-    axios.get('http://localhost:5000/accounts/getClassesByAccount/' + acctID)
-    .then((res) => {
-        console.log(res.data)
-        return res.data
-    })
-    .catch((err) => console.error(err))
-}
+const useGetClassesByAcct = (acctID) => {
+  const [classesList, setClassesList] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/accounts/getClassesByAccount/${acctID}`);
+        setClassesList(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchData();
+  }, [acctID]);
+
+  return classesList;
+};
+
+export default useGetClassesByAcct;

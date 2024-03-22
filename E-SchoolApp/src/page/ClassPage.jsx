@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import style from './ClassPage.module.css'
 import logo from '../assets/logo.png'
 import sample from '../assets/sample.jpg'
 import whiteLogo from '../assets/logo-white.png'
-import { useClassStore } from '../stores/useClassStore'
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai"
 import { VscTriangleUp, VscTriangleDown } from "react-icons/vsc"
 import { useNavigateStore } from '../stores/useNavigateStore'
@@ -17,46 +16,36 @@ import notifSound from '../assets/sound/notif.mp3';
 import erroSound from '../assets/sound/error.mp3';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useImageStore } from '../stores/useImageStore'
 import * as XLSX from 'xlsx'
 import { ProgressBar } from  'react-loader-spinner';
 
 
 const ClassPage = () => {
 
-const { addClass, getClass, classes, hideClass } = useClassStore()
-const { uploadImage, getImages } = useImageStore()
-const { getMembers } = useMemberStore()
 const [isClassListShow, setisClassListShow] = useState(true)
 const [isModalShow, setisModalShow] = useState(false)
 const [showExcellInputCard, selectExcellInputCard] = useState(false)
 const [textButton, settextButton] = useState('Create Class')
 const [className, setclassName] = useState()
-const [classCode, setclassCode] = useState()
-const [acctID, setacctID] = useState()
-const [classDesc, setclassDesc] = useState()
+const [classCode, setclassCode] = useState(null)
+const [classDesc, setclassDesc] = useState('none')
 const [showCreateClass, setshowCreateClass] = useState(false)
 const [classesObj, setclassesObj] = useState([])
 const [currentImageClass, setcurrentImageClass] = useState('')
+const [errorMessage, setErrorMessage] = useState(false)
 
 const [dropHideList, setdropHideList] = useState(false)
-const { updateRouteChoose } = useNavigateStore()
-const { addMembers } = useMemberStore()
-const [showPreview, setshowPreview] = useState('classPage')
+const [showPreview, setshowPreview] = useState('loading')
 const [currentSubjectName, setcurrentSubjectName] = useState()
 const [currentClassCode, setcurrentClassCode] = useState()
 const [currentclassID, setcurrentclassID] =useState()
 const [currentMemberID, setcurrentMemberID] = useState()
-const [uniqueId, setuniqueId] = useState('')
-const [selectedImage, setselectedImage] = useState()
-const [typeError, setTypeError] = useState(null)
-const [excelData, setExcelData] = useState(null)
+const [selectedImage, setselectedImage] = useState(null)
 const [excelFile, setExcelFile] = useState(null)
+const [update, setupdate] = useState(false)
+const inputRef = useRef(null)
 
-const [allClasses, setallClasses] = useState(JSON.parse(localStorage.getItem('class')))
-const [allMembers, setmembersList] = useState(JSON.parse(localStorage.getItem('members')))
 const [userAccount, setuserAccount] = useState(JSON.parse(localStorage.getItem('user')))
-const [userClasses, setuserClasses] = useState(null)
 
 const [classesList, setClassesList] = useState([])
 
@@ -64,28 +53,49 @@ const notif = new Howl({ src: [notifSound]})
 const errSound = new Howl({ src: [erroSound]})
 
 useEffect(() => {
-
     const acctID = userAccount.acctID
-    axios.get('http://localhost:5000/accounts/getClassesByAccount/' + acctID)
+    axios.get('http://localhost:5000/classes/getClassesByAccount/' + acctID)
     .then((res) => {
+        setshowPreview('classPage')
+        console.log('myClasses', res.data)
         setClassesList(res.data)
     })
     .catch((err) => console.error(err))
 
-    getClass()
-    getMembers()
+},[update])
 
-    getCurrentClass()
 
-    if(classesObj < 0) {
-        isClassListShow(false)
+const duplicateClassCodeCheck = (classCode) => {
+    const classCodeList = classesList.map((data) => data.classCode)
+
+    for (let i = 0; i < classCodeList.length; i++) {
+        if (classCode === classCodeList[i]) {
+            return true
+        }
     }
-},[])
+    
+    return false
+}
 
-
+const handleInputClassCode = (e) => {
+    e.preventDefault()
+    const classCode = e.target.value
+    
+    if (duplicateClassCodeCheck(classCode)) {
+        inputRef.current.style.outline = '1px solid red'
+        inputRef.current.style.color = 'red'
+        setclassCode(null)
+        setErrorMessage(true)
+    }else {
+        inputRef.current.style.outline = 'none'
+        inputRef.current.style.color = '#3E3F40'
+        setErrorMessage(false)
+        setclassCode(classCode)
+    }
+}
 
 const notify = (message, state) => {
-    console.log(message);
+
      if (state === 'err') {
         errSound.play()
         toast.error(message, {
@@ -115,41 +125,42 @@ const notify = (message, state) => {
     
 }
 
-const getCurrentClass = () => {
-    getClass()
-    getMembers()
-    getImages()
-
-    setshowPreview('loading')
+const handleHideClass = (id) => {
     
-    setTimeout(() => {
-        setshowPreview('classPage')
-        const classes = JSON.parse(localStorage.getItem('class'))
-        const members = JSON.parse(localStorage.getItem('members'))
-        const images = JSON.parse(localStorage.getItem('images'))
-
-        if (classes && members) {
-            const filter = members.filter((member) => member.acctID === userAccount.acctID)
-
-            let classesList = []
-
-            for (let i = 0; i < filter.length; i++) {
-                const result = classes.filter((cls) => cls.membersID === filter[i].membersID)
-                classesList.push(result[0])
+    setClassesList((prevClassList) => {
+       return prevClassList.map((classes) => {
+            if (classes.classID === id) {
+                return {...classes, hidden: 'true'}
             }
-            setuserClasses(classesList)
-        }
-    }, 5000);
-    
-  }
+            return classes
+       })
+    })
 
-const handleHideClass = (classCode, membersID, state) => {
-    let updated = userClasses.filter((cls) => cls.classCode === classCode)
-    let restData = userClasses.filter((cls) => cls.classCode !== classCode)
-    updated[0].hidden = state
-    restData.push(updated)
-    setuserClasses(restData)
-    hideClass(classCode, state)
+    const classID = id
+
+    axios.put('http://localhost:5000/classes/hideClass/' + classID)
+    .then((res) => res.data)
+    .then((data) => console.log(data.message))
+    .catch((err) => console.error(err))
+}
+
+const handleUnHideClass = (id) => {
+
+    setClassesList((prevClassList) => {
+       return prevClassList.map((classes) => {
+            if (classes.classID === id) {
+                return {...classes, hidden: 'false'}
+            }
+            return classes
+       })
+    })
+
+    const classID = id
+
+    axios.put('http://localhost:5000/classes/unhideClass/' + classID)
+    .then((res) => res.data)
+    .then((data) => console.log(data.message))
+    .catch((err) => console.error(err))
 }
 
 const dropDownHiddenClass = () => {
@@ -174,43 +185,50 @@ const CreateClass = () => {
     setisModalShow(!isModalShow)    
 }
 
-const handleSubmit = (e) => { 
+const handleAddClass = (e) => { 
     e.preventDefault()
-    const { uniqueID, file } = selectedImage
-    let imageID = 'none'
-    let membersID = generateUniqueId()
-    
-    if (uniqueID) {
-        imageID = uniqueID
-        membersID = uniqueID
-    }
 
-    const acctID = userAccount.acctID
-    const firstName = userAccount.firstname
-    const midleName = userAccount.middlename
-    const lastName = userAccount.lastname
-    const memberType = 'admin'
-
-    addClass(className, classDesc, classCode, imageID, membersID)
-    addMembers(membersID, acctID, firstName, midleName, lastName, memberType)
+    const generatedID = generateUniqueId()
+    let imageFile = null
 
     if (selectedImage) {
-        const imageFile = {
-            file,
-            imageID: uniqueID,
-        }
-        uploadImage(imageFile)
+        imageFile = selectedImage.file
     }
 
-    const message = 'Class created succefully.'
-    notify(message, 'success')
+    const formData = new FormData
 
-    setisModalShow(false)
-    setshowCreateClass(false)
-    setisClassListShow(true)
-    setselectedImage(null)
+    formData.append('className', className)
+    formData.append('classDesc', classDesc)
+    formData.append('classCode', classCode)
+    formData.append('membersID', generatedID)
+    formData.append('imageID', generatedID)
+    formData.append('hidden', 'false')
+    formData.append('acctID', userAccount.acctID)
+    formData.append('firstname', userAccount.firstname)
+    formData.append('middlename', userAccount.middlename)
+    formData.append('lastname', userAccount.lastname)
+    formData.append('memberType', 'admin')
+    formData.append('image', imageFile)
 
-    getCurrentClass()
+    console.log(className)
+
+    axios.post('http://localhost:5000/classes/addClass', formData, {
+        headers: {
+            'Content-Type':'multipart/form-data'
+        }
+    })
+    .then((res) => res.data)
+    .then((data) => {
+        const message = data.message
+        notify(message, 'success')
+        setisModalShow(false)
+        setshowCreateClass(false)
+        setisClassListShow(true)
+        setselectedImage(null)
+        setupdate(!update)
+    })
+    .catch((err) => console.log(err))
+
 }
 
 const handleOpenClass = (subjectName, classCode, membersID, imageID, classID, classDesc) => {
@@ -267,9 +285,20 @@ const handleFile = (e) => {
     
 }
 
-const generateClassPicUpload = () => {
+const handleDrop = (e) => {
+    e.preventDefault()
+    const value = e.dataTransfer.files[0]
+    setselectedImage({
+        file: value,
+        uniqueID: generateUniqueId()
+    })
+ }
 
-    console.log(selectedImage)
+const preventDefault = (e) => {
+    e.preventDefault()
+}
+
+const generateClassPicUpload = () => {
     if (selectedImage) {
         const { file } = selectedImage
         return URL.createObjectURL(file)
@@ -291,7 +320,8 @@ const handleFileImport = (e) => {
             let reader = new FileReader();
             reader.readAsArrayBuffer(selectedFile);
             reader.onload=(e) => {
-                setExcelFile(e.target.result);
+                const data = e.target.result
+                setExcelFile(data)
             }
         }
 
@@ -305,70 +335,84 @@ const handleFileImport = (e) => {
         }
 }
 
-const handleFileSubmit = (e) => {
-    e.preventDefault();
-    let idList = []
-    if (excelFile!==null) {
-        const workbook = XLSX.read(excelFile, {type: 'buffer'});
-        const worksheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[worksheetName];
-        const data = XLSX.utils.sheet_to_json(worksheet);
-        setExcelData(data.slice(0,10));
-    }
+const handleExcelFileSubmit = (e) => {
+    e.preventDefault()
 
-    if (excelData) {
-        const { className, classDesc, classCode } = excelData[0]
-        console.log('result:', className, classDesc, classCode)
-        const imageID = 'none'
+    if (excelFile) {
 
-        if (className && classDesc && classCode) {
+        const workbook = XLSX.read(excelFile, {type: 'buffer'})
+        const worksheetName = workbook.SheetNames[0]
+        const worksheet = workbook.Sheets[worksheetName]
+        const data = XLSX.utils.sheet_to_json(worksheet)
+
+        if (data) {
             let done = 0
             let fail = 0
             let exist = 0
             let success = false
 
-            for (let i = 0; i < excelData.length; i++) {
-                const { className, classDesc, classCode} = excelData[i]
-                if (className && classDesc && classCode) {
-                    const isExist = allClasses.filter((cls) => cls.classCode === classCode)
+            for (let i = 0; i < data.length; i++) {
 
-                    if (isExist.length > 0) {
-                        exist = exist + 1
-                        fail = fail + 1
-                        continue
-                    }else {
+                const newClassName = data[i].className
+                const newClassCode = data[i].classCode
+                const newClassDesc = data[i].classDesc
+
+                if (newClassName && newClassCode && newClassDesc) {
+
+                   for (let x = 0; x < classesList.length; x++) {
+
+                        const existingClassCode = classesList[x].classCode
+                        
+                        if (newClassCode === existingClassCode) {
+                            exist = exist + 1
+                            console.log(newClassCode + 'is exist')
+                        }else {
+                            continue
+                        }                    
+                   }
+
+                   if (exist === 0) {
                         const generatedID = generateUniqueId()
-                        idList.push(generatedID)
-                        const membersID = generatedID
 
-                        addClass(className, classDesc, classCode, imageID, membersID)
+                        const formData = new FormData
+                        formData.append('className', newClassName)
+                        formData.append('classDesc', newClassCode)
+                        formData.append('classCode', newClassCode)
+                        formData.append('membersID', generatedID)
+                        formData.append('imageID', generatedID)
+                        formData.append('hidden', 'false')
+                        formData.append('acctID', userAccount.acctID)
+                        formData.append('firstname', userAccount.firstname)
+                        formData.append('middlename', userAccount.middlename)
+                        formData.append('lastname', userAccount.lastname)
+                        formData.append('memberType', 'admin')
+                        formData.append('image', null)
+
+                        axios.post('http://localhost:5000/classes/addClass', formData, {
+                            headers: {
+                                'Content-Type':'multipart/form-data'
+                            }
+                        })
+                        .then((res) => res.data)
+                        .then((data) => {
+                            done = done + 1
+                            success = true
+                            const message = data.message
+                            console.log(message)
+                        })
+                        .catch((err) => console.log(err))
+
                         done = done + 1
-                        success = true
-                    }
-                    
+                        exist = 0
+                   }else {
+                        fail = fail + 1
+                   }
+
                 }else {
                     fail = fail + 1
-                    continue
                 }
             }
 
-            console.log(done)
-            console.log(fail)
-
-            if (success) {
-                const acctID = userAccount.acctID
-                const firstName = userAccount.firstname
-                const midleName = userAccount.middlename
-                const lastName = userAccount.lastname
-                const memberType = 'admin'
-                console.log('idList:',idList)
-                for (let i = 0; i < idList.length; i++) {
-                    const membersID = idList[i]
-                    addMembers(membersID, acctID, firstName, midleName, lastName, memberType)
-                }
-                
-            }
-            
             if (fail) {
                 if (done) {
                     const message = `${done} Class imported succefully. ${fail} Failed to import`
@@ -379,12 +423,14 @@ const handleFileSubmit = (e) => {
                 }
                 
             }else {
+                console.log('done',done)
                 const message = `${done} Class imported succefully.`
                 notify(message, 'success')
+                setisClassListShow(true)
+                setselectedImage(null)
+                setupdate(!update)
             }
 
-            
-            
             exist = 0
             done = 0
             fail = 0
@@ -392,9 +438,14 @@ const handleFileSubmit = (e) => {
             const message = 'Invalid format.'
             notify(message, 'err')
         }
+    }else {
+        const message = `no file uploaded`
+        notify(message, 'err')
     }
 
 }
+
+
 
 
   return (
@@ -440,29 +491,39 @@ const handleFileSubmit = (e) => {
                     {
                         isModalShow && (
                             <div className={style.modalContainer}>
-                                <form action="" onSubmit={handleSubmit}>
+                                <form style={{ marginTop: '0px' }} action="" onSubmit={handleAddClass}>
                                     <div className={style.modalContent}>
-
                                         <div className={style.horizontalDiv}>
                                             <div className={style.leftCon}>
-                                                <h1>Create you Class</h1>
-                                                <p>Teachers have ownership of the class, while students actively engage as members. Within each class, you have the ability to generate quizzes, document student feedback, and share announcements.</p>
-                                                <label>Class Name:</label>
+                                                <h1 id={style.createClassTitle}>Create you Class</h1>
+                                                <p id={style.createDiscription}>Teachers have ownership of the class, while students actively engage as members. Within each class, you have the ability to generate quizzes, document student feedback, and share announcements.</p>
+                                                <label id={style.labelDescription}>Class Name:</label>
                                                 <input type="text" onChange={(e) => setclassName(e.target.value)} required/>
-                                                <label>Class code:</label>
-                                                <input type="text" onChange={(e) => setclassCode(e.target.value)} required/>
+                                                <label id={style.labelDescription}>Class Code:</label>
+                                                <input type="text" onChange={handleInputClassCode} required ref={inputRef}/>
+                                                {errorMessage && <p id={style.errorMessage}>Class code is already use.</p> }
                                             </div>
-                                            <div className={style.rightCon}>
-                                                <img src={generateClassPicUpload()} alt="profile" id={style.classProfile}/>
-                                                <input type="file" id={style.uploadPic}a ccept="image/*" onChange={handleFile}/>
+                                            <div className={style.rightCon} 
+                                                onDrop={handleDrop}
+                                                onDragOver={preventDefault}
+                                            > 
+                                                {
+                                                    selectedImage ? (
+                                                        <img src={generateClassPicUpload()} alt="profile" id={style.classProfile}/>
+                                                    ) : (
+                                                        <div className={style.dragPhoto}>Drag photo here.</div>
+                                                    )
+                                                    
+                                                }
+                                                
+                                                <input type="file" id={style.uploadPic}a ccept="image/*" onChange={handleFile} style={{ display: 'none' }}/>
                                             </div>
                                         </div>
-                                        
-                                        <label>Description(optional):</label>
+                                        <label id={style.labelDescription} style={{ marginTop: '20px' }}>Description ( optional ):</label>
                                         <textarea id={style.desInput} type="text" onChange={(e) => setclassDesc(e.target.value)}></textarea>
                                         <div className={style.horMenu}>
                                             <button id={style.btnCancel} onClick={CreateClass}>Cancel</button>
-                                            <button type='submit'>Next</button>
+                                            <button type='submit' disabled={classCode ? false : true}>Next</button>
                                         </div>
 
                                     </div>
@@ -492,7 +553,7 @@ const handleFileSubmit = (e) => {
                                             <div className={style.card} style={{ backgroundColor: '#D0E7D2'}}>
                                                 <BiExit size={20} id={style.iconExit} onClick={() => selectExcellInputCard(false)}/>
                                                 <input type="file" id={style.importExcelFile} accept='.xlsx' onChange={handleFileImport}/>
-                                                <button onClick={handleFileSubmit} style={{ backgroundColor: '#099AED'}}>Upload</button>
+                                                <button onClick={handleExcelFileSubmit} style={{ backgroundColor: '#099AED'}}>Upload</button>
                                             </div>
                                         )
                                     }
@@ -529,10 +590,10 @@ const handleFileSubmit = (e) => {
                                         <h2 id={style.classListLabel}>Class List</h2>
                                         <div className={style.horizontalList}>
                                                 {
-                                                    classesList? (
-                                                        classesList.filter((data) => data.hidden === 'false').map((data, index) => (   
+                                                    classesList.length > 0 ? (
+                                                        classesList.filter((data) => data.hidden === 'false' || data.hidden === false).map((data, index) => (   
                                                             <div className={style.classCard} key={index}>
-                                                                <AiFillEyeInvisible size={20} className={style.btnVisible} title='Hide class' onClick={() => handleHideClass(data.classCode, data.membersID, 'true')}/>
+                                                                <AiFillEyeInvisible size={20} className={style.btnVisible} title='Hide class' onClick={() => handleHideClass(data.classID)}/>
                                                                 <div className={style.mainPoint} onClick={() => handleOpenClass(data.className, data.classCode, data.membersID, data.imageID, data.classID, data.classDesc)}>
                                                                     {
                                                                         data.name !== 'default' ? (
@@ -549,7 +610,7 @@ const handleFileSubmit = (e) => {
                                                     ) : (
                                         
                                                             <div className={style.reminder}>
-                                                                <h2>ADD YOUR CLASS.</h2>
+                                                                <h2>NO ADDED CLASSES.</h2>
                                                             </div>
                                                         )
                                                 }
@@ -572,18 +633,24 @@ const handleFileSubmit = (e) => {
                                                 dropHideList && (
                                                     <div className={style.horizontalList}>
                                                         {
-                                                            userClasses? (
-                                                                userClasses.filter((cls) => cls.hidden === 'true').map((cls, index) => (
+                                                            classesList.length > 0 ? (
+                                                                classesList.filter((data) => data.hidden === 'true' || data.hidden === true).map((data, index) => (
                                                                     <div className={style.classCard} key={index}>
-                                                                        <AiFillEye size={20} className={style.btnVisible} title='Unhide class' onClick={() => handleHideClass(cls.classCode, cls.membersID, 'false')}/>
-                                                                        <img src={generatePic(cls.imageID)} alt='class photo' id={style.imageContainer}/>
-                                                                        <h1>{cls.className}</h1>
-                                                                        <p>{cls.classDesc}</p>
+                                                                        <AiFillEye size={20} className={style.btnVisible} title='Unhide class' onClick={() => handleUnHideClass(data.classID)}/>
+                                                                        {
+                                                                            data.name !== 'default' ? (
+                                                                                <img src={generatePic(data.name)} alt='class photo' id={style.imageContainer}/>
+                                                                            ):(
+                                                                                <div id={style.defaultClassPic}>{data.className.substring(0, 1).toUpperCase()}</div> 
+                                                                            )
+                                                                        }
+                                                                        <h1>{data.className}</h1>
+                                                                        <p>{data.classDesc}</p>
                                                                     </div>
                                                                 ))
                                                             ) : (
                                                                 <div className={style.reminder}>
-                                                                    <h2>ADD YOUR CLASS.</h2>
+                                                                    <h2>NO HIDDEN CLASS.</h2>
                                                                 </div>
                                                             )
                                                             

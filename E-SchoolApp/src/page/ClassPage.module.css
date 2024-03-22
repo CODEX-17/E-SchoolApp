@@ -1,10 +1,10 @@
 @font-face {
-    font-family: sanBold;
-    src: url('../assets/fonts/sanBold.ttf');
+    font-family: bold;
+    src: url('../assets/fonts/Montserrat-Bold.ttf');
 }
 @font-face {
-    font-family: sanSemi;
-    src: url('../assets/fonts/sanSemi.ttf');
+    font-family: normal;
+    src: url('../assets/fonts/Montserrat-Regular.ttf');
 } 
 
 :root {
@@ -17,7 +17,7 @@
 .container {
     width: 95%;
     height: 95%;
-    font-family: sanSemi;
+    font-family: normal;
     position: relative;
 }
 
@@ -44,9 +44,6 @@
     align-items: center;
 }
 
-
-
-
 .exitTrapNotif {
     animation: pop 0.5s ease;
     background-color: #ffffff;
@@ -65,13 +62,13 @@
   }
 
   .exitTrapNotif p {
-    font-family: sanBold;
+    font-family: bold;
     color: #3E3F40;
   }
 
 .header h1 {
     color: #3E3F40;
-    font-family: sanBold;
+    font-family: bold;
     font-size: 40px;
     user-select: none;
 }
@@ -86,7 +83,7 @@
     height: 39px;
     border-radius: 6px;
     font-size: 13px;
-    font-family: sanSemi;
+    font-family: bold;
 }
 
 .header button:hover {
@@ -143,13 +140,13 @@
 .card h2 {
     font-size: 20px;
     color: #3E3F40;
-    font-family: sanSemi;
+    font-family: normal;
 }
 
 .card #joinText {
     font-size: 15px;
     color: #3E3F40;
-    font-family: sanSemi;
+    font-family: normal;
 }
 
 .card button {
@@ -159,7 +156,7 @@
     background-color: #3E3F40;
     color: white;
     border: none;
-    font-family: sanSemi;
+    font-family: normal;
     font-size: 14px;
 }
 
@@ -192,7 +189,7 @@
     left: 0.5%;
     top: 10%;
     font-size: 17px;
-    font-family: sanSemi;
+    font-family: normal;
     color: #3E3F40;
 }
 
@@ -226,14 +223,14 @@
 }
 
 form .modalContent h1 {
-    font-family: sanBold;
+    font-family: bold;
     font-size: 20px;
     color: #3E3F40;
     user-select: none;
 }
 
 form .modalContent p {
-    font-family: sanSemi;
+    font-family: normal;
     font-size: 13px;
     color: #3E3F40;
     user-select: none;
@@ -270,17 +267,51 @@ form .modalContent input {
 
 .leftCon {
     display: flex;
+    flex: 50%;
     flex-direction: column;
 }
 
+#errorMessage {
+    padding-top: 10px;
+    color: red;
+    animation: shake 0.5s ease-in-out;
+}
+
+#createDiscription {
+    font-size: 10pt;
+    text-align: justify;
+}
+
+#createClassTitle {
+    font-size: 20pt;
+}
+
+#labelDescription {
+    font-size: 10pt;
+}
+
 #classProfile {
-    width: 200px;
-    height: 200px;
-    border-radius: 200px;
+    width: 80%;
+    height: 100%;
+    border-radius: 50%;
+}
+
+.dragPhoto {
+    width: 80%;
+    height: 100%;
+    display: flex;
+    text-align: center;
+    color: #099AED;
+    font-size: 10pt;
+    align-items: center;
+    justify-content: center;
+    border: 5px dashed #099AED;
+    border-radius: 50%;
 }
 
 .rightCon {
     display: flex;
+    flex: 50%;
     flex-direction: column;
     align-items: center;
 }
@@ -307,6 +338,10 @@ form .modalContent input {
     font-size: 12px;
 }
 
+.horMenu button:disabled {
+    background-color: #7f8285;
+}
+
 .horMenu button:hover, #btnCancel:hover {
     background-color: #3E3F40;
     color: white;
@@ -320,7 +355,7 @@ form .modalContent input {
 }
 
 .listContainer {
-    font-family: sanSemi;
+    font-family: normal;
     color: #3E3F40;
     height: 90%;
     padding: 2%;
@@ -392,6 +427,7 @@ form .modalContent input {
     height: 80px;
     color: white;
     display: flex;
+    font-family: bold;
     font-size: 20pt;
     align-items: center;
     justify-content: center;
@@ -402,7 +438,7 @@ form .modalContent input {
 
 .classCard h1 {
     font-size: 15px;
-    font-family: sanBold;
+    font-family: bold;
     margin-top: 5%;
     margin-bottom: 0;
     user-select: none;
@@ -454,4 +490,27 @@ form .modalContent input {
     to {
       opacity: 1;
     }
+  }
+
+  @keyframes shake {
+    0% {
+      transform: translateX(0);
+    }
+  
+    20% {
+      transform: translateX(10px);
+    }
+
+    50% {
+        transform: translateX(0);
+    }
+
+    70% {
+        transform: translateX(10px);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+
   }
