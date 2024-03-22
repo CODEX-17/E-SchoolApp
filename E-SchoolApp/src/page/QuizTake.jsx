@@ -14,7 +14,7 @@ import StopwatchTimer from 'react-stopwatch-timer';
 import LeaderBoard from './LeaderBoard'
 import io from 'socket.io-client'
 import { useScoreStore } from '../stores/useScoreStore'
-const socket = io.connect('http://localhost:5000')
+const socket = io.connect('http://localhost:5001')
 
 
 const QuizTake = () => {
@@ -565,7 +565,7 @@ const QuizTake = () => {
     }
 
     const generatePicture = (data) => {
-        return 'http://localhost:5000/'+data
+        return 'http://localhost:1/'+data
     }
 
     const generateCloseTime = () => {

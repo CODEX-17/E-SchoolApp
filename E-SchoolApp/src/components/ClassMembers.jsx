@@ -133,7 +133,7 @@ const ClassMembers = ({ memberID }) => {
     if (imageID) {
       const currentImage = images.filter((img) => img.imageID === imageID).map((img) => img.data)
       if (currentImage) {
-        return 'http://localhost:5000/' + currentImage[0]
+        return 'http://localhost:5001/' + currentImage[0]
       }else {
         return sample
       }
@@ -147,7 +147,7 @@ const ClassMembers = ({ memberID }) => {
     if (imageID) {
       const currentImage = images.filter((img) => img.imageID === imageID[0]).map((img) => img.data)
       if (currentImage) {
-        return 'http://localhost:5000/' + currentImage[0]
+        return 'http://localhost:5001/' + currentImage[0]
       }else {
         return sample
       }

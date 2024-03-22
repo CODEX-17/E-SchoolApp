@@ -4,7 +4,7 @@ import axios from 'axios'
 export const useMessageStore = create((set) => ({
 
     getMessages: () => {
-        axios.get('http://localhost:5000/getMessages')
+        axios.get('http://localhost:5001/getMessages')
         .then(res => localStorage.setItem('messages', JSON.stringify(res.data)))
         .catch(err => console.error(err))
     },
@@ -30,19 +30,19 @@ export const useMessageStore = create((set) => ({
         const date = data.date
         const time = data.time
 
-        axios.post('http://localhost:5000/saveMessages', {messageID, roomID, messageContent, messageSender, messageReceiver, date, time})
+        axios.post('http://localhost:5001/saveMessages', {messageID, roomID, messageContent, messageSender, messageReceiver, date, time})
         .then(res => console.log(res.data))
         .catch(err => console.error(err))
     },
 
     addMessage: (obj) => {
-        axios.post('http://localhost:5000/addMessage', {obj})
+        axios.post('http://localhost:5001/addMessage', {obj})
         .then( res => console.log(res))
         .catch(err => console.error(err))
     },
 
     deleteMessages: (id) => {
-        axios.post(`http://localhost:5000/deleteMessages`, {id})
+        axios.post(`http://localhost:5001/deleteMessages`, {id})
         .then( res => console.log(res))
         .catch(err => console.log(err))
     },

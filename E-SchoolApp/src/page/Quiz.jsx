@@ -198,7 +198,7 @@ const deleteAllData = () => {
 }
 
 const getSubjects = () => {
-    axios.get('http://localhost:5000/getSubjects')
+    axios.get('http://localhost:5001/getSubjects')
     .then(res => setsubjectNameList(res.data))
     .catch(err => console.error(err))
 }
@@ -667,7 +667,7 @@ const handleFinalQuestion = () => {
             if(questionObj.length > 0){
                 for (let i = 0; i < questionObj.length; i++) {
                     const dataObj = questionObj[i]
-                    axios.post('http://localhost:5000/questions', { dataObj, id } )
+                    axios.post('http://localhost:5001/questions', { dataObj, id } )
                     .then(res => {
                         resetValues(2)
                     })
@@ -684,7 +684,7 @@ const handleFinalQuestion = () => {
           
                 for (let i = 0; i < choices.length; i++) {
                     const dataObj = choices[i]
-                    axios.post('http://localhost:5000/choices', { dataObj } )
+                    axios.post('http://localhost:5001/choices', { dataObj } )
                     .then(res => {
                         console.log(res)
                         setChoices([])
@@ -701,7 +701,7 @@ const handleFinalQuestion = () => {
                     formData.append('image', file)
                     formData.append('imageID', imageID)
         
-                    axios.post('http://localhost:5000/upload', formData, {
+                    axios.post('http://localhost:5001/upload', formData, {
                         headers: {
                         'Content-Type': 'multipart/form-data',
                         },
@@ -717,7 +717,7 @@ const handleFinalQuestion = () => {
             if (fillLayoutSet.length > 0) {
                 for (let i = 0; i < fillLayoutSet.length; i++) {
                     const data = fillLayoutSet[i];
-                    axios.post('http://localhost:5000/fillLayout', { data } )
+                    axios.post('http://localhost:5001/fillLayout', { data } )
                     .then(res => {
                         console.log(res.data)
                         setfillLayoutSet([])

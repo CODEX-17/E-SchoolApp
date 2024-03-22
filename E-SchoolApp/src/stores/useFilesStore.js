@@ -4,13 +4,13 @@ import axios from 'axios'
 export const useFilesStore = create((set) => ({
 
     getFiles: () => {
-        axios.get('http://localhost:5000/getALLfiles')
+        axios.get('http://localhost:5001/getALLfiles')
         .then((res) => localStorage.setItem('files', JSON.stringify(res.data)))
         .catch((error) => console.error(error))
     },
 
     addFiles: (obj) => {
-        axios.post('http://localhost:5000/addFiles', {obj})
+        axios.post('http://localhost:5001/addFiles', {obj})
         .then(res => console.log(res.data))
         .catch((error) => console.error(error))
     },
@@ -21,7 +21,7 @@ export const useFilesStore = create((set) => ({
         formData.append('file', file)
         formData.append('fileID', fileID)
 
-        axios.post('http://localhost:5000/uploadFile', formData, {
+        axios.post('http://localhost:5001/uploadFile', formData, {
                 headers: {
                 'Content-Type': 'multipart/form-data',
                 },
@@ -31,7 +31,7 @@ export const useFilesStore = create((set) => ({
     },
 
     deleteFiles: (id) => {
-        axios.post(`http://localhost:5000/deleteFiles`, {id})
+        axios.post(`http://localhost:5001/deleteFiles`, {id})
         .then( res => console.log(res))
         .catch(err => console.log(err))
     }

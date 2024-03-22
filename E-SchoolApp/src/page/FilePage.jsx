@@ -5,7 +5,7 @@ import FileViewer from 'react-file-viewer';
 const FilePage = () => {
 
   const docs = [
-    { uri: "http://localhost:5000/file_1703608899097.xlsx" },
+    { uri: "http://localhost:5001/file_1703608899097.xlsx" },
   ];
 
   return(
@@ -21,10 +21,10 @@ const FilePage = () => {
   {/* For PPT and XLS files */}
   <FileViewer
     fileType={'pptx'}
-    filePath={'http://localhost:5000/file_1703604974548.pptx'}
+    filePath={'http://localhost:5001/file_1703604974548.pptx'}
   />
 
-    <iframe src={'http://localhost:5000/file_1703604974548.pptx'} width="100%" height="500px" frameBorder="0">
+    <iframe src={'http://localhost:5001/file_1703604974548.pptx'} width="100%" height="500px" frameBorder="0">
       </iframe>
 </>
   ) 

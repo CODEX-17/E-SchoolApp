@@ -5,7 +5,7 @@ export const useQuestionsStore = create((set) => ({
 
     questions: [],
     getQuestion: () => {
-        axios.get('http://localhost:5000/getQuestion')
+        axios.get('http://localhost:5001/getQuestion')
         .then(res => {
             set({questions: res.data})
             localStorage.setItem('questions', JSON.stringify(res.data))
@@ -15,7 +15,7 @@ export const useQuestionsStore = create((set) => ({
 
     addQuestions: (dataObj) => {
 
-            axios.post('http://localhost:5000/questions', { dataObj })
+            axios.post('http://localhost:5001/questions', { dataObj })
             .then(res => console.log(res))
             .catch(err => console.log(err))
         
@@ -23,7 +23,7 @@ export const useQuestionsStore = create((set) => ({
 
     updateQuestions: (id, questionID) => {
        
-        axios.put('http://localhost:5000/updateQuestions', { id, questionID })
+        axios.put('http://localhost:5001/updateQuestions', { id, questionID })
         .then(res => console.log(res))
         .catch(err => console.log(err))
     },
@@ -45,13 +45,13 @@ export const useQuestionsStore = create((set) => ({
     },
 
     addQuestion: (obj) => {
-        axios.post('http://localhost:5000/addQuestion', {obj})
+        axios.post('http://localhost:5001/addQuestion', {obj})
         .then( res => console.log(res))
         .catch(err => console.error(err))
     },
 
     deleteQuestions: (id) => {
-        axios.post(`http://localhost:5000/deleteQuestions`, {id})
+        axios.post(`http://localhost:5001/deleteQuestions`, {id})
         .then( res => console.log(res))
         .catch(err => console.log(err))
     },

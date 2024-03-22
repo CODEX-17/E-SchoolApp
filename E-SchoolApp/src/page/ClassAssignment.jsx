@@ -12,7 +12,7 @@ import { Howl, Howler } from "howler";
 import { ToastContainer, toast } from 'react-toastify';
 import { useScheduleStore } from '../stores/useScheduleStore';
 import io from 'socket.io-client'
-const socket = io.connect('http://localhost:5000')
+const socket = io.connect('http://localhost:5001')
 
 
 const ClassAssignment = ({ postType, quizObj, handlePostAssignment }) => {

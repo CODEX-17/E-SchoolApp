@@ -23,7 +23,7 @@ export const usePostStore = create((set) => ({
         const duration = postSet.duration
         const random = postSet.random
 
-        axios.post('http://localhost:5000/uploadPost', { 
+        axios.post('http://localhost:5001/uploadPost', { 
             postID,
             acctID,
             name,
@@ -48,31 +48,31 @@ export const usePostStore = create((set) => ({
     },
 
     addPost: (obj) => {
-        axios.post('http://localhost:5000/addPost', {obj})
+        axios.post('http://localhost:5001/addPost', {obj})
         .then( res => console.log(res))
         .catch(err => console.error(err))
     },
 
     updatePost: (obj) => {
-        axios.put('http://localhost:5000/updatePost', {obj})
+        axios.put('http://localhost:5001/updatePost', {obj})
         .then(res => console.error(res))
         .catch(err => console.error(err))
     },
 
     deletePost: (id) => {
-        axios.delete('http://localhost:5000/deletePost/'+id)
+        axios.delete('http://localhost:5001/deletePost/'+id)
         .then(res => console.log(res.data))
         .catch(err => console.error(err))
     },
 
     getPost: () => {
-        axios.get('http://localhost:5000/getPost')
+        axios.get('http://localhost:5001/getPost')
         .then(res => localStorage.setItem('post', JSON.stringify(res.data)))
         .catch(err => console.error(err))
     },
 
     deletePost: (id) => {
-        axios.post(`http://localhost:5000/deletePost`, {id})
+        axios.post(`http://localhost:5001/deletePost`, {id})
         .then( res => console.log(res))
         .catch(err => console.log(err))
     },

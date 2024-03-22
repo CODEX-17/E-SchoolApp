@@ -9,7 +9,7 @@ export const useAccountStore = create((set) => ({
     currentAccount: null,
 
     getAccounts: () => {
-        axios.get('http://localhost:5000/getAccount')
+        axios.get('http://localhost:5001/getAccount')
         .then(result => {
             localStorage.setItem('accounts', JSON.stringify(result.data))
             set({account: result.data})
@@ -18,7 +18,7 @@ export const useAccountStore = create((set) => ({
     },
 
     getAccountById: (id) => {
-        axios.get('http://localhost:5000/getAcctById/'+id)
+        axios.get('http://localhost:5001/getAcctById/'+id)
         .then(result => {
             set({currentAccount: result.data})
         })
@@ -30,13 +30,13 @@ export const useAccountStore = create((set) => ({
     },
 
     addAccounts: (obj) => {
-        axios.post('http://localhost:5000/addAccounts', {obj})
+        axios.post('http://localhost:5001/addAccounts', {obj})
         .then(res => console.error(res))
         .catch(err => console.error(err))
     },
 
     updateAccounts: (obj) => {
-        axios.post('http://localhost:5000/updateAccounts', {obj})
+        axios.post('http://localhost:5001/updateAccounts', {obj})
         .then(res => console.error(res))
         .catch(err => console.error(err))
     },
@@ -47,7 +47,7 @@ export const useAccountStore = create((set) => ({
     },
 
     updateStatus: (id, status) => {
-        axios.put('http://localhost:5000/status/' + id, { status })
+        axios.put('http://localhost:5001/status/' + id, { status })
         .then(res => {
             console.log(res)
             const data = JSON.parse(localStorage.getItem('user'))
@@ -59,13 +59,13 @@ export const useAccountStore = create((set) => ({
     },
 
     updatePassword: (id, newPass) => {
-        axios.put('http://localhost:5000/updatePassword/' + id, { newPass })
+        axios.put('http://localhost:5001/updatePassword/' + id, { newPass })
         .then( res => console.log(res))
         .catch(err => console.log(err))
     },
 
     deleteAccount: (acctID) => {
-        axios.post(`http://localhost:5000/deleteAccount`, {acctID})
+        axios.post(`http://localhost:5001/deleteAccount`, {acctID})
         .then( res => console.log(res))
         .catch(err => console.log(err))
     },

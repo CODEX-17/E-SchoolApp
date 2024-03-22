@@ -6,13 +6,13 @@ export const useMemberStore = create((set)=> ({
     members: [],
 
     getMembers: () => {
-        axios.get('http://localhost:5000/getMembers')
+        axios.get('http://localhost:5001/getMembers')
         .then((res) => localStorage.setItem('members', JSON.stringify(res.data)))
         .catch((error) => console.error(error))
     },
 
     deleteMembers: (ID) => {
-        axios.post(`http://localhost:5000/deleteMembers`, {ID})
+        axios.post(`http://localhost:5001/deleteMembers`, {ID})
         .then( res => console.log(res))
         .catch(err => console.log(err))
     },
@@ -21,7 +21,7 @@ export const useMemberStore = create((set)=> ({
 
         console.log(membersID, acctID, firstName, midleName, lastName, memberType)
 
-        axios.post(`http://localhost:5000/addMembers`, { 
+        axios.post(`http://localhost:5001/addMembers`, { 
             membersID,
             acctID,
             firstName,
@@ -34,19 +34,19 @@ export const useMemberStore = create((set)=> ({
     },
 
     addMember: (obj) => {
-        axios.post('http://localhost:5000/addMember', {obj})
+        axios.post('http://localhost:5001/addMember', {obj})
         .then( res => console.log(res))
         .catch(err => console.error(err))
     },
 
     updateMember: (obj) => {
-        axios.put('http://localhost:5000/updateMember', {obj})
+        axios.put('http://localhost:5001/updateMember', {obj})
         .then(res => console.error(res))
         .catch(err => console.error(err))
     },
 
     deleteMembers: (acctID) => {
-        axios.put(`http://localhost:5000/deleteMembers`, { acctID })
+        axios.put(`http://localhost:5001/deleteMembers`, { acctID })
         .then( res => console.log(res))
         .catch(err => console.log(err))
     }

@@ -8,7 +8,7 @@ import io from 'socket.io-client'
 import { BsAwardFill } from "react-icons/bs";
 import { useScoreStore } from '../stores/useScoreStore'
 import { useQuizStore } from '../stores/useQuizStore'
-const socket = io.connect('http://localhost:5000')
+const socket = io.connect('http://localhost:5001')
 
 const LeaderBoard = () => {
 

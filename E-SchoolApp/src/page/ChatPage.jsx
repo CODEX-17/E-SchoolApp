@@ -11,7 +11,7 @@ import { useFriendStore } from '../stores/useFriendStore'
 import { useImageStore } from '../stores/useImageStore'
 import { useAccountStore } from '../stores/useAccountsStore'
 import { ProgressBar } from  'react-loader-spinner';
-const socket = io.connect('http://localhost:5000')
+const socket = io.connect('http://localhost:5001')
 
 
 const ChatPage = () => {
@@ -201,7 +201,7 @@ const ChatPage = () => {
     const userImages = images.filter((img) => img.imageID === selectedAct[0]).map((img) => img.data)
       if (userImages) {
         const image = userImages[0]
-        const url = 'http://localhost:5000/'
+        const url = 'http://localhost:5001/'
         return url+image
       }
 

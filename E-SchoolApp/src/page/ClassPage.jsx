@@ -54,7 +54,8 @@ const errSound = new Howl({ src: [erroSound]})
 
 useEffect(() => {
     const acctID = userAccount.acctID
-    axios.get('http://localhost:5000/classes/getClassesByAccount/' + acctID)
+    console.log(acctID)
+    axios.get('http://localhost:5001/classes/getClassesByAccount/' + acctID)
     .then((res) => {
         setshowPreview('classPage')
         console.log('myClasses', res.data)
@@ -138,7 +139,7 @@ const handleHideClass = (id) => {
 
     const classID = id
 
-    axios.put('http://localhost:5000/classes/hideClass/' + classID)
+    axios.put('http://localhost:5001/classes/hideClass/' + classID)
     .then((res) => res.data)
     .then((data) => console.log(data.message))
     .catch((err) => console.error(err))
@@ -157,7 +158,7 @@ const handleUnHideClass = (id) => {
 
     const classID = id
 
-    axios.put('http://localhost:5000/classes/unhideClass/' + classID)
+    axios.put('http://localhost:5001/classes/unhideClass/' + classID)
     .then((res) => res.data)
     .then((data) => console.log(data.message))
     .catch((err) => console.error(err))
@@ -212,7 +213,7 @@ const handleAddClass = (e) => {
 
     console.log(className)
 
-    axios.post('http://localhost:5000/classes/addClass', formData, {
+    axios.post('http://localhost:5001/classes/addClass', formData, {
         headers: {
             'Content-Type':'multipart/form-data'
         }
@@ -249,7 +250,7 @@ const backToHomePage = (choose) => {
 const generatePic = (filename) => {
 
     if (filename) {
-        return 'http://localhost:5000/' + filename
+        return 'http://localhost:5001/' + filename
     }else {
         return '/banner.jpg'
     }
@@ -388,7 +389,7 @@ const handleExcelFileSubmit = (e) => {
                         formData.append('memberType', 'admin')
                         formData.append('image', null)
 
-                        axios.post('http://localhost:5000/classes/addClass', formData, {
+                        axios.post('http://localhost:5001/classes/addClass', formData, {
                             headers: {
                                 'Content-Type':'multipart/form-data'
                             }
@@ -597,7 +598,7 @@ const handleExcelFileSubmit = (e) => {
                                                                 <div className={style.mainPoint} onClick={() => handleOpenClass(data.className, data.classCode, data.membersID, data.imageID, data.classID, data.classDesc)}>
                                                                     {
                                                                         data.name !== 'default' ? (
-                                                                            <img src={generatePic(data.name)} alt='class photo' id={style.imageContainer}/>
+                                                                            <img src={generatePic(data.data)} alt='class photo' id={style.imageContainer}/>
                                                                         ):(
                                                                            <div id={style.defaultClassPic}>{data.className.substring(0, 1).toUpperCase()}</div> 
                                                                         )
@@ -639,7 +640,7 @@ const handleExcelFileSubmit = (e) => {
                                                                         <AiFillEye size={20} className={style.btnVisible} title='Unhide class' onClick={() => handleUnHideClass(data.classID)}/>
                                                                         {
                                                                             data.name !== 'default' ? (
-                                                                                <img src={generatePic(data.name)} alt='class photo' id={style.imageContainer}/>
+                                                                                <img src={generatePic(data.data)} alt='class photo' id={style.imageContainer}/>
                                                                             ):(
                                                                                 <div id={style.defaultClassPic}>{data.className.substring(0, 1).toUpperCase()}</div> 
                                                                             )

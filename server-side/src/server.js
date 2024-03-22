@@ -12,7 +12,9 @@ const later = require('later');
 const Agenda = require('agenda');
 const agenda = new Agenda();
 
-const accountRoutes = require('./Routes/classesRoutes')
+const classesRoutes = require('./Routes/classesRoutes')
+const accountsRoutes = require('./Routes/accountsRoutes')
+const imagesRoutes = require('./Routes/imagesRoutes')
 
 const corsOptions = {
     origin: '*', 
@@ -42,8 +44,9 @@ const db = mysql.createConnection({
     database: 'e-school-app'
 })
 
-app.use('/classes', accountRoutes)
-
+app.use('/classes', classesRoutes)
+app.use('/accounts', accountsRoutes)
+app.use('/images', imagesRoutes)
 
 const getSchedule = () => {
     const query = "SELECT * FROM schedule"
@@ -65,9 +68,6 @@ let jobsList = []
 
 
 io.on('connection', (socket) => {
-
-
-
 
     io.emit('onlinePerson', true)
 
@@ -1735,7 +1735,7 @@ app.post('/upload', upload.single('image'), (req, res) => {
 
 
 
-const port = process.env.PORT || 5000
+const port = process.env.PORT || 5001
 
 server.listen(port, ()=> {
     console.log('Listening to port: ', port)

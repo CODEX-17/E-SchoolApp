@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
 import mammoth from 'mammoth';
 import io from 'socket.io-client';
-const socket = io.connect('http://localhost:5000');
+const socket = io.connect('http://localhost:5001');
 
 
 const ActivityPage = () => {

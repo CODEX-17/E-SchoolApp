@@ -10,7 +10,7 @@ const navigate = useNavigate()
 
 
 useEffect(() => {
-    axios.get('http://localhost:5000/getAccount')
+    axios.get('http://localhost:5001/getAccount')
     .then(result => {setStudent(result.data)
         console.log(result.data)
     })

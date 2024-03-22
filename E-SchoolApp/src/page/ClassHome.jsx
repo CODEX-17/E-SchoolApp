@@ -43,7 +43,7 @@ import { IoSend } from "react-icons/io5";
 
 
 import io from 'socket.io-client'
-const socket = io.connect('http://localhost:5000')
+const socket = io.connect('http://localhost:5001')
 
 
 const ClassHome = ({ currentSubjectName, currentImageClass, currentClassCode, currentMemberID, backToHomePage, classDesc, currentclassID }) => {
@@ -209,7 +209,7 @@ const refreshData = () => {
         
 
         setCurrentPost(filterPost)
-        const url = 'http://localhost:5000/'
+        const url = 'http://localhost:5001/'
         setCurrentClassPic(url + imagePic[0].data)
         setclassCode(filter[0].classCode)
         setsubjectName(filter[0].className)
@@ -568,7 +568,7 @@ const reset = () => {
 const generatePic = (imageID) => {
     getImages()
     const id = imageID
-    const url = 'http://localhost:5000/'
+    const url = 'http://localhost:5001/'
     const allImages = JSON.parse(localStorage.getItem('images'))
     const filter = allImages.filter((img) => img.imageID === id).map((img) => img.data)
     if (url+filter[0]) {
@@ -582,7 +582,7 @@ const imageUserPost = (id) => {
     const imagesList = JSON.parse(localStorage.getItem('images'))
     const accountImageID = accounts.filter((account) => account.acctID === id).map((account) => account.imageID)
     const filterImage = imagesList.filter((img) => img.imageID === accountImageID[0]).map((img) => img.data)
-    const url = 'http://localhost:5000/'
+    const url = 'http://localhost:5001/'
     return url+filterImage[0]
 }
 
@@ -617,7 +617,7 @@ const generateFileName = (fileID) => {
 const handleDownload = (fileID) => {
     const files = JSON.parse(localStorage.getItem('files'))
     const filter = files.filter((file) => file.fileID === fileID).map((file) => file.data)
-    const url = 'http://localhost:5000/'+filter[0]
+    const url = 'http://localhost:5001/'+filter[0]
     window.location.href = url
 }
 
@@ -658,7 +658,7 @@ const handleSaveSetting = () => {
 
 const handleViewFile = (fileID) => {
     const filter = fileList.filter((files) => files.fileID === fileID)
-    const filePath = 'http://localhost:5000/' + filter[0].data
+    const filePath = 'http://localhost:5001/' + filter[0].data
     console.log(filter[0].data)
     setviewFileName(filePath)
     setshowViewFiles(true)
@@ -862,7 +862,7 @@ const handleShowComments = (post) => {
                 showViewFiles && viewFileName && (
                     <div className={style.prevFileCon}>
                         <IoCloseCircle size={30} color='#BB2525' cursor={'pointer'} onClick={() => setshowViewFiles(false)}/>
-                        <iframe src={'http://localhost:5000/file_1705777205783.pdf'} width="100%" height="100%" ></iframe>
+                        <iframe src={'http://localhost:5001/file_1705777205783.pdf'} width="100%" height="100%" ></iframe>
                     </div>
                 )
         }

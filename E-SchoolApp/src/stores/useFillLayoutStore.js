@@ -4,19 +4,19 @@ import axios from 'axios'
 export const useFillLayoutStore = create((set) => ({
 
     getFillLayout: () => {
-        axios.get('http://localhost:5000/getFillLayout')
+        axios.get('http://localhost:5001/getFillLayout')
         .then(res => localStorage.setItem('fillLayout', JSON.stringify(res.data)))
         .catch(err => console.error(err))
     },
 
     addFillLayout: (obj) => {
-        axios.post('http://localhost:5000/addFillLayout', {obj})
+        axios.post('http://localhost:5001/addFillLayout', {obj})
         .then( res => console.log(res))
         .catch(err => console.error(err))
     },
 
     deleteFillLayout: (id) => {
-        axios.post(`http://localhost:5000/deleteFillLayout`, {id})
+        axios.post(`http://localhost:5001/deleteFillLayout`, {id})
         .then( res => console.log(res))
         .catch(err => console.log(err))
     }
