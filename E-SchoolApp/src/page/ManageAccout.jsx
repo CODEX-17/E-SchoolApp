@@ -1,4 +1,4 @@
-import React,{ useEffect, useState } from 'react'
+import React,{ useEffect, useRef, useState } from 'react'
 import style from './ManageAccout.module.css'
 import { Howl, Howler } from "howler";
 import { BiSolidShow } from 'react-icons/bi'
@@ -16,15 +16,17 @@ const ManageAccout = () => {
 
   const [image, setImage] = useState(null)
   const [oldImage, setoldImage] = useState(null)
-  const [updatedDataUser, setUpdatedDataUser] = useState(null)
   const [showPassword, setShowPass] = useState(false)
-  const [accountCurrent, setaccountCurrent] = useState(JSON.parse(localStorage.getItem('user')) || null)
-  const accountList = JSON.parse(localStorage.getItem('accounts')) || null
-  const [currentAcct, setcurrentAcct] = useState(accountList.filter((acct) => acct.id === accountCurrent.id ))
+  const [change, setChange] = useState(true)
+  const [isShowErrorMessage, setIsShowErrorMessage] = useState(false)
+  const [accountCurrent, setaccountCurrent] = useState(JSON.parse(localStorage.getItem('user')))
   let fullname = accountCurrent.firstname + ' ' + accountCurrent.middlename.charAt(0) + '. ' + accountCurrent.lastname
   const { getImagesById, images, updateImageById } = useImageStore()
   const { updatePassword, getAccountById, currentAccount } = useAccountStore()
+  const oldPassword = accountCurrent.password
   const [updatedPassword, setupdatedPassword] = useState(accountCurrent.password)
+  const inputRef = useRef(null)
+
   const notif = new Howl({ src: [notifSound]})
   const errSound = new Howl({ src: [erroSound]})
 
@@ -37,7 +39,6 @@ const ManageAccout = () => {
   },[])
 
   const notify = (message, state) => {
-    console.log(message);
      if (state === 'err') {
         errSound.play()
         toast.error(message, {
@@ -82,6 +83,7 @@ const ManageAccout = () => {
     e.preventDefault()
     const file = e.dataTransfer.files[0]
     if (file && isImageType(file)) {
+      setChange(false)
       handleFile(file)
     }else {
       const message = 'Only images are allowed'
@@ -99,21 +101,7 @@ const ManageAccout = () => {
     }
   }
 
-  const updateImageToDatabase = (data) => {
 
-    if (data) {
-      const formData = new FormData()
-      formData.append('image', data.file)
-      formData.append('imageID', data.imageID)
-
-      updateImageById(formData)
-    }else {
-      console.log('no data')
-    }
-   
-
-    
-  }
   const handleDragOver = (e) => {
     e.preventDefault();
   }
@@ -127,21 +115,62 @@ const ManageAccout = () => {
   };
 
   const handleUpload = () => {
-    if (image) {
-      updateImageToDatabase(image)
-    }
+    const acctID = accountCurrent.acctID
+    const imageID = accountCurrent.imageID
+    console.log(image.file)
 
-    if (updatedPassword) {
-      const acctID = accountCurrent.acctID
-      updatePassword(acctID, updatedPassword)
-      let updatedAcct = accountCurrent
-      updatedAcct.password = updatedPassword
-      localStorage.setItem('user', JSON.stringify(updatedAcct))
-    }
+    if (updatedPassword !== '') {
+      const formData = new FormData
+      formData.append('password', updatedPassword)
+      formData.append('acctID', acctID)
+      formData.append('imageID', imageID)
+    
+      if (image) {
+        formData.append('image', image.file)
+      }else {
+        formData.append('image', 'default')
+      }
+      
+      for (let pair of formData.entries()) {
+        console.log(pair[0]+ ', ' + pair[1]); 
+      }
 
-    const message = 'Successfully update your profile'
-    notify(message, 'success')
+      if (updatedPassword) {
+        axios.post('http://localhost:5001/accounts/updateAccount', formData)
+        .then(res => res.data)
+        .then((data) => {
+          const message = data.message
+          notify(message, 'success')
+        })
+        .catch(err => console.log(err))
+      }
+
+      
+
+    }else {
+      setChange(true)
+    }
+    
    
+  }
+
+  const handleChangePassword = (e) => {
+    e.preventDefault()
+    const value = e.target.value
+      if (oldPassword === value) {
+        inputRef.current.style.color = 'red'
+        setIsShowErrorMessage(true)
+        setTimeout(() => {
+          setIsShowErrorMessage(false)
+        }, 3000);
+      }else {
+        inputRef.current.style.color = '#099AED'
+        setupdatedPassword(value)
+        setChange(false)
+      }
+    
+    
+
   }
 
 
@@ -172,24 +201,28 @@ const ManageAccout = () => {
                 />
                 <div className='d-flex flex-column w-50 gap-2'>
                     <div className='d-flex flex-column'>
-                        <p className='m-0' id={style.label} title='cannot be editted as admin'>Name:</p>
+                        <p className='m-0' id={style.label}>Name:</p>
                         <input className={style.inputBarDis} type="text" value={fullname} disabled/>
                     </div>
                     <div className='d-flex flex-column'>
-                        <p className='m-0' id={style.label} title='cannot be editted as admin'>Email:</p>
+                        <p className='m-0' id={style.label}>Email:</p>
                         <input className={style.inputBarDis} type="text" value={accountCurrent.email}/>
                     </div>
                     <div className='d-flex flex-column'>
                         <p className='m-0' id={style.label}>Password:</p>
                         <div className='d-flex align-items-center gap-2 position-relative'>
-                            <input id={style.inputBar} type={showPassword ? 'text': 'password'} value={updatedPassword} onChange={(e) => setupdatedPassword(e.target.value)}/>
+                            <input id={style.inputBar} type={showPassword ? 'text': 'password'} value={updatedPassword} ref={inputRef} onChange={handleChangePassword}/>
                             <BiSolidShow size={20} id={style.showPass} onClick={() => setShowPass(!showPassword)}/>
                         </div>
                     </div>
+                    {
+                      isShowErrorMessage && <p id={style.errorMessage}>New password cannot be identical to the old one.</p>
+                    }
+                    
                 </div>
 
             </div>
-                <button onClick={handleUpload} id={style.btnSave}>Update</button>
+                <button onClick={handleUpload} id={style.btnSave} disabled={change}>Update</button>
         </div>
     </div>
   )

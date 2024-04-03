@@ -58,7 +58,6 @@ useEffect(() => {
     axios.get('http://localhost:5001/classes/getClassesByAccount/' + acctID)
     .then((res) => {
         setshowPreview('classPage')
-        console.log('myClasses', res.data)
         setClassesList(res.data)
     })
     .catch((err) => console.error(err))

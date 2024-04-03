@@ -25,13 +25,10 @@ const NavbarComponent = () => {
       axios.get('http://localhost:5001/images/getImages')
       .then((res) => {
           const imagesList = res.data
-          console.log(imagesList)
           const filter = imagesList.filter((data) => data.imageID === imageID).map((data) => data.data)
-          console.log(filter)
-
+        
           if (filter.length > 0) {
               const url = 'http://localhost:5001/'
-              console.log(url+filter[0])
               setUserImage(url+filter[0]) 
           }
 

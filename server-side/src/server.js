@@ -67,139 +67,139 @@ let jobsList = []
 
 
 
-io.on('connection', (socket) => {
+// io.on('connection', (socket) => {
 
-    io.emit('onlinePerson', true)
+//     io.emit('onlinePerson', true)
 
-    const date = new Date(2023, 11, 31, 18, 48, 0)
-    const currentDate = new Date()
-    let scheduleDates = []
+//     const date = new Date(2023, 11, 31, 18, 48, 0)
+//     const currentDate = new Date()
+//     let scheduleDates = []
 
-    for (let i = 0; i < schedulesList.length; i++) {
+//     for (let i = 0; i < schedulesList.length; i++) {
 
-        const schedDate = schedulesList[i].schedDate
-        const schedTime = schedulesList[i].schedTime
-        const dueDate = schedulesList[i].dueDate
-        const dueTime = schedulesList[i].dueTime
-        const closeDate = schedulesList[i].closeDate
-        const closeTime = schedulesList[i].closeTime
+//         const schedDate = schedulesList[i].schedDate
+//         const schedTime = schedulesList[i].schedTime
+//         const dueDate = schedulesList[i].dueDate
+//         const dueTime = schedulesList[i].dueTime
+//         const closeDate = schedulesList[i].closeDate
+//         const closeTime = schedulesList[i].closeTime
 
-        const currecntSched = new Date(
-            schedDate.substring(0, 4),
-            parseInt(schedDate.substring(6, 7) - 1),
-            schedDate.substring(9, 10),
-            schedTime.substring(0, 2),
-            schedTime.substring(3, 5),
-            0
-        )
+//         const currecntSched = new Date(
+//             schedDate.substring(0, 4),
+//             parseInt(schedDate.substring(6, 7) - 1),
+//             schedDate.substring(9, 10),
+//             schedTime.substring(0, 2),
+//             schedTime.substring(3, 5),
+//             0
+//         )
 
-        if (currecntSched > currentDate) {
-            console.log(currecntSched)
-            scheduleDates.push(currecntSched)
-        }else {
-            continue
-        }
-
-        
-    }
-
-    for (let i = 0; i < scheduleDates.length; i++) {
-
-       jobsList.push(
-        schedule.scheduleJob(scheduleDates[i], function(){
-            console.log('post: '+schedulesList[i].schedID)
-        })
-       )
-        
-    }
-
-    socket.on('insertOnline', (acctID) => {
-        currentAcctId = acctID
-        onlineList.push(acctID)
-        io.emit('sendOnlineList', onlineList)
-    })
-
-    socket.on('schedulePost', (sched, data) => {
-        const { schedDate, schedTime } = sched
-        
-        const [year, month, day] = schedDate.split('-').map(Number);
-        const [hour, minute] = schedTime.split(':').map(Number);
-
-        const date = new Date(year, month - 1, day, hour, minute, 0);
-        const dateorig = new Date(2024, 0, 24, 22, 50, 0);
-
-        console.log('date', date)
-        console.log('dateorig', dateorig)
-        
-        const job = schedule.scheduleJob(date, function(){
-            io.emit('postNow', data)
-            console.log('nice')
-            console.log('data', data)
-        });
+//         if (currecntSched > currentDate) {
+//             console.log(currecntSched)
+//             scheduleDates.push(currecntSched)
+//         }else {
+//             continue
+//         }
 
         
-    })
+//     }
+
+//     for (let i = 0; i < scheduleDates.length; i++) {
+
+//        jobsList.push(
+//         schedule.scheduleJob(scheduleDates[i], function(){
+//             console.log('post: '+schedulesList[i].schedID)
+//         })
+//        )
+        
+//     }
+
+//     socket.on('insertOnline', (acctID) => {
+//         currentAcctId = acctID
+//         onlineList.push(acctID)
+//         io.emit('sendOnlineList', onlineList)
+//     })
+
+//     socket.on('schedulePost', (sched, data) => {
+//         const { schedDate, schedTime } = sched
+        
+//         const [year, month, day] = schedDate.split('-').map(Number);
+//         const [hour, minute] = schedTime.split(':').map(Number);
+
+//         const date = new Date(year, month - 1, day, hour, minute, 0);
+//         const dateorig = new Date(2024, 0, 24, 22, 50, 0);
+
+//         console.log('date', date)
+//         console.log('dateorig', dateorig)
+        
+//         const job = schedule.scheduleJob(date, function(){
+//             io.emit('postNow', data)
+//             console.log('nice')
+//             console.log('data', data)
+//         });
+
+        
+//     })
 
 
-    let scoresList = []
+//     let scoresList = []
 
-    socket.on('joinQuiz', (room) => {
-        socket.join(room)
-        console.log('joined')
-    })
+//     socket.on('joinQuiz', (room) => {
+//         socket.join(room)
+//         console.log('joined')
+//     })
     
-    socket.on('score', (obj) => {
-        const { room } = obj
-        socket.join(room)
-        scoresList.push(obj)
-        console.log(obj)
-        io.emit('leaderboard', obj)
-        //io.emit('leaderboard', obj)
-    })
+//     socket.on('score', (obj) => {
+//         const { room } = obj
+//         socket.join(room)
+//         scoresList.push(obj)
+//         console.log(obj)
+//         io.emit('leaderboard', obj)
+//         //io.emit('leaderboard', obj)
+//     })
 
-    socket.on('online', (acctID) => {
-        currentAcctId = acctID
-        onlineList.push(acctID)
-        io.emit('onlinePerson', onlineList)
-    })
+//     socket.on('online', (acctID) => {
+//         currentAcctId = acctID
+//         onlineList.push(acctID)
+//         io.emit('onlinePerson', onlineList)
+//     })
 
-    socket.on('addOnlinePerson', (acctID) => {
-        onlineList.push(acctID)
-        const removeDuplicate = [...new Set(onlineList)];
-        onlineList = removeDuplicate
-        console.log(onlineList)
-    })
+//     socket.on('addOnlinePerson', (acctID) => {
+//         onlineList.push(acctID)
+//         const removeDuplicate = [...new Set(onlineList)];
+//         onlineList = removeDuplicate
+//         console.log(onlineList)
+//     })
 
-    socket.on('typing', (room, data) => {
-        socket.join(room)
-        io.to(room).emit('isTyping', data)
-    })
+//     socket.on('typing', (room, data) => {
+//         socket.join(room)
+//         io.to(room).emit('isTyping', data)
+//     })
 
-    socket.on('testingJoin', (roomID, name) => {
-        socket.join(roomID)
-        io.emit('testingJoined', name)
-    });
+//     socket.on('testingJoin', (roomID, name) => {
+//         socket.join(roomID)
+//         io.emit('testingJoined', name)
+//     });
 
-    socket.on('joinRoom', (room, name) => {
-        socket.join(room)
-        io.emit('joinedRoom', name+' you have been joined in ROOM:'+room)
-    });
+//     socket.on('joinRoom', (room, name) => {
+//         socket.join(room)
+//         io.emit('joinedRoom', name+' you have been joined in ROOM:'+room)
+//     });
 
-    socket.on('testingMessage', (room, message) => {
-        socket.join(room)
-        io.to(room).emit('testingReceived', message)
-    });
+//     socket.on('testingMessage', (room, message) => {
+//         socket.join(room)
+//         io.to(room).emit('testingReceived', message)
+//     });
 
-    socket.on('sendMessage', (room, dataObj) => {
-       socket.join(room)
-       io.to(room).emit('mess', dataObj)
-       console.log(room, dataObj)
-    });
+//     socket.on('sendMessage', (room, dataObj) => {
+//        socket.join(room)
+//        io.to(room).emit('mess', dataObj)
+//        console.log(room, dataObj)
+//     });
 
-    socket.on('disconnect', () => {
-        const restActived = onlineList.filter((online) => online !== currentAcctId)
-    });
-})
+//     socket.on('disconnect', () => {
+//         const restActived = onlineList.filter((online) => online !== currentAcctId)
+//     });
+// })
 
 
    
