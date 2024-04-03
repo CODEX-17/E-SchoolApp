@@ -39,7 +39,10 @@ import { useMemberStore } from '../stores/useMemberStore';
 import { useReactionsStore } from '../stores/useReactionsStore';
 import { useCommentsStore } from '../stores/useCommentsStore';
 import { BiSolidMessageDetail } from "react-icons/bi";
+import generateImageByImageID from '../utils/generateImageByImageID';
+
 import { IoSend } from "react-icons/io5";
+
 
 
 import io from 'socket.io-client'
@@ -130,7 +133,22 @@ const ClassHome = ({ currentSubjectName, currentImageClass, currentClassCode, cu
     weekday: 'short' 
  })
 
- 
+
+ const [currentClass, setCurrentClass] = useState(null)
+
+ useEffect(() => {
+    if (currentClassCode) {
+        axios.get('http://localhost:5001/classes/getClassByClassCode/' + classCode)
+        .then((res) => {
+            console.log(res.data)
+            const value = res.data
+            setCurrentClass(value[0])
+        })
+        .catch((err) => {
+            console.log(err)
+        })
+    }
+ },[])
 
 useEffect(()=> {
         console.log('classDesc',classDesc)
@@ -872,9 +890,9 @@ const handleShowComments = (post) => {
                 isShowSettings ? (
                     <>
                         <IoMdSettings size={25} title='setting class' id={style.settings} onClick={() => setisShowSettings(false)}/>
-                        <img src={uploadedImage ? URL.createObjectURL(uploadedImage.file) : currentClassPic} alt="pic" id={style.imgClass} />
-                        <h2>{subjectName}</h2>
-                        <p>{classCode}</p>
+                        <img src={currentClass ? generateImageByImageID(currentClass.imageID) : sample} alt="pic" id={style.imgClass} />
+                        <h2>{currentClass?.className}</h2>
+                        <p>{currentClassCode}</p>
                         <button className={choose === 'home' ? style.btnNavActive : style.btnNav} onClick={handleChooseHome}>Home</button>
                         {
                             userAccount?.acctype === 'faculty' && (

@@ -117,7 +117,6 @@ const ManageAccout = () => {
   const handleUpload = () => {
     const acctID = accountCurrent.acctID
     const imageID = accountCurrent.imageID
-    console.log(image.file)
 
     if (updatedPassword !== '') {
       const formData = new FormData
@@ -136,9 +135,13 @@ const ManageAccout = () => {
       }
 
       if (updatedPassword) {
+        console.log(updatedPassword)
         axios.post('http://localhost:5001/accounts/updateAccount', formData)
         .then(res => res.data)
         .then((data) => {
+          let userData = JSON.parse(localStorage.getItem('user'))
+          userData.password = updatedPassword
+          localStorage.setItem('user', JSON.stringify(userData))
           const message = data.message
           notify(message, 'success')
         })

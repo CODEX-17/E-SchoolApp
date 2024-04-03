@@ -25,6 +25,20 @@ router.get('/getClassesByAccount/:acctID', (req, res) => {
 
 })
 
+router.get('/getClassByClassCode/:classCode', (req, res) => {
+    const classCode = req.params.classCode
+    console.log(classCode)
+    const query = 'SELECT * FROM class WHERE classCode =?' 
+
+    db.query(query, [classCode], (error, data, fields) => {
+        if (error) {
+            return res.status(404).send(error)
+        }else {
+            return res.status(200).json(data)
+        }
+    })
+})
+
 router.put('/hideClass/:classID', (req, res) => {
     const classID = req.params.classID
     const hide = 'true'

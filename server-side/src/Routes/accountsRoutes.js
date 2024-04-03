@@ -70,58 +70,61 @@ router.post('/updateAccount', uploadImage.single('image'), (req, res) => {
     const password = req.body.password
     const acctID = req.body.acctID
     const imageID = req.body.imageID
-    let { filename, mimetype, originalname } = req.file
     
     const query = 'UPDATE accounts SET password =? WHERE acctID =?'
     const queryImage = 'UPDATE image SET name=?, type=?, data=? WHERE imageID =?'
 
     db.query(query, [password, acctID], (error, data, fields) => {
+        console.log('in')
         if (error) {
             return res.status(404).send(error)
         }else {
-            const query = 'SELECT * FROM image WHERE imageID =?'
-            const uploadFolderPath = './uploads'
-            const files = fs.readdirSync(uploadFolderPath)
-            
-            db.query(query, [imageID], (error, data, fields) => {
-                if (error) {
-                    console.log(error)
-                }else {
-                    const filenames = data[0].data
-                    let pathFile = ''
-                    for (const file of files) {
-                        if (file === filenames) {
-                            pathFile = path.join(uploadFolderPath, file)
-                        }
-                    }
-
-                    if (req.file) {
-                     
-                        db.query(queryImage, [originalname, mimetype, filename, imageID], (error, data, fields) => {
-                        
-                            if (error) {
-                                return  console.log(error)
-                            }else {
-                                fs.unlink(pathFile, (err) => {
-                                    if (err) {
-                                        console.log('in')
-                                    }else {
-                                        console.log(pathFile)
-                                        return res.status(200).json({ message: 'Successfully update the account.' })
-                                    }
-                                })
-                            }
-                        })
-                    }else {
-                        return res.status(200).json({ message: 'Successfully update the account.' })
-                    }
-
-
-                }   
-            })
-
+            if (req.file) {
+                let { filename, mimetype, originalname } = req.file
+    
+                const query = 'SELECT * FROM image WHERE imageID =?'
+                const uploadFolderPath = './uploads'
+                const files = fs.readdirSync(uploadFolderPath)
                 
-           
+                db.query(query, [imageID], (error, data, fields) => {
+                    if (error) {
+                        console.log(error)
+                    }else {
+                        const filenames = data[0].data
+                        let pathFile = ''
+                        for (const file of files) {
+                            if (file === filenames) {
+                                pathFile = path.join(uploadFolderPath, file)
+                            }
+                        }
+    
+                        if (req.file) {
+                         
+                            db.query(queryImage, [originalname, mimetype, filename, imageID], (error, data, fields) => {
+                            
+                                if (error) {
+                                    return  console.log(error)
+                                }else {
+                                    fs.unlink(pathFile, (err) => {
+                                        if (err) {
+                                            console.log('in')
+                                        }else {
+                                            console.log(pathFile)
+                                            return res.status(200).json({ message: 'Successfully update the account.' })
+                                        }
+                                    })
+                                }
+                            })
+                        }else {
+                            return res.status(200).json({ message: 'Successfully update the account.' })
+                        }
+    
+    
+                    }   
+                })  
+            }else {
+                return res.status(200).json({ message: 'Successfully update the account.' })
+            }
         }
     })
     

@@ -22,7 +22,6 @@ const HomePage = () => {
   
   useEffect(() =>  {
     if (!localStorage.getItem('user')) {
-      console.log('nice')
       navigate('/')
     }
       // socket.on('onlinePerson', (data) => {

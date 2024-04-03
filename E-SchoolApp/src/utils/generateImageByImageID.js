@@ -12,6 +12,7 @@ export default (imageID) => {
 
             if (filter.length > 0) {
                 const url = 'http://localhost:5001/'
+                console.log(url+filter[0])
                 return url+filter[0]
             }else {
                 return false
