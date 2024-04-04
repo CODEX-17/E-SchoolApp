@@ -15,4 +15,17 @@ router.get('/getImages', (req, res)=> {
     })
 })
 
+router.get('/getImagesByImageID/:imageID', (req, res)=> {
+    const imageID = req.params.imageID
+    const query = 'SELECT * FROM image WHERE imageID =?'
+
+    db.query(query, [imageID], (error, data, fields) => {
+        if (error) {
+            return res.status(404).send(error)
+        }else {
+            return res.status(200).json(data)
+        }
+    })
+})
+
 module.exports = router

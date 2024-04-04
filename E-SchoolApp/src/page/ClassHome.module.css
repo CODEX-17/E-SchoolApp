@@ -1,10 +1,10 @@
 @font-face {
-    font-family: sanBold;
-    src: url('../assets/fonts/sanBold.ttf');
+    font-family: bold;
+    src: url('../assets/fonts/Montserrat-Bold.ttf');
 }
 @font-face {
-    font-family: sanSemi;
-    src: url('../assets/fonts/sanSemi.ttf');
+    font-family: normal;
+    src: url('../assets/fonts/Montserrat-Regular.ttf');
 }
 
 
@@ -33,18 +33,40 @@
     position: relative;
 }
 
-#classPic {
-    width: 200px;
-    height: 200px;
-    border-radius: 200px;
-    border: 2px solid white;
-    background-color: white;
+.circleUpload {
+  border-radius: 50%;
+  width: 250px;
+  height: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10pt;
+  color: #099AED;
+  text-align: center;
+  user-select: none;
+  overflow: hidden;
+  position: relative;
+  border: 5px dashed #099AED;
+  margin-bottom: 20px;
+  z-index: 3;
+}
+
+.circleUpload p, .circleUpload b {
+  margin: 0;
+}
+
+.imgUploaded {
+  width: 100%;
+  height: 100%;
+  background-color: white;
 }
 
 .settingDiv {
     display: flex;
+    width: 60%;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
     animation: fadeIn 0.5s ease-in-out;
 }
 
@@ -53,17 +75,21 @@
     background-color: #099AED;
     color: white;
     width: 100%;
+    height: 40px;
     font-size: 10pt;
     border-radius: 5px;
     padding: 2%;
+    font-family: bold;
+}
+
+.settingDiv button:hover {
+   opacity: 0.5;
 }
 
 #fileInput {
     width: 100%;
     margin-bottom: 20px;
 }
-
-
 
 .settingDiv input {
     border: none;
@@ -74,13 +100,15 @@
     border-radius: 5px;
     font-size: 10pt;
     outline: none;
+    height: 40px;
+    margin-bottom: 5px;
 }
 
 .settingDiv textarea {
     width: 100%;
     background-color: white;
     border-radius: 5px;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
     font-size: 10pt;
     padding: 2%;
 }
@@ -89,6 +117,7 @@
     margin-bottom: 0;
     padding: 0;
     font-size: 10pt;
+    font-family: bold;
 }
 
 .exitTrapNotif {
@@ -111,7 +140,7 @@
   }
 
   .exitTrapNotif p {
-    font-family: sanBold;
+    font-family: bold;
     color: #3E3F40;
   }
 
@@ -173,7 +202,7 @@
 
   .comTop h2 {
     margin: 0;
-    font-family: sanBold;
+    font-family: bold;
     font-size: 20pt;
   }
 
@@ -190,7 +219,7 @@
 
   .comContent h1 {
     font-size: 15pt;
-    font-family: sanBold;
+    font-family: bold;
   }
 
   #comDP {
@@ -208,7 +237,7 @@
 
   .comsHeadPart h2 {
     font-size: 10pt;
-    font-family: sanBold;
+    font-family: bold;
   }
 
   #comsFiles {
@@ -271,8 +300,8 @@
   }
 
 .leftContent h2 {
-    font-size: 20pt;
-    font-family: sanBold;
+    font-size: 17pt;
+    font-family: bold;
     margin: 0;
     user-select: none;
     margin-top: 10%;
@@ -292,7 +321,7 @@
 .leftContent p {
     margin: 0;
     font-size: 10pt;
-    font-family: sanSemi;
+    font-family: normal;
     user-select: none;
     margin-bottom: 10%;
 }
@@ -305,8 +334,8 @@
     height: 50px;
     border-radius: 5px;
     color: white;
-    font-size: 13pt;
-    font-family: sanSemi;
+    font-size: 11pt;
+    font-family: bold;
 }
 
 .btnNavActive {
@@ -317,8 +346,8 @@
     height: 50px;
     border-radius: 5px;
     color: white;
-    font-size: 13pt;
-    font-family: sanSemi;
+    font-size: 11pt;
+    font-family: bold;
 }
 
 .btnNav:hover, .btnNavActive:hover {
@@ -384,7 +413,7 @@
   
   .headerImagePic p {
     margin: 0;
-    font-family: sanBold;
+    font-family: bold;
     font-size: 12pt;
   }
 
@@ -458,7 +487,7 @@
 .top h2 {
     margin: 0;
     font-size: 15pt;
-    font-family: sanBold;
+    font-family: bold;
 }
 
 .top p {
@@ -524,7 +553,7 @@
     border: none;
     border-radius: 10px;
     font-size: 10pt;
-    font-family: sanSemi;
+    font-family: normal;
     padding: 5px;
     outline: none;
     padding-left: 10px;
@@ -551,7 +580,7 @@
 .postDiv h2 {
     color: #3E3F40;
     font-size: 15pt;
-    font-family: sanBold;
+    font-family: bold;
     margin: 0;
 }
 
@@ -564,12 +593,12 @@
     padding: 5px;
     color: #3E3F40;
     font-size: 10pt;
-    font-family: sanSemi;
+    font-family: normal;
     padding-left: 1%;
 }
 
 #name {
-    font-family: sanBold;
+    font-family: bold;
     margin: 0;
     font-size: 15pt;
     color: #3E3F40;
@@ -600,7 +629,7 @@
     color: white;
     width: 70px;
     font-size: 10pt;
-    font-family: sanSemi;
+    font-family: normal;
     border-radius: 5px;
     height: 30px;
 }
@@ -664,7 +693,12 @@
 
 #cardCommentFiles p {
   margin: 0;
-  font-family: sanBold;
+  font-family: bold;
+}
+
+.errorMessage {
+  color: red;
+  animation: shake 0.5s ease-in-out;
 }
 
 #quizBox {
@@ -707,4 +741,27 @@
     to {
       opacity: 1;
     }
+  }
+
+  @keyframes shake {
+    0% {
+      transform: translateX(0);
+    }
+  
+    20% {
+      transform: translateX(10px);
+    }
+
+    50% {
+        transform: translateX(0);
+    }
+
+    70% {
+        transform: translateX(10px);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+
   }

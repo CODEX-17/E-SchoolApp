@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import style from './ClassHome.module.css'
 import { ToastContainer, toast } from 'react-toastify';
 import { Howl, Howler } from "howler";
@@ -39,7 +39,6 @@ import { useMemberStore } from '../stores/useMemberStore';
 import { useReactionsStore } from '../stores/useReactionsStore';
 import { useCommentsStore } from '../stores/useCommentsStore';
 import { BiSolidMessageDetail } from "react-icons/bi";
-import generateImageByImageID from '../utils/generateImageByImageID';
 
 import { IoSend } from "react-icons/io5";
 
@@ -49,7 +48,9 @@ import io from 'socket.io-client'
 const socket = io.connect('http://localhost:5001')
 
 
-const ClassHome = ({ currentSubjectName, currentImageClass, currentClassCode, currentMemberID, backToHomePage, classDesc, currentclassID }) => {
+const ClassHome = ({ currentSubjectName, currentImageClass, classCodeCurrent, currentMemberID, backToHomePage, classDesc, currentclassID }) => {
+
+console.log(classCodeCurrent)
 
  const { updateClass, getClass } = useClassStore()
  const [memberID, setmemberID] = useState(currentMemberID)
@@ -66,8 +67,8 @@ const ClassHome = ({ currentSubjectName, currentImageClass, currentClassCode, cu
  const [replyID, setreplyID] = useState('none')
  const [heartCount, setheart] = useState(0)
  const [likeCount, setlike] = useState(0)
- const [subjectName, setsubjectName] = useState(currentSubjectName)
- const [classCode, setclassCode] =useState(currentClassCode)
+ const [subjectName, setsubjectName] = useState(null)
+ const [classCode, setclassCode] =useState(classCodeCurrent)
  const [classDescription, setclassDescription] = useState(classDesc)
  const [imageFile, setimageFile] = useState(null)
  const [docxFileUploaded, setdocxFileUploaded] = useState(null)
@@ -88,6 +89,7 @@ const ClassHome = ({ currentSubjectName, currentImageClass, currentClassCode, cu
  const [comments, setcomments] = useState()
  const [accountsList, setaccountsList] = useState()
  const [commentContent, setcommentContent] = useState()
+ const [classImage, setclassImage] = useState(null)
 
  const [currentScore, setcurrentScore] = useState(0)
 
@@ -110,6 +112,7 @@ const ClassHome = ({ currentSubjectName, currentImageClass, currentClassCode, cu
  const { getReactions, addReactions, deleteReactions} = useReactionsStore()
  const { getComments, addComments } = useCommentsStore()
  const navigate = useNavigate()
+ 
 
  const [showChangeImageModal, setshowChangeImageModal] = useState(false)
  const [showChangeFileModal, setshowChangeFileModal] = useState(false)
@@ -121,6 +124,8 @@ const ClassHome = ({ currentSubjectName, currentImageClass, currentClassCode, cu
  const [showComments, setshowComments] = useState(false)
 
  const [currentComments, setcurrentComments] = useState([])
+
+
 
  const notif = new Howl({ src: [notifSound]})
  const errSound = new Howl({ src: [erroSound]})
@@ -135,14 +140,44 @@ const ClassHome = ({ currentSubjectName, currentImageClass, currentClassCode, cu
 
 
  const [currentClass, setCurrentClass] = useState(null)
+ const [currentClassCode, setCurrentClassCode] = useState(classCodeCurrent)
+ const [classesList, setclassesList] = useState([])
+ const [updatedClassCode, setupdatedClassCode] = useState()
+ const [updatedClassName, setupdatedClassName] = useState()
+ const [updatedClassDesc, setupdatedClassDesc] = useState(classDescription)
+ const [currentClassImageID, setcurrentClassImageID] = useState()
+
+ const [isShowErrorMessage, setisShowErrorMessage] = useState(false)
+ const inputRef = useRef(null)
+
+ const generateImageByImageID = (imageID) => {
+    if (imageID) {
+        axios.get('http://localhost:5001/images/getImagesByImageID/' + imageID)
+        .then((res) => {
+            const image = res.data
+            const url = 'http://localhost:5001/'
+            const imagePath = url+image[0].data
+            setclassImage(imagePath)
+        })
+        .catch((err) => console.log(err))
+    }
+ }
 
  useEffect(() => {
     if (currentClassCode) {
-        axios.get('http://localhost:5001/classes/getClassByClassCode/' + classCode)
+        axios.get('http://localhost:5001/classes/getClasses')
         .then((res) => {
-            console.log(res.data)
             const value = res.data
-            setCurrentClass(value[0])
+            setclassesList(value)
+
+            const filter = value.filter((data) => data.classCode === currentClassCode)
+            if (filter) {
+                generateImageByImageID(filter[0].imageID)
+                setsubjectName(filter[0].className)
+                setCurrentClass(filter[0])
+                setcurrentClassImageID(filter[0].imageID)
+            }
+            
         })
         .catch((err) => {
             console.log(err)
@@ -150,8 +185,10 @@ const ClassHome = ({ currentSubjectName, currentImageClass, currentClassCode, cu
     }
  },[])
 
+
+ 
+
 useEffect(()=> {
-        console.log('classDesc',classDesc)
         socket.on('postNow', (data) => {
             let oldData = [...currentPost]
             oldData.push(data)
@@ -180,11 +217,6 @@ useEffect(()=> {
 
     
 },[])
-
-// setInterval(() => {
-//     getPost()
-//     currentPostClass()
-// }, 1000);
 
 
 const refreshData = () => {
@@ -581,6 +613,52 @@ const reset = () => {
     setimageFile(null)
 }
 
+const handleEditedClassCode = (e) => {
+    e.preventDefault()
+    const value = e.target.value
+    if (classesList) {
+        const classCodeList = classesList.map((data) => data.classCode)
+        let isExist = false
+
+        for (let i = 0; i < classCodeList.length; i++) {
+
+            if (value === classCodeList[i]) {
+                isExist = true
+                break
+            }
+        }
+
+        if (isExist) {
+            setisShowErrorMessage(true)
+            inputRef.current.style.color = 'red'
+        }else {
+            setisShowErrorMessage(false)
+            inputRef.current.style.color = '#3E3F40'
+            setupdatedClassCode(value)
+        }
+        
+}
+    }
+    
+
+
+const handleDrop = (e) => {
+    e.preventDefault()
+    const value = e.dataTransfer.files[0]
+    setUploadedImage(value)
+}
+
+const handleDragEnter = (e) => {
+    e.preventDefault()
+  }
+
+  const handleDragLeave = (e) => {
+    e.preventDefault()
+  }
+
+const preventDefault = (e) => {
+    e.preventDefault()
+}
 
 
 const generatePic = (imageID) => {
@@ -642,36 +720,41 @@ const handleDownload = (fileID) => {
 const handleUploadImageChange = (e) => {
     e.preventDefault()
     const file = e.target.files[0]
-    setUploadedImage({
-        imageID: uniqueId,
-        file,
-    })
+    setUploadedImage(file)
 }
 
 const handleSaveSetting = () => {
-    const currectClass = classes.filter((cls) => cls.classCode === currentClassCode)
-    
-    let imageID = currectClass[0].imageID 
 
-    if (uploadImage !== null) {
-        imageID = uploadImage.imageID
+    if (updatedClassName && updatedClassCode && updatedClassDesc) {
+        const formData = new FormData
+
+        formData.append('className', updatedClassName)
+        formData.append('classCode', updatedClassCode)
+        formData.append('classDesc', updatedClassDesc)
+        formData.append('imageID', currentClassImageID)
+        formData.append('oldClassCode', currentClassCode)
+
+        if (uploadedImage) {
+            formData.append('image', uploadedImage)
+        }
+
+        axios.post('http://localhost:5001/classes/updateClass', formData)
+        .then((res) => res.data)
+        .then((data) => {
+            setsubjectName(updatedClassName)
+            setCurrentClassCode(updatedClassCode)
+            const message = data.message
+            notify(message, 'success')
+        })
+        .catch((err) => console.log(err))
+
+        return
+    }else {
+        const message = 'Please fill in all fields'
+        notify(message, 'err')
+        return
     }
 
-    const obj = {
-        className: subjectName,
-        classDesc: classDescription,
-        classCode: classCode,
-        membersID: currentMemberID,
-        imageID,
-        hidden: 'false',
-    }
-
-    
-    console.log(obj)
-    uploadImage(uploadedImage)
-    updateClass(obj)
-    setisShowSettings(true)
-    generateCurrentClass()
 }
 
 const handleViewFile = (fileID) => {
@@ -890,7 +973,7 @@ const handleShowComments = (post) => {
                 isShowSettings ? (
                     <>
                         <IoMdSettings size={25} title='setting class' id={style.settings} onClick={() => setisShowSettings(false)}/>
-                        <img src={currentClass ? generateImageByImageID(currentClass.imageID) : sample} alt="pic" id={style.imgClass} />
+                        <img src={classImage} alt="pic" id={style.imgClass} />
                         <h2>{currentClass?.className}</h2>
                         <p>{currentClassCode}</p>
                         <button className={choose === 'home' ? style.btnNavActive : style.btnNav} onClick={handleChooseHome}>Home</button>
@@ -908,15 +991,40 @@ const handleShowComments = (post) => {
                     </>
                 ) : (
                     <div className={style.settingDiv}>
-                        <img src={uploadedImage ? URL.createObjectURL(uploadedImage.file) : currentImageClass} alt="class dp" id={style.classPic}/>
-                        <input type="file" id={style.fileInput} onChange={handleUploadImageChange}/>
-                        <p id={style.titleSetting}>Class Name</p>
-                        <input type="text" value={subjectName} placeholder='class name...' onChange={(e) => setsubjectName(e.target.value)}/>
-                        <p id={style.titleSetting}>Class Code</p>
-                        <input type="text" value={classCode} placeholder='class name...' onChange={(e) => setclassCode(e.target.value)}/>
-                        <p id={style.titleSetting}>Description</p>
-                        <textarea type="text" value={classDescription} placeholder='class name...' onChange={(e) => setclassDescription(e.target.value)}/>
-                        <button onClick={handleSaveSetting}>Save</button>
+                        <div
+                            className={style.circleUpload}
+                            onDrop={handleDrop}
+                            onDragOver={preventDefault}
+                            onDragEnter={handleDragEnter}
+                            onDragLeave={handleDragLeave}
+                        >
+                            { uploadedImage ? (
+                                <img src={URL.createObjectURL(uploadedImage)} alt="Uploaded" className={style.imgUploaded} />
+                            ) : ( 
+                                <p>Drag & drop an image here.</p>
+                            )}
+                        </div>
+                        <input 
+                            type="file"
+                            accept="image/*"
+                            onChange={handleUploadImageChange}
+                            style={{ display: 'none' }}
+
+                        />
+                        <div className='d-flex flex-column w-100'>
+                            <p id={style.titleSetting}>Class Name</p>
+                            <input type="text" value={updatedClassName} placeholder={subjectName} onChange={(e) => setupdatedClassName(e.target.value)}/>
+                            <p id={style.titleSetting}>Class Code</p>
+                            <input type="text" ref={inputRef} value={updatedClassCode} placeholder={currentClassCode} onChange={handleEditedClassCode}/>
+                            {isShowErrorMessage && <p className={style.errorMessage}>Class code already exist.</p>}
+                            
+                            <p id={style.titleSetting}>Description</p>
+                            <textarea type="text" value={updatedClassDesc} placeholder='input class description...' onChange={(e) => setupdatedClassDesc(e.target.value)}/>
+                            <div className='d-flex gap-2'>
+                                <button onClick={handleSaveSetting}>Save</button>
+                                <button onClick={() => setisShowSettings(true)} style={{ backgroundColor: '#3E3F40' }}>Back</button>
+                            </div>
+                        </div>
                     </div>
                 )
             }

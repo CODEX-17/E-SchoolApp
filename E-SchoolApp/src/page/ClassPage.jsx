@@ -452,7 +452,7 @@ const handleExcelFileSubmit = (e) => {
             showPreview === 'classHome' && (
                 <ClassHome 
                    currentSubjectName={currentSubjectName}
-                   currentClassCode={currentClassCode}
+                   classCodeCurrent={currentClassCode}
                    currentMemberID={currentMemberID}
                    backToHomePage={backToHomePage}
                    currentImageClass={currentImageClass}
@@ -509,7 +509,7 @@ const handleExcelFileSubmit = (e) => {
                                                     selectedImage ? (
                                                         <img src={generateClassPicUpload()} alt="profile" id={style.classProfile}/>
                                                     ) : (
-                                                        <div className={style.dragPhoto}>Drag photo here.</div>
+                                                        <div className={style.dragPhoto}>Drag image here.</div>
                                                     )
                                                     
                                                 }

@@ -103,16 +103,16 @@ const ManageAccout = () => {
 
 
   const handleDragOver = (e) => {
-    e.preventDefault();
+    e.preventDefault()
   }
 
   const handleDragEnter = (e) => {
     e.preventDefault()
-  };
+  }
 
   const handleDragLeave = (e) => {
     e.preventDefault()
-  };
+  }
 
   const handleUpload = () => {
     const acctID = accountCurrent.acctID
@@ -193,7 +193,7 @@ const ManageAccout = () => {
                     { image ? (
                       <img src={URL.createObjectURL(image.file)} alt="Uploaded" className={style.imgUploaded} />
                     ) : ( 
-                      <p>Drag & drop an image here <br/> or click to select one</p>
+                      <p>Drag & drop an image here.</p>
                     )}
                 </div>
                 <input

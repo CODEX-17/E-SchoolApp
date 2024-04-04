@@ -3,6 +3,20 @@ const router = express.Router()
 const db = require('../db')
 const multer = require('multer')
 const path = require('path')
+const fs = require('fs')
+
+router.get('/getClasses', (req, res) => {
+    const query = 'SELECT * FROM class'
+
+    db.query(query, (error, data, fields) => {
+        if (error) {
+            return res.status(404).send(error)
+        }else {
+            return res.status(200).json(data)
+        }
+    })
+
+})
 
 router.get('/getClassesByAccount/:acctID', (req, res) => {
 
@@ -150,6 +164,74 @@ router.post('/addClass', upload.single('image'), (req, res) => {
 
 })
 
+
+router.post('/updateClass', upload.single('image'), (req, res) => {
+    const classCode = req.body.classCode
+    const className = req.body.className
+    const classDesc = req.body.classDesc
+    const oldClassCode = req.body.oldClassCode
+
+    console.log(classCode, className, classDesc)
+
+    const query = 'UPDATE class SET className=?, classDesc=?, classCode=? WHERE classCode=?'
+    const queryImage = 'UPDATE image SET name=?, type=?, data=? WHERE imageID =?'
+
+    db.query(query, [className, classDesc, classCode, oldClassCode], (error, data, fields) => {
+        if (error) {
+            return res.status(404).send(error)
+        }else{
+            if (req.file) {
+                let { filename, mimetype, originalname } = req.file
+                const imageID = req.body.imageID
+
+                const query = 'SELECT * FROM image WHERE imageID =?'
+                const uploadFolderPath = './uploads'
+                const files = fs.readdirSync(uploadFolderPath)
+                
+                db.query(query, [imageID], (error, data, fields) => {
+                    if (error) {
+                        console.log(error)
+                    }else {
+                        const filenames = data[0].data
+                        let pathFile = ''
+                        for (const file of files) {
+                            if (file === filenames) {
+                                pathFile = path.join(uploadFolderPath, file)
+                            }
+                        }
+    
+                        if (req.file) {
+                         
+                            db.query(queryImage, [originalname, mimetype, filename, imageID], (error, data, fields) => {
+                            
+                                if (error) {
+                                    return  console.log(error)
+                                }else {
+                                    fs.unlink(pathFile, (err) => {
+                                        if (err) {
+                                            console.log(err)
+                                        }else {
+                                            console.log(pathFile)
+                                            return res.status(200).json({ message: 'Successfully update the class.' })
+                                        }
+                                    })
+                                }
+                            })
+                        }else {
+                            return res.status(200).json({ message: 'Successfully update the class.' })
+                        }
+    
+    
+                    }   
+                })  
+            }else {
+                return res.status(200).json({ message: 'Successfully update the class.' })
+            }
+
+        }
+    })
+
+})
 
 
 

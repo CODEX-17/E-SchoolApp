@@ -75,7 +75,6 @@ router.post('/updateAccount', uploadImage.single('image'), (req, res) => {
     const queryImage = 'UPDATE image SET name=?, type=?, data=? WHERE imageID =?'
 
     db.query(query, [password, acctID], (error, data, fields) => {
-        console.log('in')
         if (error) {
             return res.status(404).send(error)
         }else {
@@ -107,7 +106,7 @@ router.post('/updateAccount', uploadImage.single('image'), (req, res) => {
                                 }else {
                                     fs.unlink(pathFile, (err) => {
                                         if (err) {
-                                            console.log('in')
+                                            console.log(err)
                                         }else {
                                             console.log(pathFile)
                                             return res.status(200).json({ message: 'Successfully update the account.' })

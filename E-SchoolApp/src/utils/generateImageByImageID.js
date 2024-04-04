@@ -9,10 +9,8 @@ export default (imageID) => {
         .then((res) => {
             const imagesList = res.data
             const filter = imagesList.filter((data) => data.imageID === imageID).map((data) => data.data)
-
             if (filter.length > 0) {
                 const url = 'http://localhost:5001/'
-                console.log(url+filter[0])
                 return url+filter[0]
             }else {
                 return false
