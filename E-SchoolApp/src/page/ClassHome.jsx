@@ -1001,7 +1001,7 @@ const handleShowComments = (post) => {
                             { uploadedImage ? (
                                 <img src={URL.createObjectURL(uploadedImage)} alt="Uploaded" className={style.imgUploaded} />
                             ) : ( 
-                                <p>Drag & drop an image here.</p>
+                                'Drag & drop an image here.'
                             )}
                         </div>
                         <input 
