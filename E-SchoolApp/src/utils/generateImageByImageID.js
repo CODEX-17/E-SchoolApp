@@ -1,25 +1,26 @@
-import axios from "axios"
-import { images } from "mammoth"
-import { useEffect } from "react"
+import { useState, useEffect } from "react";
+import axios from "axios";
 
-export default (imageID) => {
-
+const useImageLoader = (imageID) => {
+    const [imageUrl, setImageUrl] = useState(null)
+ 
     useEffect(() => {
         axios.get('http://localhost:5001/images/getImages')
-        .then((res) => {
-            const imagesList = res.data
-            const filter = imagesList.filter((data) => data.imageID === imageID).map((data) => data.data)
+            .then((res) => {
+                const imagesList = res.data
+                const filter = imagesList.filter((data) => data.imageID === imageID).map((data) => data.data)
 
-            if (filter.length > 0) {
-                const url = 'http://localhost:5001/'
-                console.log(url+filter[0])
-                return url+filter[0]
-            }else {
-                return false
-            }
+                if (filter.length > 0) {
+                    const url = 'http://localhost:5001/'
+                    setImageUrl(url + filter[0])
+                }
+            })
+            .catch((err) => {
+                console.log(err)
+            })
+    }, [imageID])
 
-        })
-        .catch((err) => console.log(err))
-      },[])
+    return imageUrl
+};
 
-}
+export default useImageLoader

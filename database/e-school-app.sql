@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 22, 2024 at 09:41 AM
+-- Generation Time: Apr 05, 2024 at 11:16 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -252,10 +252,10 @@ CREATE TABLE `class` (
 --
 
 INSERT INTO `class` (`classID`, `className`, `classDesc`, `classCode`, `membersID`, `imageID`, `hidden`) VALUES
-(1, 'CAPSTONE 2', 'IT 4C', 'IT 411', 'BiJ456Aj', '5nhHfr52', 'true'),
-(2, 'ENTREPRENEURSHIP', 'IT 4B', 'ELECTIVE13', '42d8800e', '5fa1a8a3', 'true'),
+(1, 'CAPSTONE 2', 'IT 4C', 'IT 411', 'BiJ456Aj', 'dpUUUDVK', 'false'),
+(2, 'ENTREPRENEURSHIP EDDITED', 'ENTREPRENEURSHIP EDDITED', 'ELECTIVE4', '42d8800e', '5fa1a8a3', 'false'),
 (4, 'TRACK ELECTIVE 4', 'IT 4A', '322', '534aa38a', '789053b6', 'false'),
-(5, 'dsdsdsds', 'IT 2B', 'IT 412', 'BiJ456Aj', '789053b6', 'false'),
+(5, 'dsdsdsds', 'IT 2B', 'IT-412', 'BiJ456Aj', '789053b6', 'false'),
 (96, 'PRINCIPLES AND STRATEGIES IN TEACHING', 'IS 1A', 'GEC 12', '0TFZuveP', 'none', 'false'),
 (97, 'IT 2B', 'INFORMATION ASSURANCE AND SECURITY 2', 'IT 325', '0TFZuveP', 'none', 'false'),
 (98, 'TRACK ELECTIVE 4', 'CS 1B', 'IT 323', '0TFZuveP', 'none', 'false'),
@@ -269,12 +269,13 @@ INSERT INTO `class` (`classID`, `className`, `classDesc`, `classCode`, `membersI
 (121, 'ADVANCE DATABASE AND EMERGING TECHONOLIGIES', 'IT 4A', 'it-1b', 'B4xPtUgz', '6Xa6RJps', 'false'),
 (122, 'ADVANCE DATABASE SYSTEM', 'IS 4B', 'it-4b', 'FiyUQ57t', '31SWSLLW', 'false'),
 (136, 'TRY LANG', 'CS 2B', 'TRY LANG', '7rXq0ytX', '7rXq0ytX', 'true'),
-(137, 'TEST', 'BMMA 1A', 'TEST', '8rADveS5', '8rADveS5', 'false'),
+(137, 'TEST', 'BMMA 1A', 'TEST', '8rADveS5', '8rADveS5', 'true'),
 (138, 'testrintg', 'BMMA 1C', 'testrintg', 'dpUUUDVK', 'dpUUUDVK', 'true'),
-(139, 'sample', 'BMMA 4C', 'sample', 'ogrRsg2f', 'ogrRsg2f', 'false'),
-(140, '56images', 'BMMA 2B', '56images', 'z4PKmF5V', 'z4PKmF5V', 'false'),
+(139, 'sample', 'BMMA 4C', 'sample', 'ogrRsg2f', 'ogrRsg2f', 'true'),
+(140, '56images', 'BMMA 2B', '56images', 'z4PKmF5V', 'z4PKmF5V', 'true'),
 (141, 'tttty', 'BMMA 3A', 'tttty', 'SPdrCaPA', 'SPdrCaPA', 'true'),
-(142, 'Newwww', 'IT 1B', 'New123', 'HQRxJ6UB', 'HQRxJ6UB', 'true');
+(142, 'Newwww', 'IT 1B', 'New123', 'HQRxJ6UB', 'HQRxJ6UB', 'true'),
+(1982, 'NEW CLASS', 'newclass boy', 'new_class', 'vFv4dIfD', 'vFv4dIfD', 'false');
 
 -- --------------------------------------------------------
 
@@ -2128,7 +2129,8 @@ INSERT INTO `class_list` (`id`, `acctID`, `classCode`, `hidden`) VALUES
 (1831, 'un2kt7px', 'IT-BT7', 'false'),
 (1832, 'un2kt7px', 'IT-BT8', 'false'),
 (1833, 'un2kt7px', 'IT-Bi3', 'false'),
-(1834, 'un2kt7px', 'IT-Bi2', 'false');
+(1834, 'un2kt7px', 'IT-Bi2', 'false'),
+(1835, 'un2kt7px', 'it_4rty', 'false');
 
 -- --------------------------------------------------------
 
@@ -2354,7 +2356,7 @@ INSERT INTO `image` (`id`, `name`, `type`, `data`, `imageID`) VALUES
 (1, '344391301_785267086284456_4061475503426963811_n.jpg', 'image/jpeg', 'image_1701870720540.jpg', 'xVKKzdPD'),
 (2, 'd0fd3e8b-b962-4eaa-910b-52450d13a98b', 'image/jpeg', 'image_1705395999108.png', 'VHXQ6s6O'),
 (3, '1f518d5c-3429-4c1b-bb20-efcc8d955a0e', 'image/jpeg', 'image_1701254576533.jpg', 'UXWBLij6'),
-(4, '0ee98ece-6e22-4ea0-8586-1a02f8558ff8', 'image/jpeg', 'image_1704957155388.jpg', 'un2kt7p1'),
+(4, 'image_1701690570512.jpg', 'image/jpeg', 'image_1712129334913.jpg', 'un2kt7p1'),
 (5, '076f5d6b-febf-462e-9feb-b0fb1d6a2075', 'image/jpeg', 'image_170169110392.jpg', 'SNSBjwH9'),
 (6, 'befa7c30-3fac-44e6-a8ef-cfc52c1b86c0', 'image/jpeg', 'image_1701691103988.jpg', 'Ljs0ssxv'),
 (7, 'c9216f48-f9fb-4a73-83f1-0d282d6fd311', 'image/jpeg', 'image_1701691103985.jpg', '8J26Xi2P'),
@@ -2374,7 +2376,7 @@ INSERT INTO `image` (`id`, `name`, `type`, `data`, `imageID`) VALUES
 (31, '350262176_3170354303270490_7094168844908324087_n.jpg', 'image/jpeg', 'image_1702022948342.jpg', 'QiYSQ8BD'),
 (32, 'image_sam.png', 'image/jpeg', 'image_sam.png', 'c8d9b2bd'),
 (33, 'image_capstone.png', 'image/jpeg', 'image_capstone.png', '2cdbb370'),
-(34, 'image_entrep.png', 'image/jpeg', 'image_entrep.png', '5fa1a8a3'),
+(34, '387413822_1350810549161804_5183597562654798555_n.jpg', 'image/jpeg', 'image_1712209056941.jpg', '5fa1a8a3'),
 (35, 'image_elective.png', 'image/jpeg', 'image_elective.png', '789053b6'),
 (36, 'image_1122233334444.png', 'image/png', 'image_1702477954288.png', 'xZaxdwxK'),
 (37, '358141633_1013823656449194_8048989606479484722_n.jpg', 'image/jpeg', 'image_1703050288571.jpg', '9B3G5paA'),
@@ -2421,7 +2423,9 @@ INSERT INTO `image` (`id`, `name`, `type`, `data`, `imageID`) VALUES
 (79, 'image_1701668137802.png', 'image/png', 'image_1706096362470.png', '4uo6d8kO'),
 (80, 'download-removebg-preview (7).png', 'image/png', 'image_1706119026433.png', 'wnO4vqMR'),
 (81, '425611406_1070057820765758_5923240528812158650_n.gif', 'image/gif', 'image_1707986139984.gif', 'Y39N7rdw'),
-(82, 'image_1711072820723.jpg', 'image/jpeg', 'YHWH.jpg', '8L4BSQPr');
+(82, 'image_1711072820723.jpg', 'image/jpeg', 'YHWH.jpg', '8L4BSQPr'),
+(1902, 'hoursCalculatorLogo.png', 'image/png', 'image_1712220040854.png', 'vFv4dIfD'),
+(1903, 'DROPS LOGO.jpg', 'image/jpeg', 'image_1712281427637.jpg', 'FEDzCmB6');
 
 -- --------------------------------------------------------
 
@@ -2472,7 +2476,8 @@ INSERT INTO `members` (`ID`, `membersID`, `acctID`, `firstname`, `middlename`, `
 (94, 'BiJ456Aj', 'SNSBjwH9', 'Reneal', 'Cubeta', 'Accad', 'member'),
 (95, 'BiJ456Aj', 'WhpOtets', 'Red', 'Horse', 'Ito ang laban', 'member'),
 (96, 'vhgu87yu', 'un2kt7px', 'Rumar', 'Capoquian', 'Pamparo', 'admin'),
-(97, '8L4BSQPr', 'un2kt7px', 'Rumar', 'Capoquian', 'Pamparo', 'admin');
+(97, '8L4BSQPr', 'un2kt7px', 'Rumar', 'Capoquian', 'Pamparo', 'admin'),
+(1932, 'vFv4dIfD', 'un2kt7px', 'Rumar', 'Capoquian', 'Pamparo', 'admin');
 
 -- --------------------------------------------------------
 
@@ -2812,7 +2817,8 @@ INSERT INTO `post` (`id`, `postID`, `acctID`, `name`, `timePosted`, `datePosted`
 (182, 'Sk5v50DX', 'un2kt7px', 'rumar C Pamparo', '09:52 PM', 'Sun Jan 28 2024', '222', 'Sk5v50DX', 'none', 'none', 0, 0, 'IT 411', 'CAPSTONE 2', '', '95Q4bSLS', 'none', 0, '1'),
 (183, 'Hktq9fpd', 'un2kt7px', 'rumar C Pamparo', '10:08 PM', 'Sun Jan 28 2024', 'ww11', 'Hktq9fpd', 'none', 'none', 0, 0, 'IT 411', 'CAPSTONE 2', '', 'aa96zKC3', 'none', 0, '1'),
 (184, '7IsBExcZ', 'un2kt7px', 'rumar C Pamparo', '10:09 PM', 'Sun Jan 28 2024', '222', '7IsBExcZ', 'none', 'none', 0, 0, 'IT 411', 'CAPSTONE 2', '', '61oE4vgu', 'none', 0, '1'),
-(185, 'MiaKDyAT', 'un2kt7px', 'rumar C Pamparo', '04:36 PM', 'Thu Feb 15 2024', 'take your quiz now', 'MiaKDyAT', 'none', 'none', 0, 0, 'IT 411', 'CAPSTONE 2', '', '8ePQ5du4', 'none', 0, '1');
+(185, 'MiaKDyAT', 'un2kt7px', 'rumar C Pamparo', '04:36 PM', 'Thu Feb 15 2024', 'take your quiz now', 'MiaKDyAT', 'none', 'none', 0, 0, 'IT 411', 'CAPSTONE 2', '', '8ePQ5du4', 'none', 0, '1'),
+(186, '2yiiWD0O', 'un2kt7px', 'Rumar C. Pamparo', '09:25 AM', 'Fri Apr 05 2024', 'this', '2yiiWD0O', 'none', 'none', 0, 0, 'IT 411', 'CAPSTONE 2', 'normal', 'none', 'none', 0, 'none');
 
 -- --------------------------------------------------------
 
@@ -3157,7 +3163,9 @@ INSERT INTO `reactions` (`id`, `reactID`, `postID`, `acctID`, `reactType`) VALUE
 (30, 'cZRSlXI2', 'jQ3BMZtE', 'un2kt7px', 'like'),
 (33, 'ck49OhKA', 'sRy1F8C5', 'un2kt7px', 'heart'),
 (37, 'NQimKeSM', 'sRy1F8C5', 'un2kt7px', 'like'),
-(38, '44Buumeu', 'eYIFfaMC', 'un2kt7px', 'heart');
+(38, '44Buumeu', 'eYIFfaMC', 'un2kt7px', 'heart'),
+(40, 'wKh7lkU8', 'dJVHlavH', 'un2kt7px', 'heart'),
+(41, 'ic00TEXk', 'dJVHlavH', 'un2kt7px', 'like');
 
 -- --------------------------------------------------------
 
@@ -3440,13 +3448,13 @@ ALTER TABLE `choices`
 -- AUTO_INCREMENT for table `class`
 --
 ALTER TABLE `class`
-  MODIFY `classID` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1982;
+  MODIFY `classID` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1983;
 
 --
 -- AUTO_INCREMENT for table `class_list`
 --
 ALTER TABLE `class_list`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1835;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1836;
 
 --
 -- AUTO_INCREMENT for table `comments`
@@ -3476,13 +3484,13 @@ ALTER TABLE `friends`
 -- AUTO_INCREMENT for table `image`
 --
 ALTER TABLE `image`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1902;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1904;
 
 --
 -- AUTO_INCREMENT for table `members`
 --
 ALTER TABLE `members`
-  MODIFY `ID` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1932;
+  MODIFY `ID` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1933;
 
 --
 -- AUTO_INCREMENT for table `messages`
@@ -3494,7 +3502,7 @@ ALTER TABLE `messages`
 -- AUTO_INCREMENT for table `post`
 --
 ALTER TABLE `post`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=186;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=187;
 
 --
 -- AUTO_INCREMENT for table `questionbank`
@@ -3512,7 +3520,7 @@ ALTER TABLE `questions`
 -- AUTO_INCREMENT for table `reactions`
 --
 ALTER TABLE `reactions`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 
 --
 -- AUTO_INCREMENT for table `schedule`

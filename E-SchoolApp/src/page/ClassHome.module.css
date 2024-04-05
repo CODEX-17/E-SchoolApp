@@ -354,22 +354,82 @@
     background-color: #a9a3a3;
 }
 
-.changeImageContainer {
+.postModalBackgroundDIV {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  position: absolute;
+  align-items: center;
+  justify-content: center;
+}
+
+.postModalContainer {
     animation: pop 0.5s ease;
     background-color: #ffffff;
     position: absolute;
-    top: 20%;
     width: 40%;
-    height: 50%;
+    height: auto;
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 2%;
-    border-radius: 20px;
+    border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     z-index: 3;
     gap: 5%;
   }
+
+  .headerPostModal {
+    width: 100%;
+    display: flex;
+    padding: 2%;
+    justify-content: space-between;
+    border-bottom: 1px solid #3e3f403f;
+  }
+
+  .bodyPostModal {
+    margin-top: 10px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .bodyPostModal textarea {
+    border-radius: 5px;
+    font-size: 10pt;
+    padding: 2%;
+    font-family: normal;
+  }
+
+  #addImageUploadLayout {
+    border: 2px dashed #099AED;
+    padding: 2%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    width: 50%;
+    height: 50px;
+    gap: 2%;
+  }
+
+  #addImageUploadLayout input[type="file"] {
+    display: none;
+  }
+
+  #addImageUploadLayout h2 {
+    font-size: 10pt;
+    font-family: bold;
+    color: #099AED;
+    margin: 0;
+  }
+  
+  #nameInPostModal {
+    font-size: 12pt;
+    font-family: bold;
+    margin: 0;
+  }
+
 
   .changeFileContainer {
     animation: pop 0.5s ease;
@@ -429,18 +489,81 @@
   }
 
   
-.btnChangeImage {
+.btnPostModal {
     border: none;
     background-color: #099AED;
     font-size: 10pt;
     color: white;
-    width: 200px;
+    width: 100%;
     height: 40px;
-    border-radius: 10px;
+    font-family: bold;
+    border-radius: 5px;
   }
   
-  .btnChangeImage:hover {
+  .btnPostModal:hover {
     background-color: #b9b9b9;
+  }
+
+
+
+  .fileListPost {  
+    margin-bottom: 20px;
+    width: 100%;
+    height: auto;
+    display: flex;
+    overflow: auto;
+    padding: 2%;
+    white-space: nowrap;
+  }
+
+  .fileDivPreview {
+    gap: 2%;
+    border: 2px solid #099AED;
+    background-color: #099AED;
+    border-radius: 5px;
+    padding: 2%;
+    flex: 0 0 auto;
+    width: auto;
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+    position: relative;
+    animation: pop 0.5s ease-in-out;
+  }
+
+  .fileDivPreview p {
+    margin: 0;
+    color: white;
+    font-size: 10pt;
+    font-family: bold;
+  }
+
+  .imageDivPreview {
+    border: 2px solid #099AED;
+    border-radius: 10px;
+    flex: 0 0 auto;
+    width: 200px;
+    margin-right: 10px;
+    position: relative;
+    animation: pop 0.5s ease-in-out;
+  }
+
+  .imageDivPreview img {
+    width: 100%;
+    object-fit: contain;
+    height: auto;
+  }
+
+  #deleteImagePreview {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    cursor: pointer;
+    color: white;
+    z-index: 3  ;
+    border: 1px solid #099AED;
+    border-radius: 100%;
+    background-color: #099AED;
   }
 
 .listPostContainer {
@@ -597,10 +720,23 @@
     padding-left: 1%;
 }
 
+.postBotton {
+    background-color: #efecec;
+    border-radius: 5px;
+    width: 100%;
+    height: 50px;
+    padding: 5px;
+    color: #3E3F40;
+    font-size: 10pt;
+    font-family: normal;
+    padding-left: 1%;
+}
+
 #name {
     font-family: bold;
     margin: 0;
-    font-size: 15pt;
+    margin-left: 10px;
+    font-size: 12pt;
     color: #3E3F40;
 }
 

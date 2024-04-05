@@ -39,6 +39,13 @@ import { useMemberStore } from '../stores/useMemberStore';
 import { useReactionsStore } from '../stores/useReactionsStore';
 import { useCommentsStore } from '../stores/useCommentsStore';
 import { BiSolidMessageDetail } from "react-icons/bi";
+import { IoDocumentText } from "react-icons/io5";
+import generateImageByImageID from '../utils/generateImageByImageID'
+
+import { FaPlus } from "react-icons/fa";
+import generateFullname from '../utils/generateFullname';
+import postContentHook from '../utils/postContentHook'
+
 
 import { IoSend } from "react-icons/io5";
 
@@ -50,7 +57,7 @@ const socket = io.connect('http://localhost:5001')
 
 const ClassHome = ({ currentSubjectName, currentImageClass, classCodeCurrent, currentMemberID, backToHomePage, classDesc, currentclassID }) => {
 
-console.log(classCodeCurrent)
+
 
  const { updateClass, getClass } = useClassStore()
  const [memberID, setmemberID] = useState(currentMemberID)
@@ -72,8 +79,8 @@ console.log(classCodeCurrent)
  const [classDescription, setclassDescription] = useState(classDesc)
  const [imageFile, setimageFile] = useState(null)
  const [docxFileUploaded, setdocxFileUploaded] = useState(null)
- const [file, setFile] = useState()
- const [docxFiles, setdocxFiles] = useState()
+ const [file, setFile] = useState(null)
+ const [docxFiles, setdocxFiles] = useState(null)
  const [userAccount, setUserAccount] = useState(JSON.parse(localStorage.getItem('user')))
  const [imageUser, setImageUser] = useState()
  const [quiz, setquiz] = useState()
@@ -114,7 +121,7 @@ console.log(classCodeCurrent)
  const navigate = useNavigate()
  
 
- const [showChangeImageModal, setshowChangeImageModal] = useState(false)
+ const [showPostModal, setshowPostModal] = useState(false)
  const [showChangeFileModal, setshowChangeFileModal] = useState(false)
  const [isShowSettings, setisShowSettings] = useState(true)
  const [showLoading, setshowLoading] =useState(true)
@@ -122,6 +129,8 @@ console.log(classCodeCurrent)
  const [viewFileName, setviewFileName]= useState(null)
  const [viewScore, setviewScore] = useState(false)
  const [showComments, setshowComments] = useState(false)
+ const inputImageFileRef = useRef(null)
+ const inputFilesRef = useRef(null)
 
  const [currentComments, setcurrentComments] = useState([])
 
@@ -150,7 +159,7 @@ console.log(classCodeCurrent)
  const [isShowErrorMessage, setisShowErrorMessage] = useState(false)
  const inputRef = useRef(null)
 
- const generateImageByImageID = (imageID) => {
+ const generateClassImageByImageID = (imageID) => {
     if (imageID) {
         axios.get('http://localhost:5001/images/getImagesByImageID/' + imageID)
         .then((res) => {
@@ -172,7 +181,7 @@ console.log(classCodeCurrent)
 
             const filter = value.filter((data) => data.classCode === currentClassCode)
             if (filter) {
-                generateImageByImageID(filter[0].imageID)
+                generateClassImageByImageID(filter[0].imageID)
                 setsubjectName(filter[0].className)
                 setCurrentClass(filter[0])
                 setcurrentClassImageID(filter[0].imageID)
@@ -185,8 +194,6 @@ console.log(classCodeCurrent)
     }
  },[])
 
-
- 
 
 useEffect(()=> {
         socket.on('postNow', (data) => {
@@ -218,6 +225,32 @@ useEffect(()=> {
     
 },[])
 
+const handleUploadImageClick = () => {
+    inputImageFileRef.current.click()
+}
+
+const handleUploadFilesClick = () => {
+    inputFilesRef.current.click()
+}
+
+const closePostModal = () => {
+    setPostContent('')
+    setdocxFiles(null)
+    setFile(null)
+    setshowPostModal(false)
+}
+
+const deleteImageInPostModal = (currentIndex) => {
+    const oldImages = file
+    const filter = oldImages.filter((data, index) => index !== currentIndex)
+    setFile(filter)
+}
+
+const deleteFilesInPostModal = (currentIndex) => {
+    const oldFiles = docxFiles
+    const filter = oldFiles.filter((data, index) => index !== currentIndex)
+    setdocxFiles(filter)
+}
 
 const refreshData = () => {
     setshowLoading(true)
@@ -403,17 +436,21 @@ const handleDeletePost = (id) => {
 const handleGetImage = (e) => {
     e.preventDefault()
     const file = e.target.files
-    setFile(file)
+    const fileList = Array.from(file)
+    console.log(fileList)
+    setFile(fileList)
 }
 
 const handleGetFiles = (e) => {
     e.preventDefault()
     const file = e.target.files
-    setdocxFiles(file)
+    const fileList = Array.from(file)
+    console.log(fileList)
+    setdocxFiles(fileList)
 }
 
 const handleUploadImage = () => {
-    generateUniqueId()
+ 
     if (uniqueId) {
         const image = {
             file: file[0],
@@ -421,7 +458,7 @@ const handleUploadImage = () => {
         }
         setimageFile(image)
         uploadImage(image)
-        setshowChangeImageModal(false)
+        setshowPostModal(false)
     }
 }
 
@@ -471,8 +508,8 @@ const handlePost = () => {
             datePosted: date,
             postContent,
             replyID: uniqueId,
-            imageID: image,
-            fileID: files,
+            image: imageFile,
+            fileID: docxFileUploaded,
             heartCount,
             likeCount,
             classCode: currentClassCode,
@@ -485,17 +522,18 @@ const handlePost = () => {
 
         }
 
-        getFiles()
-        setPost(updatedPost)
-        uploadPost(updatedPost)
-        updated.push(updatedPost)
-        setCurrentPost(updated)
-        localStorage.setItem('currentPost', JSON.stringify(updatedPost))
+        //postContentHook(updatedPost)
+        // getFiles()
+        // setPost(updatedPost)
+        // uploadPost(updatedPost)
+        // updated.push(updatedPost)
+        // setCurrentPost(updated)
+        // localStorage.setItem('currentPost', JSON.stringify(updatedPost))
 
-        reset()
-        setimageFile(null)
-        const message = 'Successfully posted.'
-        notify(message, 'success')
+        // reset()
+        // setimageFile(null)
+        // const message = 'Successfully posted.'
+        // notify(message, 'success')
     }else {
         const message = 'Please insert Content'
         notify(message, 'err')
@@ -908,7 +946,7 @@ const handleShowComments = (post) => {
                         <textarea onChange={(e) => setcommentContent(e.target.value)} placeholder='Insert comment...'></textarea>
                         <div className='d-flex flex-column'>
                             <MdOutlineAttachment size={20} cursor={'pointer'} onClick={() => setshowChangeFileModal(true)}/>
-                            <FaRegImages size={18} cursor={'pointer'} onClick={() => setshowChangeImageModal(true)}/>
+                            <FaRegImages size={18} cursor={'pointer'} onClick={() => setshowPostModal(true)}/>
                         </div>
                         <button size={29} id={style.sendBtnComs} onClick={handleSendReply}>Reply</button>
                     </div>
@@ -927,18 +965,77 @@ const handleShowComments = (post) => {
         }
 
         {
-                showChangeImageModal && (
-                    <div className={style.changeImageContainer}>
-                        <div className={style.headerImagePic}>
-                            <div className='d-flex gap-2 align-items-center'>
-                                <p>Upload Image</p>
+                showPostModal && (
+                    <div className={style.postModalBackgroundDIV}>
+                        <div className={style.postModalContainer}>
+                            <div className={style.headerPostModal}>
+                                <div className='d-flex gap-2 align-items-center'>
+                                    <img src={imageUserPost(userAccount.acctID)} alt="picture" style={{ width: '30px', height: '30px', borderRadius: '50%'}}/>
+                                    <p id={style.nameInPostModal}>{generateFullname()}</p>
+                                </div>
+                                <BiExit size={20} title='closed' cursor={'pointer'} onClick={closePostModal}/>
                             </div>
-                             
-                            <BiExit size={20} title='closed' cursor={'pointer'} onClick={() => setshowChangeImageModal(false)}/>
+                            <div className={style.bodyPostModal}>
+                            {
+                                file && 
+                                <div className={style.fileListPost}>
+                                    {
+                                        file.map((data, index) => (
+                                        <div className={style.imageDivPreview} key={index}>
+                                            <IoCloseCircle id={style.deleteImagePreview} size={25} onClick={() => deleteImageInPostModal(index)}/>
+                                            <img src={URL.createObjectURL(data)}></img>
+                                        </div>
+                                        ))
+                                    }
+                                </div>
+                            }
+
+                            {
+                                docxFiles && 
+                                <div className={style.fileListPost}>
+                                    {
+                                        docxFiles.map((data, index) => (
+                                        <div className={style.fileDivPreview} key={index}>
+                                            <IoCloseCircle id={style.deleteImagePreview} size={25} onClick={() => deleteFilesInPostModal(index)}/>
+                                            <IoDocumentText size={25} color='white'/>
+                                            <p>{data.name}</p>
+                                        </div>
+                                        ))
+                                    }
+                                </div>
+                            }
+                                
+                                <textarea placeholder='Share your thoughts here...' onChange={(e) => setPostContent(e.target.value)}></textarea>
+                                <div className='d-flex w-100 mt-2 mb-5 gap-2'>
+                                    <div id={style.addImageUploadLayout} onClick={handleUploadImageClick}>
+                                        <input 
+                                            type="file"
+                                            ref={inputImageFileRef}
+                                            accept='image/*'
+                                            onChange={handleGetImage}
+                                            style={{ display:'none'}}
+                                            multiple
+                                        />
+                                        <FaRegImages color='#099AED' size={23} />
+                                        <h2>Add Image</h2>
+                                    </div>
+                                    <div id={style.addImageUploadLayout} onClick={handleUploadFilesClick}>
+                                        <input 
+                                            type="file"
+                                            ref={inputFilesRef}
+                                            accept=".doc, .docx, .pdf, .txt, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                                            onChange={handleGetFiles}
+                                            style={{ display:'none'}}
+                                            multiple
+                                        />
+                                        <MdOutlineAttachment color='#099AED' size={23} />
+                                        <h2>Add File</h2>
+                                    </div>
+                                </div>
+                                
+                                <button className={style.btnPostModal} onClick={handleUploadImage}>Upload</button>
+                            </div>
                         </div>
-                        <img src={file? URL.createObjectURL(file[0]) : sample } alt="image" id={style.imgChangePic}/>
-                        <input type="file" accept='image/*' id={style.imgUpload} onChange={handleGetImage}/>
-                        <button className={style.btnChangeImage} onClick={handleUploadImage}>Upload</button>
                     </div>
                 )
         }
@@ -1036,24 +1133,10 @@ const handleShowComments = (post) => {
                     <>
                         <div className={style.card}>
                             <div className='d-flex flex-column gap-2'>
-                                <div className='d-flex align-items-center gap-1'>
-                                    <img src={imageUserPost(userAccount.imageID)} alt="profile" id={style.imgDp}/>
-                                    <h2 id={style.name}>{generateFullname()}</h2>
-                                    <div className={style.menuUpper}>
-                                        <MdOutlineAttachment className={style.upperIcons}  onClick={() => setshowChangeFileModal(true)}/>
-                                        <FaRegImages className={style.upperIcons} onClick={() => setshowChangeImageModal(true)}/>
-                                        <button id={style.btnPost} onClick={handlePost}>Post <RiSendPlaneFill/></button>
-                                    </div>
-                                </div>
-                                <div className='d-flex gap-2 '>
-                                    {
-                                        imageFile ? (<img src={URL.createObjectURL(imageFile.file)} alt="image" id={style.imgPostPreview}/>) : ''
-                                    }
-                                    {
-                                        docxFileUploaded && (<SiFiles size={30} color='#F45050'/>)
-                                    }
-                                    
-                                    <textarea className={style.textarea} value={postContent} placeholder="What's on your mind?" onChange={(e) => setPostContent(e.target.value)}></textarea>
+                                <div className='d-flex align-items-center gap-2'>
+                                    <img src={generateImageByImageID(userAccount.imageID)} alt="profile" id={style.imgDp}/>
+                                    <div className={style.postBotton} onClick={() => setshowPostModal(true)}>What's on your mind?</div>
+                                    <FaRegImages size={20} onClick={() => setshowPostModal(true)}/>
                                 </div>
                             </div>
                         </div>
