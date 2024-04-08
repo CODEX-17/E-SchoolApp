@@ -15,6 +15,8 @@ const agenda = new Agenda();
 const classesRoutes = require('./Routes/classesRoutes')
 const accountsRoutes = require('./Routes/accountsRoutes')
 const imagesRoutes = require('./Routes/imagesRoutes')
+const postRoutes = require('./Routes/postRoutes')
+const reactsRoutes = require('./Routes/reactsRoutes')
 
 const corsOptions = {
     origin: '*', 
@@ -47,6 +49,8 @@ const db = mysql.createConnection({
 app.use('/classes', classesRoutes)
 app.use('/accounts', accountsRoutes)
 app.use('/images', imagesRoutes)
+app.use('/post', postRoutes)
+app.use('/reacts', reactsRoutes)
 
 const getSchedule = () => {
     const query = "SELECT * FROM schedule"

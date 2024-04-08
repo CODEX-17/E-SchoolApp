@@ -100,7 +100,7 @@ const ClassHome = ({ currentSubjectName, currentImageClass, classCodeCurrent, cu
 
  const [currentScore, setcurrentScore] = useState(0)
 
- const [currentPost, setCurrentPost] = useState()
+ const [currentPost, setCurrentPost] = useState(null)
  const [currentClassPic, setCurrentClassPic] = useState()
  const [postType, setPostType] = useState('')
  const [quizObj, setQuizObj] = useState('')
@@ -155,6 +155,7 @@ const ClassHome = ({ currentSubjectName, currentImageClass, classCodeCurrent, cu
  const [updatedClassName, setupdatedClassName] = useState()
  const [updatedClassDesc, setupdatedClassDesc] = useState(classDescription)
  const [currentClassImageID, setcurrentClassImageID] = useState()
+ const [reactionsList, setreactionsList] = useState(null)
 
  const [isShowErrorMessage, setisShowErrorMessage] = useState(false)
  const inputRef = useRef(null)
@@ -191,21 +192,45 @@ const ClassHome = ({ currentSubjectName, currentImageClass, classCodeCurrent, cu
         .catch((err) => {
             console.log(err)
         })
+
+
+        //GET POST BY CLASSCODE
+        axios.get('http://localhost:5001/post/getPostByClassCode/' + currentClassCode)
+        .then((res) => {
+            const value = res.data
+            console.log('currentPost:', value)
+            setCurrentPost(value)
+        })
+        .catch((err) => {
+            console.log(err)
+        })
+
+        //GET REACTIONS BY POST ID
+        axios.get('http://localhost:5001/reacts/getReactsByPostID/' + currentClassCode)
+        .then((res) => {
+            const value = res.data
+            console.log('reactions:', value)
+            setreactionsList(value)
+        })
+        .catch((err) => {
+            console.log(err)
+        })
+
     }
  },[])
 
 
 useEffect(()=> {
-        socket.on('postNow', (data) => {
-            let oldData = [...currentPost]
-            oldData.push(data)
-            console.log('oldData',oldData)
-            setCurrentPost(oldData)
-            uploadPost(data)
-            refreshData()
-            const message = 'Successfully posted.'
-            notify(message, 'success')
-        })
+        // socket.on('postNow', (data) => {
+        //     let oldData = [...currentPost]
+        //     oldData.push(data)
+        //     console.log('oldData',oldData)
+        //     setCurrentPost(oldData)
+        //     uploadPost(data)
+        //     refreshData()
+        //     const message = 'Successfully posted.'
+        //     notify(message, 'success')
+        // })
     
     
         getAccounts()
@@ -476,14 +501,12 @@ const handleUploadFiles = () => {
 }
 
 const deleteShow = (acctID) => {
-    const adminAcctID = members
-        .filter((mm) => mm.memberID === currentMemberID && mm.memberType === 'admin')
-        .map((mm) => mm.acctID)
-
-    if (acctID === userAccount.acctID || adminAcctID === userAccount.acctID) {
+    if (acctID === userAccount.acctID) {
         return true
+    }else {
+        return false
     }
-    return false
+    
 }
 
 
@@ -491,16 +514,9 @@ const handlePost = () => {
     
     if (postContent) {
         let updated = [...currentPost]
-        let updatedImages = 
-        generateUniqueId()
-        const image = imageFile ? (imageFile.imageID) : ('none')
-        const files = docxFileUploaded ? (docxFileUploaded.fileID) : ('none')
-
-        console.log('files:',files)
-        console.log('image:',image)
+        let updatedImages = generateUniqueId()
 
         let updatedPost = {
-
             postID: uniqueId,
             acctID: userAccount.acctID,
             name: generateFullname(),
@@ -519,8 +535,12 @@ const handlePost = () => {
             schedID: 'none',
             duration: 'none',
             random: 'none',
-
         }
+
+        updated.push(updatedPost)
+        setCurrentPost(updated)
+
+        console.log(updatedPost)
 
         //postContentHook(updatedPost)
         // getFiles()
@@ -544,8 +564,8 @@ const handlePost = () => {
 }
 
 const handleCalculateReact = (postID, type) => {
-    if (reactions) {
-        const filter = reactions.filter((r) => r.postID === postID && r.reactType === type)
+    if (reactionsList) {
+        const filter = reactionsList.filter((data) => data.postID === postID && data.reactType === type)
         if (filter) {
             return filter.length
         }else {
@@ -557,42 +577,49 @@ const handleCalculateReact = (postID, type) => {
 }
 
 const handleIfalreadyClicked = (postID, type) => {
-    const filter = reactions.filter((r) => r.postID === postID && r.reactType === type && r.acctID === userAccount.acctID)
+    const filter = reactionsList.filter((data) => data.postID === postID && data.reactType === type && data.acctID === userAccount.acctID)
     if (filter.length > 0) {
+        console.log('reactions', filter)
         return true
+    }else {
+        return false
     }
-    return false
+    
 }
 
-const clickedHeart = (postID) => {
+const clickReact = (postID, type) => {
+
     const data = {
         reactID: generateID(),
         postID,
+        classCode: currentClassCode,
         acctID: userAccount.acctID,
-        reactType: 'heart',
+        reactType: type,
     }
 
-    addReactions(data)
-    setreactions((oldData) => [...oldData, data])
+    axios.post("http://localhost:5001/reacts/addReactions", data)
+    .then(res => {
+        const value = res.data
+        console.log(value.message)
+        setreactionsList((oldData) => [...oldData, data])
+    })
+    .catch(err => console.log(err))
+
 }
 
 const unClickReact = (postID, type) => {
-    const filter = reactions.filter((rec) => rec.postID === postID && rec.acctID === userAccount.acctID && rec.reactType === type)
-    deleteReactions(filter[0].reactID)
-    const updated = reactions.filter((rec) => rec.reactID !== filter[0].reactID)
-    setreactions(updated)
-}
-
-const clickedLike = (postID) => {
-    const data = {
-        reactID: generateID(),
-        postID,
-        acctID: userAccount.acctID,
-        reactType: 'like',
-    }
-
-    addReactions(data)
-    setreactions((oldData) => [...oldData, data])
+    
+    const filter = reactionsList.filter((data) => data.postID === postID && data.acctID === userAccount.acctID && data.reactType === type)
+    const reactID = filter[0].reactID
+    axios.delete("http://localhost:5001/reacts/deleteReactionsByreactID/" + reactID)
+    .then(res => {
+        const data = res.data
+        console.log(data.message)
+        const updated = reactionsList.filter((data) => data.reactID !== reactID)
+        setreactionsList(updated)
+    })
+    .catch(err => console.log(err))
+    
 }
 
 const generateFullname = () => {
@@ -1033,7 +1060,7 @@ const handleShowComments = (post) => {
                                     </div>
                                 </div>
                                 
-                                <button className={style.btnPostModal} onClick={handleUploadImage}>Upload</button>
+                                <button className={style.btnPostModal} onClick={handlePost}>Upload</button>
                             </div>
                         </div>
                     </div>
@@ -1213,7 +1240,7 @@ const handleShowComments = (post) => {
                                                             cursor={'pointer'}
                                                             size={20}
                                                             color='#3E3F40'
-                                                            onClick={() =>clickedHeart(post.postID)}
+                                                            onClick={() => clickReact(post.postID, 'heart')}
                                                         />
                                                          
                                             }
@@ -1228,7 +1255,7 @@ const handleShowComments = (post) => {
                                                         color='#3081D0'
                                                     /> :
                                                     <AiOutlineLike
-                                                        onClick={() => clickedLike(post.postID)}
+                                                        onClick={() => clickReact(post.postID, 'like')}
                                                         cursor={'pointer'}
                                                         size={20}
                                                         color='#3E3F40'
