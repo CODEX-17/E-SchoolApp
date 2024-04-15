@@ -35,6 +35,13 @@ const usePostContentHook = (data) => {
         random,
     } = data
 
+    if (!image) {
+        image = 'none'
+    }else {
+        image.file
+    }
+
+
 }
 
 export default usePostContentHook;

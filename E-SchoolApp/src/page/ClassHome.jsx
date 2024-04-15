@@ -157,6 +157,7 @@ const ClassHome = ({ currentSubjectName, currentImageClass, classCodeCurrent, cu
  const [currentClassImageID, setcurrentClassImageID] = useState()
  const [reactionsList, setreactionsList] = useState(null)
  const [imageList, setimageList] = useState(null)
+ const [filesLists, setfilesLists] = useState(null)
 
  const [isShowErrorMessage, setisShowErrorMessage] = useState(false)
  const inputRef = useRef(null)
@@ -202,7 +203,7 @@ const ClassHome = ({ currentSubjectName, currentImageClass, classCodeCurrent, cu
         axios.get('http://localhost:5001/post/getPostByClassCode/' + currentClassCode)
         .then((res) => {
             const value = res.data
-            console.log(value)
+            console.log('currentPost: ',value)
             setCurrentPost(value)
         })
         .catch((err) => {
@@ -219,26 +220,40 @@ const ClassHome = ({ currentSubjectName, currentImageClass, classCodeCurrent, cu
             console.log(err)
         })
 
+        getFilesByClassCode()
         getImagesByClassCode()
-
+        
     }
 
  },[])
 
  const getImagesByClassCode = () => (
+
     //GET IMAGES BY CLASSCODE
     axios.get('http://localhost:5001/images/getImagesByClassCode/' + currentClassCode)
     .then((res) => {
         const value = res.data
-        console.log(value)
+        console.log('images', value)
         setimageList(value)
         setshowLoading(false)
     })
     .catch((err) => {
         console.log(err)
     })
+ )
 
-    
+ const getFilesByClassCode = () => (
+
+    //GET FILES BY CLASSCODE
+    axios.get('http://localhost:5001/files/getFilesByClassCode/' + currentClassCode)
+    .then((res) => {
+        const value = res.data
+        console.log('files', value)
+        setfilesLists(value)
+    })
+    .catch((err) => {
+        console.log(err)
+    })
  )
 
 
@@ -605,6 +620,10 @@ const handlePost = () => {
                 const files = updatedPost.file
                 const formData = new FormData
                 formData.append('fileID', updatedPost.fileID)
+                formData.append('dateUploaded', updatedPost.datePosted)
+                formData.append('timeUploaded', updatedPost.timePosted)
+                formData.append('acctID', updatedPost.acctID)
+                formData.append('classCode', updatedPost.classCode)
                 
                 for (let i = 0; i < files.length; i++) {
                     formData.append('file', files[i])
@@ -613,6 +632,7 @@ const handlePost = () => {
                 axios.post('http://localhost:5001/files/addFiles', formData)
                 .then((res) => {
                     const data = res.data
+                    getFilesByClassCode()
                     console.log(data.message)
                 })
                 .catch((err) => {
@@ -822,8 +842,12 @@ const imageUserPost = (id) => {
     return url+filterImage[0]
 }
 
-const generateFile = (fileID) => {
-    
+const shortenFileName = (fileName) => {
+    if (fileName.length > 25) {
+        return fileName.substring(0, 25) + '...'
+    }
+
+    return fileName
 }
 
 const handleExit = () => {
@@ -850,12 +874,7 @@ const generateFileName = (fileID) => {
 
 }
 
-const handleDownload = (fileID) => {
-    const files = JSON.parse(localStorage.getItem('files'))
-    const filter = files.filter((file) => file.fileID === fileID).map((file) => file.data)
-    const url = 'http://localhost:5001/'+filter[0]
-    window.location.href = url
-}
+
 
 const handleUploadImageChange = (e) => {
     e.preventDefault()
@@ -897,24 +916,44 @@ const handleSaveSetting = () => {
 
 }
 
-const handleViewFile = (fileID) => {
-    const filter = fileList.filter((files) => files.fileID === fileID)
-    const filePath = 'http://localhost:5001/' + filter[0].data
-    console.log(filter[0].data)
-    setviewFileName(filePath)
-    setshowViewFiles(true)
+const handleDownload = (fileName) => {
+    if (fileName) {
+        const filePath = 'http://localhost:5001/' + fileName
+        console.log('filePath',filePath)
+        window.location.href = filePath
+    }
+   
 }
 
-const checkIfPDFfile = (fileID) => {
-    const filter = fileList.filter((files) => files.fileID === fileID)
-
-    if (filter.length > 0) {
-        if (filter[0].type === 'application/pdf') {
-            return true
-        }
+const handleViewFile = (fileName) => {
+    if (fileName) {
+        const filePath = 'http://localhost:5001/' + fileName
+        console.log('filePath', filePath)
+        setviewFileName(filePath)
+        setshowViewFiles(true)
     }
-    
-    return false
+}
+
+const checkIfPDFfile = (fileName) => {
+    if (fileName) {
+        const filter = filesLists.filter((files) => files.data === fileName).map((files) => files.type)
+        
+        if (filter) {
+            if (filter[0] === 'application/pdf') {
+                return true
+            }
+        }
+        
+        return false
+    }
+}
+
+const getFilesUrlsByFileID = (fileID) => {
+    if (fileID) {
+        const filter = filesLists.filter((data) => data.fileID === fileID)
+        console.log(filter)
+        return filter
+    }   
 }
 
 const ifAlreadyTaken = (quizID) => {
@@ -1172,7 +1211,7 @@ const getImageUrlsByImageID = (imageID) => {
                 showViewFiles && viewFileName && (
                     <div className={style.prevFileCon}>
                         <IoCloseCircle size={30} color='#BB2525' cursor={'pointer'} onClick={() => setshowViewFiles(false)}/>
-                        <iframe src={'http://localhost:5001/file_1705777205783.pdf'} width="100%" height="100%" ></iframe>
+                        <iframe src={viewFileName} width="100%" height="100%" ></iframe>
                     </div>
                 )
         }
@@ -1279,22 +1318,23 @@ const getImageUrlsByImageID = (imageID) => {
                                                 }
                                             </div>
                                             
-                                            {/* {
+                                            {
                                                 post.fileID !== 'none'  && (
-                                                    <>
+                                                    
+                                                    getFilesUrlsByFileID(post.fileID).map((data, index) => (
                                                         <div id={style.filePdf}>
                                                             <SiFiles size={30} color='#F45050'/>
-                                                            <p>{generateFileName(post.fileID)}</p>
+                                                            <p>{shortenFileName(data.name)}</p>
                                                             {
-                                                                checkIfPDFfile(post.fileID) && <div id={style.viewFile} onClick={() =>handleViewFile(post.fileID)}>View</div>
+                                                                checkIfPDFfile(data.data) && <div id={style.viewFile} onClick={() =>handleViewFile(data.data)}>View</div>
                                                             }
                                                             
-                                                            <FiDownload size={20} cursor={'pointer'} color='#3E3F40' onClick={() =>handleDownload(post.fileID)}/>
+                                                            <FiDownload size={20} cursor={'pointer'} color='#3E3F40' onClick={() =>handleDownload(data.data)}/>
                                                         </div>
-                                                        
-                                                    </>
+                                                    ))
                                                 )
-                                            } */}
+                                            }
+
                                             {
                                                 post.quizID !== 'none'  && (
                                                         <div id={style.quizBox}>

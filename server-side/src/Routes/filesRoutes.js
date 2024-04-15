@@ -4,6 +4,20 @@ const db = require('../db')
 const multer = require('multer')
 const path = require('path')
 
+
+router.get('/getFilesByClassCode/:classCode', (req, res) => {
+    const classCode =  req.params.classCode
+    const query = "SELECT * FROM files WHERE classCode=?"
+    db.query(query,[classCode], (error, data, field) => {
+        if (error) {
+            res.status(404).json(error)
+        } else {
+            res.status(200).json(data)
+        }
+    })
+})
+
+
 // Multer configuration
 const fileStorage = multer.diskStorage({
     destination: './uploads',
@@ -19,6 +33,10 @@ router.post('/addFiles', upload.array('file'), (req, res) => {
 
     const fileID = req.body.fileID;
     const files = req.files
+    const dateUploaded = req.body.dateUploaded
+    const timeUploaded = req.body.timeUploaded
+    const acctID = req.body.acctID
+    const classCode = req.body.classCode
 
     // If no uploaded docs
     if (files.length === 0) {
@@ -29,9 +47,9 @@ router.post('/addFiles', upload.array('file'), (req, res) => {
     files.forEach((file) => {
         const { filename, mimetype, originalname } = file;
     
-        const query = 'INSERT INTO files(name, type, data, fileID) VALUES(?,?,?,?)'
+        const query = 'INSERT INTO files(name, type, data, dateUploaded, timeUploaded, acctID, classCode, fileID) VALUES(?,?,?,?,?,?,?,?)'
 
-        db.query(query, [originalname, mimetype, filename, fileID], (error, data, fields) => {
+        db.query(query, [originalname, mimetype, filename, dateUploaded, timeUploaded, acctID, classCode, fileID], (error, data, fields) => {
             if (error) {
                 console.log(error);
                 return res.status(500).send("Error inserting docs into the database.")

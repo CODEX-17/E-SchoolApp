@@ -4,7 +4,7 @@ const db = require('../db')
 
 router.get('/getPostByClassCode/:classCode', (req, res) => {
     const classCode =  req.params.classCode
-    const query = "SELECT * FROM `post` INNER JOIN `class` ON post.classCode = class.classCode WHERE post.classCode =?"
+    const query = "SELECT * FROM `post` WHERE classCode =?"
     db.query(query,[classCode], (error, data, field) => {
         if (error) {
             res.status(404).json(error)

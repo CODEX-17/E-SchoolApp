@@ -12,6 +12,4 @@ export default () => {
         return 'no user available'
     }
 
-    
-
 }
