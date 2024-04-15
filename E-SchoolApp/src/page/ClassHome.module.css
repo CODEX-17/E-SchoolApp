@@ -568,6 +568,7 @@
 
 .listPostContainer {
     overflow-y: auto;
+    overflow-x: hidden;
     height: 600px;
     padding: 2%;
 }
@@ -592,6 +593,9 @@
 .card {
     border-radius: 10px;
     padding: 1%;
+    margin-left: 2%;
+    margin-right: 2%;
+    width: 100%;
     margin-bottom: 4%;
     position: relative;
     background-color: white;
@@ -633,6 +637,28 @@
     margin: 0;
 }
 
+.imgListInPost {
+  display: flex;
+  width: 800px;
+  overflow-x: auto;
+  gap: 2%;
+}
+
+.imgContainer {
+  background-color: rgba(128, 128, 128, 0.098);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#imgSend {
+    max-width: 200px;
+    height: auto;
+    display: block;
+    border-radius: 10px;
+}
+
 #deleteBtn {
     position: absolute;
     right: 1%;
@@ -645,10 +671,6 @@
     transform: scale(110%);
 }
 
-#imgSend {
-    width: 200px;
-    border-radius: 10px;
-}
 
 #imgClass {
     width: 150px;
@@ -777,7 +799,7 @@
 }
 
 .rightContent {
-    flex: 80%;
+    flex: 1500px;
     border-radius: 0px 24px 24px 0px;
     padding: 2%;
 }

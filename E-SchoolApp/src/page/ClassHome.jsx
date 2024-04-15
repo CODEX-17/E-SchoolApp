@@ -156,6 +156,7 @@ const ClassHome = ({ currentSubjectName, currentImageClass, classCodeCurrent, cu
  const [updatedClassDesc, setupdatedClassDesc] = useState(classDescription)
  const [currentClassImageID, setcurrentClassImageID] = useState()
  const [reactionsList, setreactionsList] = useState(null)
+ const [imageList, setimageList] = useState(null)
 
  const [isShowErrorMessage, setisShowErrorMessage] = useState(false)
  const inputRef = useRef(null)
@@ -174,6 +175,9 @@ const ClassHome = ({ currentSubjectName, currentImageClass, classCodeCurrent, cu
  }
 
  useEffect(() => {
+
+    console.log(classCodeCurrent)
+
     if (currentClassCode) {
         axios.get('http://localhost:5001/classes/getClasses')
         .then((res) => {
@@ -198,7 +202,7 @@ const ClassHome = ({ currentSubjectName, currentImageClass, classCodeCurrent, cu
         axios.get('http://localhost:5001/post/getPostByClassCode/' + currentClassCode)
         .then((res) => {
             const value = res.data
-            console.log('currentPost:', value)
+            console.log(value)
             setCurrentPost(value)
         })
         .catch((err) => {
@@ -209,15 +213,33 @@ const ClassHome = ({ currentSubjectName, currentImageClass, classCodeCurrent, cu
         axios.get('http://localhost:5001/reacts/getReactsByPostID/' + currentClassCode)
         .then((res) => {
             const value = res.data
-            console.log('reactions:', value)
             setreactionsList(value)
         })
         .catch((err) => {
             console.log(err)
         })
 
+        getImagesByClassCode()
+
     }
+
  },[])
+
+ const getImagesByClassCode = () => (
+    //GET IMAGES BY CLASSCODE
+    axios.get('http://localhost:5001/images/getImagesByClassCode/' + currentClassCode)
+    .then((res) => {
+        const value = res.data
+        console.log(value)
+        setimageList(value)
+        setshowLoading(false)
+    })
+    .catch((err) => {
+        console.log(err)
+    })
+
+    
+ )
 
 
 useEffect(()=> {
@@ -474,19 +496,6 @@ const handleGetFiles = (e) => {
     setdocxFiles(fileList)
 }
 
-const handleUploadImage = () => {
- 
-    if (uniqueId) {
-        const image = {
-            file: file[0],
-            imageID: uniqueId,
-        }
-        setimageFile(image)
-        uploadImage(image)
-        setshowPostModal(false)
-    }
-}
-
 const handleUploadFiles = () => {
     generateUniqueId()
     if (uniqueId) {
@@ -511,11 +520,10 @@ const deleteShow = (acctID) => {
 
 
 const handlePost = () => {
-    
-    if (postContent) {
-        let updated = [...currentPost]
-        let updatedImages = generateUniqueId()
 
+        // insert current post in variable
+        let updated = [...currentPost]
+        
         let updatedPost = {
             postID: uniqueId,
             acctID: userAccount.acctID,
@@ -524,8 +532,8 @@ const handlePost = () => {
             datePosted: date,
             postContent,
             replyID: uniqueId,
-            image: imageFile,
-            fileID: docxFileUploaded,
+            image: file,
+            file: docxFiles,
             heartCount,
             likeCount,
             classCode: currentClassCode,
@@ -533,34 +541,99 @@ const handlePost = () => {
             postType: 'normal',
             quizID: 'none',
             schedID: 'none',
-            duration: 'none',
+            duration: 0,
             random: 'none',
         }
 
+        // if image is not null it return unique id
+        if (updatedPost.image) {
+            updatedPost.imageID = uniqueId
+        }else {
+            updatedPost.imageID = 'none'
+        }
+
+        // if file is not null it return unique id
+        if (updatedPost.file) {
+            updatedPost.fileID = uniqueId
+        }else {
+            updatedPost.fileID = 'none'
+        }
+
+        // add post in variable
         updated.push(updatedPost)
         setCurrentPost(updated)
 
         console.log(updatedPost)
 
-        //postContentHook(updatedPost)
-        // getFiles()
-        // setPost(updatedPost)
-        // uploadPost(updatedPost)
-        // updated.push(updatedPost)
-        // setCurrentPost(updated)
-        // localStorage.setItem('currentPost', JSON.stringify(updatedPost))
+        // API for adding post
+        axios.post('http://localhost:5001/post/addPost', updatedPost )
+        .then((res) => {
+            const data = res.data
+            console.log(data.message)
 
-        // reset()
-        // setimageFile(null)
-        // const message = 'Successfully posted.'
-        // notify(message, 'success')
-    }else {
-        const message = 'Please insert Content'
-        notify(message, 'err')
-    }
+            //API for adding image of post
+            if (updatedPost.image) {
+                
+                const images = updatedPost.image
+                const formData = new FormData
+                formData.append('imageID', updatedPost.imageID)
+                formData.append('dateUploaded', updatedPost.datePosted)
+                formData.append('timeUploaded', updatedPost.timePosted)
+                formData.append('acctID', updatedPost.acctID)
+                formData.append('classCode', updatedPost.classCode)
 
-    refreshData()
-    
+                for (let i = 0; i < images.length; i++) {
+                    formData.append('image', images[i])
+                }
+                
+                axios.post('http://localhost:5001/images/addImage', formData )
+                .then((res) => {
+                    const data = res.data
+                    setshowLoading(true)
+                    getImagesByClassCode()
+                    console.log(data.message)
+                })
+                .catch((err) => {
+                    console.log(err)
+                })
+
+            }
+
+            //API for adding docs of post
+            if (updatedPost.file) {
+                
+                const files = updatedPost.file
+                const formData = new FormData
+                formData.append('fileID', updatedPost.fileID)
+                
+                for (let i = 0; i < files.length; i++) {
+                    formData.append('file', files[i])
+                }
+
+                axios.post('http://localhost:5001/files/addFiles', formData)
+                .then((res) => {
+                    const data = res.data
+                    console.log(data.message)
+                })
+                .catch((err) => {
+                     console.log(err)
+                 })
+
+            }
+
+            // reset variables
+            setPostContent('')
+            setFile(null)
+            setdocxFiles(null)
+            setshowPostModal(false)
+
+            // notification for success
+            const message = 'posted successfully'
+            notify(message, 'success')
+            
+        })
+        .catch((err) => console.log(err))
+
 }
 
 const handleCalculateReact = (postID, type) => {
@@ -577,13 +650,15 @@ const handleCalculateReact = (postID, type) => {
 }
 
 const handleIfalreadyClicked = (postID, type) => {
-    const filter = reactionsList.filter((data) => data.postID === postID && data.reactType === type && data.acctID === userAccount.acctID)
-    if (filter.length > 0) {
-        console.log('reactions', filter)
-        return true
-    }else {
-        return false
+    if (reactionsList) {
+        const filter = reactionsList.filter((data) => data.postID === postID && data.reactType === type && data.acctID === userAccount.acctID)
+        if (filter.length > 0) {
+            return true
+        }else {
+            return false
+        }
     }
+    
     
 }
 
@@ -871,6 +946,16 @@ const handleShowComments = (post) => {
     }
     setcurrentComments(post)
     setshowComments(true)
+}
+
+
+const getImageUrlsByImageID = (imageID) => {
+    if (imageID) {
+        const url = 'http://localhost:5001/'
+        const filter = imageList.filter((data) => data.imageID === imageID).map((data) => url + data.data)
+        return filter
+    }
+    
 }
 
   return (
@@ -1182,10 +1267,19 @@ const handleShowComments = (post) => {
                                         </div>
                                         <div className={style.body}>
                                             <p>{post.postContent}</p>
-                                            {
-                                                post.imageID !== 'none' && (<img src={generatePic(post.imageID)} alt="photo" id={style.imgSend}/>)
-                                            }
-                                            {
+                                            <div className={style.imgListInPost}>
+                                                {
+                                                    post.imageID !== 'none' && (
+                                                        getImageUrlsByImageID(post.imageID).map((data, index) => (
+                                                            <div className={style.imgContainer}>
+                                                                <img key={index} src={data} alt="photo" id={style.imgSend}/>
+                                                            </div>
+                                                        ))
+                                                    )
+                                                }
+                                            </div>
+                                            
+                                            {/* {
                                                 post.fileID !== 'none'  && (
                                                     <>
                                                         <div id={style.filePdf}>
@@ -1200,7 +1294,7 @@ const handleShowComments = (post) => {
                                                         
                                                     </>
                                                 )
-                                            }
+                                            } */}
                                             {
                                                 post.quizID !== 'none'  && (
                                                         <div id={style.quizBox}>

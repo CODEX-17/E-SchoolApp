@@ -22,12 +22,11 @@ router.get('/getClassesByAccount/:acctID', (req, res) => {
 
     const acctID = req.params.acctID
     const query = `
-    SELECT class.*, image.*
+    SELECT class_list.*, class.*, image.data
     FROM class
-    JOIN members ON class.membersID = members.membersID
-    JOIN accounts ON members.acctID = accounts.acctID
+    JOIN class_list ON class_list.classCode = class.classCode
     JOIN image ON class.imageID = image.imageID
-    WHERE accounts.acctID =? `
+    WHERE class_list.acctID =? `
 
     db.query(query,[acctID], (error, data, fields) => {
         if (error) {
@@ -53,12 +52,12 @@ router.get('/getClassByClassCode/:classCode', (req, res) => {
     })
 })
 
-router.put('/hideClass/:classID', (req, res) => {
-    const classID = req.params.classID
+router.put('/hideClass/:id', (req, res) => {
+    const id = req.params.id
     const hide = 'true'
-    const query = 'UPDATE class SET hidden =? WHERE classID =?'
+    const query = 'UPDATE class_list SET hidden =? WHERE id =?'
 
-    db.query(query, [hide, classID], (error, data, fields) => {
+    db.query(query, [hide, id], (error, data, fields) => {
         if (error) {
             return res.status(404).send(error)
         }else {
@@ -68,12 +67,12 @@ router.put('/hideClass/:classID', (req, res) => {
 
 })
 
-router.put('/unhideClass/:classID', (req, res) => {
-    const classID = req.params.classID
+router.put('/unhideClass/:id', (req, res) => {
+    const id = req.params.id
     const hide = 'false'
-    const query = 'UPDATE class SET hidden =? WHERE classID =?'
+    const query = 'UPDATE class_list SET hidden =? WHERE id =?'
 
-    db.query(query, [hide, classID], (error, data, fields) => {
+    db.query(query, [hide, id], (error, data, fields) => {
         if (error) {
             return res.status(404).send(error)
         }else {

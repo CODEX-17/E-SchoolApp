@@ -56,6 +56,7 @@ useEffect(() => {
     axios.get('http://localhost:5001/classes/getClassesByAccount/' + acctID)
     .then((res) => {
         setshowPreview('classPage')
+        console.log(res.data)
         setClassesList(res.data)
     })
     .catch((err) => console.error(err))
@@ -127,16 +128,14 @@ const handleHideClass = (id) => {
     
     setClassesList((prevClassList) => {
        return prevClassList.map((classes) => {
-            if (classes.classID === id) {
+            if (classes.id === id) {
                 return {...classes, hidden: 'true'}
             }
             return classes
        })
     })
 
-    const classID = id
-
-    axios.put('http://localhost:5001/classes/hideClass/' + classID)
+    axios.put('http://localhost:5001/classes/hideClass/' + id)
     .then((res) => res.data)
     .then((data) => console.log(data.message))
     .catch((err) => console.error(err))
@@ -146,16 +145,14 @@ const handleUnHideClass = (id) => {
 
     setClassesList((prevClassList) => {
        return prevClassList.map((classes) => {
-            if (classes.classID === id) {
+            if (classes.id === id) {
                 return {...classes, hidden: 'false'}
             }
             return classes
        })
     })
 
-    const classID = id
-
-    axios.put('http://localhost:5001/classes/unhideClass/' + classID)
+    axios.put('http://localhost:5001/classes/unhideClass/' + id)
     .then((res) => res.data)
     .then((data) => console.log(data.message))
     .catch((err) => console.error(err))
@@ -229,13 +226,14 @@ const handleAddClass = (e) => {
 
 }
 
-const handleOpenClass = (subjectName, classCode, membersID, imageID, classID, classDesc) => {
+const handleOpenClass = (subjectName, classCode, membersID, imageID, id, classDesc) => {
     setcurrentMemberID(membersID)
     setcurrentClassCode(classCode)
+    console.log('classCode',classCode)
     setcurrentSubjectName(subjectName)
     setclassDesc(classDesc)
     setshowPreview('classHome')
-    setcurrentclassID(classID)
+    setcurrentclassID(id)
     const image = generatePic(imageID)
     setcurrentImageClass(image)
 }
@@ -591,8 +589,8 @@ const handleExcelFileSubmit = (e) => {
                                                     classesList.length > 0 ? (
                                                         classesList.filter((data) => data.hidden === 'false' || data.hidden === false).map((data, index) => (   
                                                             <div className={style.classCard} key={index}>
-                                                                <AiFillEyeInvisible size={20} className={style.btnVisible} title='Hide class' onClick={() => handleHideClass(data.classID)}/>
-                                                                <div className={style.mainPoint} onClick={() => handleOpenClass(data.className, data.classCode, data.membersID, data.imageID, data.classID, data.classDesc)}>
+                                                                <AiFillEyeInvisible size={20} className={style.btnVisible} title='Hide class' onClick={() => handleHideClass(data.id)}/>
+                                                                <div className={style.mainPoint} onClick={() => handleOpenClass(data.className, data.classCode, data.membersID, data.imageID, data.id, data.classDesc)}>
                                                                     {
                                                                         data.name !== 'default' ? (
                                                                             <img src={generatePic(data.data)} alt='class photo' id={style.imageContainer}/>
@@ -634,7 +632,7 @@ const handleExcelFileSubmit = (e) => {
                                                             classesList.length > 0 ? (
                                                                 classesList.filter((data) => data.hidden === 'true' || data.hidden === true).map((data, index) => (
                                                                     <div className={style.classCard} key={index}>
-                                                                        <AiFillEye size={20} className={style.btnVisible} title='Unhide class' onClick={() => handleUnHideClass(data.classID)}/>
+                                                                        <AiFillEye size={20} className={style.btnVisible} title='Unhide class' onClick={() => handleUnHideClass(data.id)}/>
                                                                         {
                                                                             data.name !== 'default' ? (
                                                                                 <img src={generatePic(data.data)} alt='class photo' id={style.imageContainer}/>
