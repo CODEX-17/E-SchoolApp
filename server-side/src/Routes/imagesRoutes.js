@@ -3,7 +3,47 @@ const router = express.Router()
 const db = require('../db')
 const multer = require('multer')
 const path = require('path')
+const fs = require('fs')
 
+//API delete images
+router.delete('/deleteImage', (req, res) => {
+    const imageID = req.body.imageID
+    const imageNames = req.body.name
+
+    const query = 'DELETE FROM image WHERE imageID =?'
+
+    db.query(query, [imageID], (error, data, field) => {
+        if (error) {
+            res.status(404).json(error)
+        } else {
+            const uploadFolderPath = './uploads'
+            const deletionErrors = []
+
+            // Loop through image names and delete files
+            imageNames.forEach(imageName => {
+                const filePath = path.join(uploadFolderPath, imageName);
+                
+                // Delete file in upload folder
+                fs.unlink(filePath, (err) => {
+                    if (err) {
+                        console.error(err);
+                        deletionErrors.push({ imageName, error: 'Error deleting image file.' });
+                    } else {
+                        console.log(filePath);
+                    }
+                });
+            });
+
+            // After all deletions are attempted, respond
+            if (deletionErrors.length > 0) {
+                res.status(500).json({ errors: deletionErrors });
+            } else {
+                res.status(200).json({ message: 'Images successfully deleted.' });
+            }
+           
+        }
+    })
+})
 
 
 router.get('/getImages', (req, res)=> {
@@ -18,6 +58,7 @@ router.get('/getImages', (req, res)=> {
     })
 })
 
+//Get images by imageID
 router.get('/getImagesByImageID/:imageID', (req, res)=> {
     const imageID = req.params.imageID
     const query = 'SELECT * FROM image WHERE imageID =?'
@@ -31,11 +72,25 @@ router.get('/getImagesByImageID/:imageID', (req, res)=> {
     })
 })
 
+//Get images by classCode
 router.get('/getImagesByClassCode/:classCode', (req, res)=> {
     const classCode = req.params.classCode
     const query = 'SELECT * FROM image WHERE classCode =?'
 
     db.query(query, [classCode], (error, data, fields) => {
+        if (error) {
+            return res.status(404).send(error)
+        }else {
+            return res.status(200).json(data)
+        }
+    })
+})
+
+//Get all none value classCode images
+router.get('/getAccountImages', (req, res)=> {
+    const query = "SELECT * FROM image WHERE classCode='none'"
+
+    db.query(query, (error, data, fields) => {
         if (error) {
             return res.status(404).send(error)
         }else {
@@ -66,7 +121,7 @@ router.post('/addImage', upload.array('image'), (req, res) => {
     let type = ''
     let name = ''
 
-    // If no uploaded image
+    //If no uploaded image
     if (images.length === 0) {
         console.log('no files to upload')
     }

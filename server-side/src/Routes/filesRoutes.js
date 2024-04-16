@@ -3,6 +3,47 @@ const router = express.Router()
 const db = require('../db')
 const multer = require('multer')
 const path = require('path')
+const fs = require('fs')
+
+//API delete files
+router.delete('/deleteFiles', (req, res) => {
+    const fileID = req.body.fileID
+    const fileNames = req.body.name
+
+    const query = 'DELETE FROM files WHERE fileID =?'
+
+    db.query(query, [fileID], (error, data, field) => {
+        if (error) {
+            res.status(404).json(error)
+        } else {
+            const uploadFolderPath = './uploads'
+            const deletionErrors = []
+
+            // Loop through image names and delete files
+            fileNames.forEach(fileName => {
+                const filePath = path.join(uploadFolderPath, fileName);
+                
+                // Delete file in upload folder
+                fs.unlink(filePath, (err) => {
+                    if (err) {
+                        console.error(err);
+                        deletionErrors.push({ fileName, error: 'Error deleting file.' });
+                    } else {
+                        console.log(filePath);
+                    }
+                });
+            });
+
+            // After all deletions are attempted, respond
+            if (deletionErrors.length > 0) {
+                res.status(500).json({ errors: deletionErrors });
+            } else {
+                res.status(200).json({ message: 'Images successfully deleted.' });
+            }
+           
+        }
+    })
+})
 
 
 router.get('/getFilesByClassCode/:classCode', (req, res) => {

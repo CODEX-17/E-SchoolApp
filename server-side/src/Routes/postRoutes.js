@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const db = require('../db')
 
+// Get post by classCode
 router.get('/getPostByClassCode/:classCode', (req, res) => {
     const classCode =  req.params.classCode
     const query = "SELECT * FROM `post` WHERE classCode =?"
@@ -14,7 +15,23 @@ router.get('/getPostByClassCode/:classCode', (req, res) => {
     })
 })
 
+// Delete post by postID
+router.delete('/deletePostByPostID/:postID', (req, res) => {
+    const postID = req.params.postID
+    const fileID = req.body.fileID
+    const imageID = req.body.imageID
+    const query = "DELETE FROM `post` WHERE postID =?"
 
+    db.query(query, [postID], (error, data, field) => {
+        if (error) {
+            res.status(404).send(error)
+        } else {
+            res.status(200).json({ message: 'Delete post successfully.' })
+        }
+    })
+})
+
+// Add post in database
 router.post('/addPost', (req, res) => {
     
     const postID = req.body.postID

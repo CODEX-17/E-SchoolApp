@@ -30,6 +30,7 @@ app.use(express.json())
 app.use(cors())
 app.use(cors(corsOptions))
 app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.static('uploads'))
 const server = http.createServer(app)
 const io = socketIO(server, {

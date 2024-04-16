@@ -21,17 +21,13 @@ const NavbarComponent = () => {
   useEffect(() => {
     
     if (user) {
-      const imageID = user.imageID
-      axios.get('http://localhost:5001/images/getImages')
-      .then((res) => {
-          const imagesList = res.data
-          const filter = imagesList.filter((data) => data.imageID === imageID).map((data) => data.data)
-        
-          if (filter.length > 0) {
-              const url = 'http://localhost:5001/'
-              setUserImage(url+filter[0]) 
-          }
+      const acctID = user.acctID
 
+      axios.get('http://localhost:5001/images/getImagesByImageID/' + acctID)
+      .then((res) => {
+          const result = res.data
+          const url = 'http://localhost:5001/'
+          setUserImage(url + result[0].data)
       })
       .catch((err) => console.log(err)) 
     }

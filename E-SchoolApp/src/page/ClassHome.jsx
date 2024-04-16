@@ -101,7 +101,6 @@ const ClassHome = ({ currentSubjectName, currentImageClass, classCodeCurrent, cu
  const [currentScore, setcurrentScore] = useState(0)
 
  const [currentPost, setCurrentPost] = useState(null)
- const [currentClassPic, setCurrentClassPic] = useState()
  const [postType, setPostType] = useState('')
  const [quizObj, setQuizObj] = useState('')
  const [filteredComments, setFilteredComments] = useState([])
@@ -158,6 +157,9 @@ const ClassHome = ({ currentSubjectName, currentImageClass, classCodeCurrent, cu
  const [reactionsList, setreactionsList] = useState(null)
  const [imageList, setimageList] = useState(null)
  const [filesLists, setfilesLists] = useState(null)
+ const [acctImagesList, setacctImagesList] = useState(null)
+ const [showViewImage, setshowViewImage] = useState(false)
+
 
  const [isShowErrorMessage, setisShowErrorMessage] = useState(false)
  const inputRef = useRef(null)
@@ -220,7 +222,15 @@ const ClassHome = ({ currentSubjectName, currentImageClass, classCodeCurrent, cu
             console.log(err)
         })
 
+        //GET ALL ACCOUNT IMAGES
+        axios.get('http://localhost:5001/images/getAccountImages')
+        .then((res) => setacctImagesList(res.data))
+        .catch((err) => console.log(err))
+
+        //GET FILES BY CLASSCODE
         getFilesByClassCode()
+
+        //GET IMAGES BY CLASSCODE
         getImagesByClassCode()
         
     }
@@ -348,14 +358,12 @@ const refreshData = () => {
         setquiz(quiz)
         setreactions(reactions)
         const filter = classes.filter((cls) => cls.classID === currentclassID)
-        const imagePic = images.filter((cls) => cls.imageID === filter[0].imageID)
+      
         const filterPost = post.filter((post) => post.classCode === currentClassCode)
 
         
 
-        setCurrentPost(filterPost)
-        const url = 'http://localhost:5001/'
-        setCurrentClassPic(url + imagePic[0].data)
+        setCurrentPost(filterPost)  
         setclassCode(filter[0].classCode)
         setsubjectName(filter[0].className)
         
@@ -488,11 +496,68 @@ const generateID = () => {
     }
  }
 
-const handleDeletePost = (id) => {
-    const filter = currentPost.filter((posts) => posts.id !== id)
-    setCurrentPost(filter)
-    deletePost(id)
-    refreshData()
+ 
+// Delete post by postID
+const handleDeletePost = (postID, imageID, fileID) => {
+
+    if (postID && currentPost) {
+        
+        //API delete post in table post
+        axios.delete('http://localhost:5001/post/deletePostByPostID/' + postID)
+        .then((res) => {
+            const result = res.data
+            const message = result.message
+            console.log(message)
+
+            //check if the imageID is not equal to none
+            if (imageID !== 'none') {
+
+                //Get the image name by imageID
+                const imageName = imageList.filter((image) => image.imageID === imageID).map((image) => image.data)
+                
+                const imageDetails = {
+                    name: imageName,
+                    imageID,
+                }
+                
+                //Delete image from database
+                axios.delete('http://localhost:5001/images/deleteImage', { data: imageDetails })
+                .then((res) => {
+                    const result = res.data
+                    const message = result.message
+                    console.log(message)
+                }).catch((err) => console.log(err))
+
+            }
+            
+            //If fileID is not equal to none
+            if (fileID !== 'none') {
+
+                //Get the file name by fileID
+                const fileName = filesLists.filter((files) => files.fileID === fileID).map((files) => files.data)
+                
+                const fileDetails = {
+                    name: fileName,
+                    fileID,
+                }
+                
+                //Delete image from database
+                axios.delete('http://localhost:5001/files/deleteFiles', { data: fileDetails })
+                .then((res) => {
+                    const result = res.data
+                    const message = result.message
+                    console.log(message)
+                }).catch((err) => console.log(err))
+            }
+
+
+        })
+        .catch((err) => console.log(err))
+
+
+        const filter = currentPost.filter((data) => data.postID !== postID)
+        setCurrentPost(filter)
+    }
 }
 
 const handleGetImage = (e) => {
@@ -524,16 +589,18 @@ const handleUploadFiles = () => {
     }
 }
 
+
+// Delete post icon show if the user are poster
 const deleteShow = (acctID) => {
     if (acctID === userAccount.acctID) {
         return true
-    }else {
-        return false
     }
-    
+
+    return false
 }
 
 
+// Submit new post
 const handlePost = () => {
 
         // insert current post in variable
@@ -833,13 +900,12 @@ const generatePic = (imageID) => {
     return sample
 }
  
-const imageUserPost = (id) => {
-    const accounts = JSON.parse(localStorage.getItem('accounts'))
-    const imagesList = JSON.parse(localStorage.getItem('images'))
-    const accountImageID = accounts.filter((account) => account.acctID === id).map((account) => account.imageID)
-    const filterImage = imagesList.filter((img) => img.imageID === accountImageID[0]).map((img) => img.data)
-    const url = 'http://localhost:5001/'
-    return url+filterImage[0]
+const imageUserPost = (acctID) => {
+    if (acctID && acctImagesList) {
+        const filter = acctImagesList.filter((data) => data.imageID === acctID).map((img) => img.data)
+        const url = 'http://localhost:5001/'
+        return url+filter[0]
+    }
 }
 
 const shortenFileName = (fileName) => {
@@ -928,9 +994,15 @@ const handleDownload = (fileName) => {
 const handleViewFile = (fileName) => {
     if (fileName) {
         const filePath = 'http://localhost:5001/' + fileName
-        console.log('filePath', filePath)
         setviewFileName(filePath)
         setshowViewFiles(true)
+    }
+}
+
+const handleViewImage = (fileName) => {
+    if (fileName) {
+        setviewFileName(fileName)
+        setshowViewImage(true)
     }
 }
 
@@ -949,7 +1021,7 @@ const checkIfPDFfile = (fileName) => {
 }
 
 const getFilesUrlsByFileID = (fileID) => {
-    if (fileID) {
+    if (fileID && filesLists) {
         const filter = filesLists.filter((data) => data.fileID === fileID)
         console.log(filter)
         return filter
@@ -989,7 +1061,7 @@ const handleShowComments = (post) => {
 
 
 const getImageUrlsByImageID = (imageID) => {
-    if (imageID) {
+    if (imageID && imageList) {
         const url = 'http://localhost:5001/'
         const filter = imageList.filter((data) => data.imageID === imageID).map((data) => url + data.data)
         return filter
@@ -1121,7 +1193,7 @@ const getImageUrlsByImageID = (imageID) => {
                         <div className={style.postModalContainer}>
                             <div className={style.headerPostModal}>
                                 <div className='d-flex gap-2 align-items-center'>
-                                    <img src={imageUserPost(userAccount.acctID)} alt="picture" style={{ width: '30px', height: '30px', borderRadius: '50%'}}/>
+                                    <img src={imageUserPost(userAccount.acctID)} alt='profile picture' id={style.imgDp}/>
                                     <p id={style.nameInPostModal}>{generateFullname()}</p>
                                 </div>
                                 <BiExit size={20} title='closed' cursor={'pointer'} onClick={closePostModal}/>
@@ -1216,6 +1288,15 @@ const getImageUrlsByImageID = (imageID) => {
                 )
         }
 
+        {
+                showViewImage && viewFileName && (
+                    <div className={style.prevFileCon}>
+                        <IoCloseCircle size={30} color='#BB2525' cursor={'pointer'} onClick={() => setshowViewImage(false)}/>
+                        <img src={viewFileName} width="100%" height="80%" alt='picture'/>
+                    </div>
+                )
+        }
+
         <div className={style.leftContent}>
             {
                 isShowSettings ? (
@@ -1285,8 +1366,8 @@ const getImageUrlsByImageID = (imageID) => {
                         <div className={style.card}>
                             <div className='d-flex flex-column gap-2'>
                                 <div className='d-flex align-items-center gap-2'>
-                                    <img src={generateImageByImageID(userAccount.imageID)} alt="profile" id={style.imgDp}/>
-                                    <div className={style.postBotton} onClick={() => setshowPostModal(true)}>What's on your mind?</div>
+                                    <img src={imageUserPost(userAccount.acctID)} alt="profile" id={style.imgDp}/>
+                                    <div className={style.postBotton} onClick={() => setshowPostModal(true)}>Share your thoughts here...</div>
                                     <FaRegImages size={20} onClick={() => setshowPostModal(true)}/>
                                 </div>
                             </div>
@@ -1301,7 +1382,7 @@ const getImageUrlsByImageID = (imageID) => {
                                             <h2>{post.name}</h2>
                                             <p>{post.timePosted +' ('+post.datePosted+')'}</p>
                                                 {
-                                                    deleteShow(post.acctID) && <AiOutlineDelete id={style.deleteBtn} title='delete' onClick={() => handleDeletePost(post.id)}/>
+                                                    deleteShow(post.acctID) && <AiOutlineDelete id={style.deleteBtn} title='delete' onClick={() => handleDeletePost(post.postID, post.imageID, post.fileID)}/>
                                                 }
                                         </div>
                                         <div className={style.body}>
@@ -1310,7 +1391,7 @@ const getImageUrlsByImageID = (imageID) => {
                                                 {
                                                     post.imageID !== 'none' && (
                                                         getImageUrlsByImageID(post.imageID).map((data, index) => (
-                                                            <div className={style.imgContainer}>
+                                                            <div className={style.imgContainer} onClick={() => handleViewImage(data)}>
                                                                 <img key={index} src={data} alt="photo" id={style.imgSend}/>
                                                             </div>
                                                         ))

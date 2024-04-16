@@ -649,7 +649,12 @@
   border-radius: 10px;
   display: flex;
   align-items: center;
+  cursor: pointer;
   justify-content: center;
+}
+
+.imgContainer:hover {
+  opacity: 0.5;
 }
 
 #imgSend {
@@ -796,6 +801,7 @@
     width: 30px;
     height: 30px;
     border-radius: 30px;
+    border: 1px solid #3e3f402b;
 }
 
 .rightContent {
