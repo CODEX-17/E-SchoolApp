@@ -144,7 +144,18 @@
     color: #3E3F40;
   }
 
+  .commentSection {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   .commentCard {
+    position: relative;
     animation: pop 0.5s ease;
     background-color: #ffffff;
     position: absolute;
@@ -203,7 +214,7 @@
   .comTop h2 {
     margin: 0;
     font-family: bold;
-    font-size: 20pt;
+    font-size: 15pt;
   }
 
   .comContent {
@@ -261,7 +272,7 @@
   }
 
   #imagePost {
-    width: 100%;
+    width: 200px;
     border-radius: 10px;
   }
 
@@ -280,11 +291,13 @@
 
   .commentFooter {
     width: 100%;
-    border-top: 2px solid #3E3F40;
+    border-top: 1px solid #3e3f4046;
     padding: 2%;
     display: flex;
     gap: 2%;
     align-items: center;
+    position: absolute;
+    bottom: 0;
   }
 
   .commentFooter textarea {
@@ -569,7 +582,7 @@
 .listPostContainer {
     overflow-y: auto;
     overflow-x: hidden;
-    height: 600px;
+    height: 85%;
     padding: 2%;
 }
 
@@ -851,8 +864,6 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-
-    border: 1px solid #3E3F40;
 }
 
 #cardCommentFiles p {

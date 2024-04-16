@@ -1095,83 +1095,93 @@ const getImageUrlsByImageID = (imageID) => {
 
         {
             showComments && currentComments && (
-                <div className={style.commentCard} style={{ height: filteredComments.length > 0 ? '100%' : 'auto' }}>
-                    <div className={style.comTop}>
-                        <div className='d-flex gap-2 align-items-center'>
-                            <img src={imageUserPost(currentComments.acctID)} alt="picture" id={style.comDP}/>
-                            <h2>{currentComments.name}</h2>
-                            <p style={{ fontSize: '10pt', margin: '0px'}}>({currentComments.datePosted} at {currentComments.timePosted})</p>
+                <div className={style.commentSection}>
+                    <div className={style.commentCard}>
+                        <div className={style.comTop}>
+                            <div className='d-flex gap-2 align-items-center'>
+                                <img src={imageUserPost(currentComments.acctID)} alt="picture" id={style.comDP}/>
+                                <h2>{currentComments.name}</h2>
+                                <p style={{ fontSize: '7pt', margin: '0px'}}>({currentComments.datePosted} at {currentComments.timePosted})</p>
+                            </div>
+                            <IoCloseCircle size={30} color='#F45050' cursor={'pointer'} onClick={() => setshowComments(false)}/>
                         </div>
-                        <IoCloseCircle size={30} color='#F45050' cursor={'pointer'} onClick={() => setshowComments(false)}/>
-                    </div>
-                    <div className={style.comContent} style={{ height: filteredComments.length > 0 ? '90%' : 'auto' }}>
-                        <div className={style.textPost}>{currentComments.postContent}</div>
-                        {
-                            currentComments.imageID !== 'none' &&
-                            <img src={generatePic(currentComments.imageID)} alt="img" id={style.imagePost}/>
-                        }
-                        
-                        {
-                            currentComments.fileID !== 'none' && (
-                                <div id={style.cardCommentFiles}>
-                                    <SiFiles size={30} color='#F45050'/>
-                                    <p>{generateFileName(currentComments.fileID)}</p>
+                        <div className={style.comContent} style={{ height: filteredComments.length > 0 ? '90%' : 'auto', border: '1px solid black' }}>
+                            <div className={style.textPost}>{currentComments.postContent}</div>
+                            {
+                                currentComments.imageID !== 'none' &&
+                                <div className={style.imgContainer} onClick={() => handleViewImage(data)}>
+                                    <img src={generatePic(currentComments.imageID)} alt="photo" id={style.imgSend}/>
                                 </div>
-                            )
-                        }
+                            }
+                            
+                            {
+                                currentComments.fileID !== 'none' && (
+                                    <div id={style.cardCommentFiles}>
+                                        <SiFiles size={30} color='#F45050'/>
+                                        <p>{generateFileName(currentComments.fileID)}</p>
+                                    </div>
+                                )
+                            }
 
-                        {
-                            currentComments.quizID !== 'none' && (
-                                <div id={style.cardCommentFiles}>
-                                    <GiNotebook size={30} color='#4F6F52'/>
-                                    <p>{generateQuizname(currentComments.quizID)}</p>
-                                </div>
-                            )
-                        }
+                            <div id={style.cardCommentFiles}>
+                                <SiFiles size={30} color='#F45050'/>
+                                <p>dsds</p>
+                            </div>
+                            
 
-                        {
-                            filteredComments.length > 0 && 
-                                <>
-                                    <h1>Comments:</h1> {
-                                        filteredComments.map((coms) => (
-                                            <div className={style.comsLayout}>
-                                                <img src={imageUserPost(coms.acctID)} alt="picture" id={style.bubbleDP}/>
-                                                <div className={style.bubble}>
-                                                    <div className={style.comsHeadPart}>
-                                                        <h2>{generateFullnameByAcctID(coms.acctID)}</h2>
-                                                        <br />
-                                                        <p style={{ fontSize: '8pt'}}>({coms.date} at {coms.time})</p>
-                                                    </div>
-                                                    <p style={{ fontSize: '12pt'}}>{coms.content}</p>
-                                                    {
-                                                        coms.imageID !== 'none' &&
-                                                        <img src={generatePic(coms.imageID)} alt="image" width={200} style={{ borderRadius: '10px'}}/>
-                                                    }
-                                                    {
-                                                         coms.fileID !== 'none' &&
-                                                         <div id={style.comsFiles}>
-                                                            <SiFiles size={30} color='#F45050'/>
-                                                            <p>{generateFileName(coms.fileID)}</p>
-                                                            <FiDownload size={20} cursor={'pointer'} color='#3E3F40' onClick={() =>handleDownload(coms.fileID)}/>
+                            {
+                                currentComments.quizID !== 'none' && (
+                                    <div id={style.cardCommentFiles}>
+                                        <GiNotebook size={30} color='#4F6F52'/>
+                                        <p>{generateQuizname(currentComments.quizID)}</p>
+                                    </div>
+                                )
+                            }
+
+                            {
+                                filteredComments.length > 0 && 
+                                    <>
+                                        <h1>Comments:</h1> {
+                                            filteredComments.map((coms) => (
+                                                <div className={style.comsLayout}>
+                                                    <img src={imageUserPost(coms.acctID)} alt="picture" id={style.bubbleDP}/>
+                                                    <div className={style.bubble}>
+                                                        <div className={style.comsHeadPart}>
+                                                            <h2>{generateFullnameByAcctID(coms.acctID)}</h2>
+                                                            <br />
+                                                            <p style={{ fontSize: '8pt'}}>({coms.date} at {coms.time})</p>
                                                         </div>
-                                                    }
-                                                        
+                                                        <p style={{ fontSize: '12pt'}}>{coms.content}</p>
+                                                        {
+                                                            coms.imageID !== 'none' &&
+                                                            <img src={generatePic(coms.imageID)} alt="image" width={200} style={{ borderRadius: '10px'}}/>
+                                                        }
+                                                        {
+                                                            coms.fileID !== 'none' &&
+                                                            <div id={style.comsFiles}>
+                                                                <SiFiles size={30} color='#F45050'/>
+                                                                <p>{generateFileName(coms.fileID)}</p>
+                                                                <FiDownload size={20} cursor={'pointer'} color='#3E3F40' onClick={() =>handleDownload(coms.fileID)}/>
+                                                            </div>
+                                                        }
+                                                            
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        ))
-                                    }
-                                </>
-                        }
-                        
+                                            ))
+                                        }
+                                    </>
+                            }
+                            
 
-                    </div>
-                    <div className={style.commentFooter}>
-                        <textarea onChange={(e) => setcommentContent(e.target.value)} placeholder='Insert comment...'></textarea>
-                        <div className='d-flex flex-column'>
-                            <MdOutlineAttachment size={20} cursor={'pointer'} onClick={() => setshowChangeFileModal(true)}/>
-                            <FaRegImages size={18} cursor={'pointer'} onClick={() => setshowPostModal(true)}/>
                         </div>
-                        <button size={29} id={style.sendBtnComs} onClick={handleSendReply}>Reply</button>
+                        <div className={style.commentFooter}>
+                            <textarea onChange={(e) => setcommentContent(e.target.value)} placeholder='Insert comment...'></textarea>
+                            <div className='d-flex flex-column'>
+                                <MdOutlineAttachment size={20} cursor={'pointer'} onClick={() => setshowChangeFileModal(true)}/>
+                                <FaRegImages size={18} cursor={'pointer'} onClick={() => setshowPostModal(true)}/>
+                            </div>
+                            <button size={29} id={style.sendBtnComs} onClick={handleSendReply}>Reply</button>
+                        </div>
                     </div>
                 </div>
             )
@@ -1390,6 +1400,7 @@ const getImageUrlsByImageID = (imageID) => {
                                             <div className={style.imgListInPost}>
                                                 {
                                                     post.imageID !== 'none' && (
+                                                        getImageUrlsByImageID(post.imageID) &&
                                                         getImageUrlsByImageID(post.imageID).map((data, index) => (
                                                             <div className={style.imgContainer} onClick={() => handleViewImage(data)}>
                                                                 <img key={index} src={data} alt="photo" id={style.imgSend}/>
@@ -1401,7 +1412,7 @@ const getImageUrlsByImageID = (imageID) => {
                                             
                                             {
                                                 post.fileID !== 'none'  && (
-                                                    
+                                                    getFilesUrlsByFileID(post.fileID) &&
                                                     getFilesUrlsByFileID(post.fileID).map((data, index) => (
                                                         <div id={style.filePdf}>
                                                             <SiFiles size={30} color='#F45050'/>
@@ -1439,7 +1450,6 @@ const getImageUrlsByImageID = (imageID) => {
                                             }
 
                                         </div>
-                                        
                                         
                                         <div className={style.footer}>
                                             { 
