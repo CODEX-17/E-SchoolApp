@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 16, 2024 at 11:34 AM
+-- Generation Time: Apr 17, 2024 at 11:26 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -269,9 +269,11 @@ INSERT INTO `class_list` (`id`, `acctID`, `classCode`, `hidden`) VALUES
 
 CREATE TABLE `comments` (
   `id` int(11) NOT NULL,
-  `commentID` varchar(10) NOT NULL,
+  `replyID` varchar(10) NOT NULL,
   `postID` varchar(10) NOT NULL,
+  `classCode` varchar(10) NOT NULL,
   `acctID` varchar(10) NOT NULL,
+  `fullname` varchar(100) NOT NULL,
   `content` varchar(100) NOT NULL,
   `time` varchar(20) NOT NULL,
   `date` varchar(20) NOT NULL,
@@ -283,26 +285,19 @@ CREATE TABLE `comments` (
 -- Dumping data for table `comments`
 --
 
-INSERT INTO `comments` (`id`, `commentID`, `postID`, `acctID`, `content`, `time`, `date`, `fileID`, `imageID`) VALUES
-(1, '8J26Xi212', 'jQ3BMZtE', 'un2kt7px', 'My name is', '03:13 PM', 'Fri Dec 15 2023', 'none', 'none'),
-(2, 'tO2n1B212', 'jQ3BMZtE', 'un2kt7px', 'New2', '03:23 PM', 'Fri Dec 15 2023', 'emf1G2t6', 'none'),
-(3, 'tO2n1B231', 'jQ3BMZtE', 'un2kt7px', 'new 3', '10:54 AM', 'Mon Dec 18 2023', 'none', 'VHXQ6s6O'),
-(4, '1J26Xi223', 'YkqaXCPa', 'un2kt7px', 'kkkk', '03:33 PM', 'Fri Dec 15 2023', 'none', 'none'),
-(5, '0QT309fJ', 'jQ3BMZtE', 'un2kt7px', 'ay panget', '03:53 AM', 'Fri Jan 26 2024', 'none', 'none'),
-(6, 'g3IXFaPT', 'jQ3BMZtE', 'un2kt7px', 'talaga ba beh', '03:54 AM', 'Fri Jan 26 2024', 'none', 'none'),
-(7, 'dDJTL02P', 'jQ3BMZtE', 'un2kt7px', 'ay cge beh', '03:57 AM', 'Fri Jan 26 2024', 'none', 'none'),
-(8, 'hWkB7FqS', 'jQ3BMZtE', 'un2kt7px', 'ito na behh', '03:58 AM', 'Fri Jan 26 2024', 'none', 'none'),
-(9, 'LE2Orx4r', 'jQ3BMZtE', 'un2kt7px', 'dsdsds', '04:09 AM', 'Fri Jan 26 2024', 'Hq4KoSMS', 'none'),
-(10, 'Xv8YXoiL', 'jQ3BMZtE', 'un2kt7px', 'its true', '04:12 AM', 'Fri Jan 26 2024', 'MBNnN2F8', 'none'),
-(11, 'R7M2yqOH', 'jQ3BMZtE', 'un2kt7px', 'its true', '04:14 AM', 'Fri Jan 26 2024', 'oeRN2G0o', 'none'),
-(12, 'F5k8e6BL', 'jQ3BMZtE', 'un2kt7px', 'working promise', '04:15 AM', 'Fri Jan 26 2024', '8HJFLsGy', 'none'),
-(13, 'wjfixoiE', 'jQ3BMZtE', 'un2kt7px', 'try', '04:17 AM', 'Fri Jan 26 2024', 'lG2HD7ql', 'none'),
-(14, '6kbrKrrh', 'jQ3BMZtE', 'un2kt7px', 'dsdas', '11:27 AM', 'Fri Jan 26 2024', 'none', 'none'),
-(15, '0Gndbmkx', 'eYIFfaMC', 'un2kt7px', 'sheesh', '12:19 PM', 'Fri Jan 26 2024', 'none', 'none'),
-(16, 'AZ7pM3hh', '9oY6kRi8', 'un2kt7px', 'hahah nuyan', '12:20 PM', 'Fri Jan 26 2024', 'none', 'none'),
-(17, '4cpAvAnK', '9oY6kRi8', 'VHXQ6s6O', 'HAHA POGI', '12:21 PM', 'Fri Jan 26 2024', 'none', 'none'),
-(18, 'hKz29lig', 'oJlxaGuq', 'un2kt7px', 'asasd', '09:36 PM', 'Sun Jan 28 2024', 'none', 'none'),
-(19, 'tpZ3mS4Y', '7IsBExcZ', 'WhpOtets', 'new 1', '08:48 AM', 'Mon Jan 29 2024', 'hRP4aof1', 'none');
+INSERT INTO `comments` (`id`, `replyID`, `postID`, `classCode`, `acctID`, `fullname`, `content`, `time`, `date`, `fileID`, `imageID`) VALUES
+(1, '5B7Rww8K', '5B7Rww8K', 'IT-CAP2', 'un2kt7px', 'Rumar C. Pamparo', 'My name is', '03:13 PM', 'Fri Dec 15 2023', 'none', 'none'),
+(2, '5B7Rww8K', '5B7Rww8K', 'IT-CAP2', 'un2kt7px', 'Rumar C. Pamparo', 'New2', '03:23 PM', 'Fri Dec 15 2023', 'none', 'none'),
+(20, '5B7Rww8K', '5B7Rww8K', 'IT-CAP2', 'un2kt7px', 'Rumar C. Pamparo', 'newComment', '04:35 PM', 'Wed Apr 17 2024', 'none', 'none'),
+(21, '5B7Rww8K', '5B7Rww8K', 'IT-CAP2', 'un2kt7px', 'Rumar C. Pamparo', 'newComment', '04:40 PM', 'Wed Apr 17 2024', 'none', 'none'),
+(22, '5B7Rww8K', '5B7Rww8K', 'IT-CAP2', 'un2kt7px', 'Rumar C. Pamparo', 'TRY LANG', '05:09 PM', 'Wed Apr 17 2024', 'none', 'none'),
+(23, '5B7Rww8K', '5B7Rww8K', 'IT-CAP2', 'un2kt7px', 'Rumar C. Pamparo', 'cge nga', '05:10 PM', 'Wed Apr 17 2024', 'none', 'none'),
+(24, '5B7Rww8K', '5B7Rww8K', 'IT-CAP2', 'un2kt7px', 'Rumar C. Pamparo', 'sample comment with image', '05:10 PM', 'Wed Apr 17 2024', 'none', 'mRqjkzL5'),
+(25, 'DOann9lo', 'DOann9lo', 'IT-ELECT2', 'un2kt7px', 'Rumar C. Pamparo', 'try', '05:13 PM', 'Wed Apr 17 2024', 'none', 'none'),
+(26, 'DOann9lo', 'DOann9lo', 'IT-ELECT2', 'un2kt7px', 'Rumar C. Pamparo', '', '05:16 PM', 'Wed Apr 17 2024', 'kQueNYI2', 'none'),
+(27, 'SnScSSNM', 'SnScSSNM', 'IT-ELECT2', 'un2kt7px', 'Rumar C. Pamparo', 'ito files', '05:23 PM', 'Wed Apr 17 2024', '3GcnDxAn', 'none'),
+(28, 'SnScSSNM', 'SnScSSNM', 'IT-ELECT2', 'un2kt7px', 'Rumar C. Pamparo', '', '05:23 PM', 'Wed Apr 17 2024', '8Wh9S1LK', 'none'),
+(29, 'SnScSSNM', 'SnScSSNM', 'IT-ELECT2', 'un2kt7px', 'Rumar C. Pamparo', '', '05:25 PM', 'Wed Apr 17 2024', 'none', 'xTuZ12uV');
 
 -- --------------------------------------------------------
 
@@ -335,7 +330,11 @@ INSERT INTO `files` (`id`, `name`, `type`, `data`, `dateUploaded`, `timeUploaded
 (48, 'PR_No._1500-23BAC...pdf', 'application/pdf', 'file_1713152254698.pdf', 'Mon Apr 15 2024', '11:37 AM', 'un2kt7px', 'IT-ELECT2', 'iwPl3xFW'),
 (49, 'NEL-V1416 COD MARCH 04, 2024.pdf', 'application/pdf', 'file_1713152969292.pdf', 'Mon Apr 15 2024', '11:49 AM', 'un2kt7px', 'IT-ELECT2', 'XlcYbqYk'),
 (50, 'PR_NO._2985-23BAC_-_ROXIEMAR_CONSTRUCTION_1xEh6C9.pdf', 'application/pdf', 'file_1713230070858.pdf', 'Tue Apr 16 2024', '09:14 AM', 'un2kt7px', 'IT-ELECT2', 'DOann9lo'),
-(51, 'PR_No._1500-23BAC...pdf', 'application/pdf', 'file_1713230070868.pdf', 'Tue Apr 16 2024', '09:14 AM', 'un2kt7px', 'IT-ELECT2', 'DOann9lo');
+(51, 'PR_No._1500-23BAC...pdf', 'application/pdf', 'file_1713230070868.pdf', 'Tue Apr 16 2024', '09:14 AM', 'un2kt7px', 'IT-ELECT2', 'DOann9lo'),
+(55, 'BN_CERTIFICATE-DMIG215716208423.pdf', 'application/pdf', 'file_1713342638775.pdf', 'Wed Apr 17 2024', '04:30 PM', 'un2kt7px', 'IT-CAP2', 'PuA2vl6y'),
+(56, 'OR_DMIG215716208423.pdf', 'application/pdf', 'file_1713345403821.pdf', 'Wed Apr 17 2024', '05:16 PM', 'un2kt7px', 'IT-ELECT2', 'kQueNYI2'),
+(57, 'OR_DMIG215716208423.pdf', 'application/pdf', 'file_1713345789537.pdf', 'Wed Apr 17 2024', '05:23 PM', 'un2kt7px', 'IT-ELECT2', '3GcnDxAn'),
+(58, 'UNDERTAKING_DMIG215716208423.pdf', 'application/pdf', 'file_1713345832208.pdf', 'Wed Apr 17 2024', '05:23 PM', 'un2kt7px', 'IT-ELECT2', '8Wh9S1LK');
 
 -- --------------------------------------------------------
 
@@ -497,7 +496,17 @@ INSERT INTO `image` (`id`, `name`, `type`, `data`, `dateUploaded`, `timeUploaded
 (1947, 'Untitled (10 x 10 in).gif', 'image/gif', 'image_1713230070863.gif', 'Tue Apr 16 2024', '09:14 AM', 'un2kt7px', 'IT-ELECT2', 'DOann9lo'),
 (1948, '423686914_439679775064082_7513696424590273516_n (1).jpg', 'image/jpeg', 'image_1713230102728.jpg', 'Tue Apr 16 2024', '09:15 AM', 'un2kt7px', 'IT-ELECT2', '1SXMpTpy'),
 (1949, 'Screenshot 2024-03-04 105655.png', 'image/png', 'image_1713230102733.png', 'Tue Apr 16 2024', '09:15 AM', 'un2kt7px', 'IT-ELECT2', '1SXMpTpy'),
-(1950, '423619598_7291313737588313_3862564192417168033_n.jpg', 'image/jpeg', 'image_1713230102736.jpg', 'Tue Apr 16 2024', '09:15 AM', 'un2kt7px', 'IT-ELECT2', '1SXMpTpy');
+(1950, '423619598_7291313737588313_3862564192417168033_n.jpg', 'image/jpeg', 'image_1713230102736.jpg', 'Tue Apr 16 2024', '09:15 AM', 'un2kt7px', 'IT-ELECT2', '1SXMpTpy'),
+(1954, 'Your paragraph text (2).jpg', 'image/jpeg', 'image_1713319714588.jpg', 'Wed Apr 17 2024', '10:08 AM', 'un2kt7px', 'IT-ELECT2', 'SnScSSNM'),
+(1955, 'Your paragraph text (3).jpg', 'image/jpeg', 'image_1713319714590.jpg', 'Wed Apr 17 2024', '10:08 AM', 'un2kt7px', 'IT-ELECT2', 'SnScSSNM'),
+(1956, 'Your paragraph text.jpg', 'image/jpeg', 'image_1713319714592.jpg', 'Wed Apr 17 2024', '10:08 AM', 'un2kt7px', 'IT-ELECT2', 'SnScSSNM'),
+(1957, '435769762_380921994913719_4069441456034002861_n.jpg', 'image/jpeg', 'image_1713319714592.jpg', 'Wed Apr 17 2024', '10:08 AM', 'un2kt7px', 'IT-ELECT2', 'SnScSSNM'),
+(1958, 'testimony.png', 'image/png', 'image_1713319714591.png', 'Wed Apr 17 2024', '10:08 AM', 'un2kt7px', 'IT-ELECT2', 'SnScSSNM'),
+(1959, 'Your paragraph text (3).jpg', 'image/jpeg', 'image_1713342533252.jpg', 'undefined', 'undefined', 'un2kt7px', 'IT-CAP2', 'XgdtaIbB'),
+(1960, 'Your paragraph text (3).jpg', 'image/jpeg', 'image_1713342614235.jpg', 'undefined', 'undefined', 'un2kt7px', 'IT-CAP2', 'eW9BbVNK'),
+(1961, 'Your paragraph text (3).jpg', 'image/jpeg', 'image_1713342638774.jpg', 'undefined', 'undefined', 'un2kt7px', 'IT-CAP2', 'PuA2vl6y'),
+(1962, 'Your paragraph text (2).jpg', 'image/jpeg', 'image_1713345058500.jpg', 'undefined', 'undefined', 'un2kt7px', 'IT-CAP2', 'mRqjkzL5'),
+(1963, 'wonder drops.png', 'image/png', 'image_1713345902985.png', 'undefined', 'undefined', 'un2kt7px', 'IT-ELECT2', 'xTuZ12uV');
 
 -- --------------------------------------------------------
 
@@ -697,7 +706,8 @@ INSERT INTO `post` (`id`, `postID`, `acctID`, `name`, `timePosted`, `datePosted`
 (270, 'iwPl3xFW', 'un2kt7px', 'Rumar C. Pamparo', '11:37 AM', 'Mon Apr 15 2024', 'sample multiple', 'iwPl3xFW', 'none', 'iwPl3xFW', 0, 0, 'IT-ELECT2', 'ENTREPRENEURSHIP 2', 'normal', 'none', 'none', 0, 'none'),
 (271, 'XlcYbqYk', 'un2kt7px', 'Rumar C. Pamparo', '11:49 AM', 'Mon Apr 15 2024', 'nel', 'XlcYbqYk', 'none', 'XlcYbqYk', 0, 0, 'IT-ELECT2', 'ENTREPRENEURSHIP 2', 'normal', 'none', 'none', 0, 'none'),
 (272, 'DOann9lo', 'un2kt7px', 'Rumar C. Pamparo', '09:14 AM', 'Tue Apr 16 2024', 'sample multiple post', 'DOann9lo', 'DOann9lo', 'DOann9lo', 0, 0, 'IT-ELECT2', 'ENTREPRENEURSHIP 2', 'normal', 'none', 'none', 0, 'none'),
-(273, '1SXMpTpy', 'un2kt7px', 'Rumar C. Pamparo', '09:15 AM', 'Tue Apr 16 2024', 'sample', '1SXMpTpy', '1SXMpTpy', 'none', 0, 0, 'IT-ELECT2', 'ENTREPRENEURSHIP 2', 'normal', 'none', 'none', 0, 'none');
+(273, '1SXMpTpy', 'un2kt7px', 'Rumar C. Pamparo', '09:15 AM', 'Tue Apr 16 2024', 'sample', '1SXMpTpy', '1SXMpTpy', 'none', 0, 0, 'IT-ELECT2', 'ENTREPRENEURSHIP 2', 'normal', 'none', 'none', 0, 'none'),
+(276, 'SnScSSNM', 'un2kt7px', 'Rumar C. Pamparo', '10:08 AM', 'Wed Apr 17 2024', 'testimony', 'SnScSSNM', 'SnScSSNM', 'none', 0, 0, 'IT-ELECT2', 'ENTREPRENEURSHIP 2', 'normal', 'none', 'none', 0, 'none');
 
 -- --------------------------------------------------------
 
@@ -1338,13 +1348,13 @@ ALTER TABLE `class_list`
 -- AUTO_INCREMENT for table `comments`
 --
 ALTER TABLE `comments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT for table `files`
 --
 ALTER TABLE `files`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
 
 --
 -- AUTO_INCREMENT for table `filllayout`
@@ -1362,7 +1372,7 @@ ALTER TABLE `friends`
 -- AUTO_INCREMENT for table `image`
 --
 ALTER TABLE `image`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1954;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1964;
 
 --
 -- AUTO_INCREMENT for table `members`
@@ -1380,7 +1390,7 @@ ALTER TABLE `messages`
 -- AUTO_INCREMENT for table `post`
 --
 ALTER TABLE `post`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=276;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=277;
 
 --
 -- AUTO_INCREMENT for table `questionbank`
