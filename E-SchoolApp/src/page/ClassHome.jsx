@@ -40,6 +40,7 @@ import { useReactionsStore } from '../stores/useReactionsStore';
 import { useCommentsStore } from '../stores/useCommentsStore';
 import { BiSolidMessageDetail } from "react-icons/bi";
 import { IoDocumentText } from "react-icons/io5";
+import { FaFolderOpen } from "react-icons/fa";
 import generateImageByImageID from '../utils/generateImageByImageID'
 
 import { FaPlus } from "react-icons/fa";
@@ -95,7 +96,7 @@ const ClassHome = ({ currentSubjectName, currentImageClass, classCodeCurrent, cu
  const [reactions, setreactions] = useState()
  const [comments, setcomments] = useState()
  const [accountsList, setaccountsList] = useState()
- const [commentContent, setcommentContent] = useState()
+ const [commentContent, setcommentContent] = useState(null)
  const [classImage, setclassImage] = useState(null)
 
  const [currentScore, setcurrentScore] = useState(0)
@@ -104,7 +105,7 @@ const ClassHome = ({ currentSubjectName, currentImageClass, classCodeCurrent, cu
  const [postType, setPostType] = useState('')
  const [quizObj, setQuizObj] = useState('')
  const [filteredComments, setFilteredComments] = useState([])
- const [currentPostID, setCurrentPostID] = useState()
+ 
  
  const { uploadPost, deletePost, getPost, updateHeart } = usePostStore()
  const { uploadImage, getImages, images } = useImageStore()
@@ -130,9 +131,8 @@ const ClassHome = ({ currentSubjectName, currentImageClass, classCodeCurrent, cu
  const [showComments, setshowComments] = useState(false)
  const inputImageFileRef = useRef(null)
  const inputFilesRef = useRef(null)
-
- const [currentComments, setcurrentComments] = useState([])
-
+ const inputImageFileRefComment = useRef(null)
+ const inputFilesRefComment = useRef(null)
 
 
  const notif = new Howl({ src: [notifSound]})
@@ -157,8 +157,13 @@ const ClassHome = ({ currentSubjectName, currentImageClass, classCodeCurrent, cu
  const [reactionsList, setreactionsList] = useState(null)
  const [imageList, setimageList] = useState(null)
  const [filesLists, setfilesLists] = useState(null)
+ const [commentsList, setcommentsList] = useState(null)
  const [acctImagesList, setacctImagesList] = useState(null)
  const [showViewImage, setshowViewImage] = useState(false)
+
+ const [selectedPostID, setSelectedPostID] = useState(null)
+ const [selectedPost, setSelectedPost] = useState(null)
+ const [selectedComments, setSelectedComments] = useState(null)
 
 
  const [isShowErrorMessage, setisShowErrorMessage] = useState(false)
@@ -227,6 +232,9 @@ const ClassHome = ({ currentSubjectName, currentImageClass, classCodeCurrent, cu
         .then((res) => setacctImagesList(res.data))
         .catch((err) => console.log(err))
 
+        //GET COMMENTS BY CLASSCODE
+        getCommentsByClassCode()
+
         //GET FILES BY CLASSCODE
         getFilesByClassCode()
 
@@ -236,6 +244,21 @@ const ClassHome = ({ currentSubjectName, currentImageClass, classCodeCurrent, cu
     }
 
  },[])
+
+ const getCommentsByClassCode = () => (
+
+    //GET COMMENTS BY CLASSCODE
+    axios.get('http://localhost:5001/comments/getCommentsByClassCode/' + currentClassCode)
+    .then((res) => {
+        const value = res.data
+        console.log('comments', value)
+        setcommentsList(value)
+        setshowLoading(false)
+    })
+    .catch((err) => {
+        console.log(err)
+    })
+ )
 
  const getImagesByClassCode = () => (
 
@@ -378,58 +401,137 @@ const navigateClass = (choose, type, obj) => {
     setPostType(type)
 }
 
-const handleSendReply = () => {
-    if (commentContent) {
+const submitReply = () => {
+    if (commentContent || file || docxFiles) {
+
+        console.log(commentContent,file,docxFiles)
 
         let fileID = 'none'
         let imageID = 'none'
-        let postID = currentPostID
-        let updated = [...filteredComments]
-        
-        
+        let content = ''
 
-        if (docxFileUploaded) {
-            fileID = docxFileUploaded.fileID
+        const id = generateID()
 
-            let updated = [...fileList]
-            updated.push(docxFileUploaded)
-            setfileList(updated)
+        if (docxFiles) {
+            fileID = id
         }
 
-        if (imageFile) {
-            imageID = imageFile.imageID
-
-            let updated = [...imagesList]
-            updated.push(imageFile)
-            setimagesList(updated)
+        if (file) {
+            imageID = id
         }
-        
-        const data = {
-            commentID: generateID(),
-            postID,
+
+        if (commentContent) {
+            content = commentContent
+        }
+
+        let data = {
+            content,
+            replyID: selectedPost.postID,
+            postID: selectedPost.postID,
             acctID: userAccount.acctID,
-            content: commentContent,
+            fullname: generateFullname(),
+            classCode: currentClassCode,
             time,
             date,
-            fileID,
-            imageID,
+            file: docxFiles,
+            image: file,
         }
 
-        addComments(data)
-        updated.push(data)
-        setcomments((old) => [...old, data])
-        console.log('data',data)
-        setFilteredComments(updated)
+        // if image is not null it return unique id
+        if (data.image) {
+            data.imageID = id
+        }else {
+            data.imageID = 'none'
+        }
 
-        const message = 'Message commented.'
-        notify(message, 'success')
+        // if file is not null it return unique id
+        if (data.file) {
+            data.fileID = id
+        }else {
+            data.fileID = 'none'
+        }
+
+        console.log('data', data)
+
+        axios.post('http://localhost:5001/comments/addComment', data)
+        .then((res) => {
+
+            const result = res.data
+            const message = result.message
+
+            //API for adding image of post
+            if (data.image) {
+                
+                const images = data.image
+                const formData = new FormData
+                formData.append('imageID', data.imageID)
+                formData.append('dateUploaded', data.datePosted)
+                formData.append('timeUploaded', data.timePosted)
+                formData.append('acctID', data.acctID)
+                formData.append('classCode', data.classCode)
+
+                for (let i = 0; i < images.length; i++) {
+                    formData.append('image', images[i])
+                }
+                
+                axios.post('http://localhost:5001/images/addImage', formData )
+                .then((res) => {
+                    const data = res.data
+                    setshowLoading(true)
+                    getImagesByClassCode()
+                    console.log(data.message)
+                })
+                .catch((err) => {
+                    console.log(err)
+                })
+
+            }
+
+            //If fileID is not equal to none
+            if (data.file) {
+
+                const files = data.file
+                const formData = new FormData
+                formData.append('fileID', data.fileID)
+                formData.append('dateUploaded', date)
+                formData.append('timeUploaded', time)
+                formData.append('acctID', data.acctID)
+                formData.append('classCode', data.classCode)
+                
+                for (let i = 0; i < files.length; i++) {
+                    formData.append('file', files[i])
+                }
+
+                axios.post('http://localhost:5001/files/addFiles', formData)
+                .then((res) => {
+                    const data = res.data
+                    getFilesByClassCode()
+                    console.log(data.message)
+                })
+                .catch((err) => {
+                        console.log(err)
+                    })
+            }
+
+            const { file: fileData, image: imageData, ...newData } = data
+            setSelectedComments((oldData) => [...oldData, newData])
+
+            getCommentsByClassCode()
+            notify(message, 'success')
+
+        })
+        .catch((err) => console.log(err))
+
+        setFile(null)
+        setdocxFiles(null)
+        setcommentContent('')
+
+        
+        
     }else {
         const message = 'Please input comment message.'
         notify(message, 'err')
     }
-    
-
-
 }
 
 const notify = (message, state) => {
@@ -889,15 +991,12 @@ const preventDefault = (e) => {
 
 
 const generatePic = (imageID) => {
-    getImages()
-    const id = imageID
-    const url = 'http://localhost:5001/'
-    const allImages = JSON.parse(localStorage.getItem('images'))
-    const filter = allImages.filter((img) => img.imageID === id).map((img) => img.data)
-    if (url+filter[0]) {
-        return url+filter[0]
+    if (imageID) {
+        const url = 'http://localhost:5001/'
+        const filter = imageList.filter((data) => data.imageID === imageID).map((img) => url + img.data)
+        return filter[0]
     }
-    return sample
+    
 }
  
 const imageUserPost = (acctID) => {
@@ -931,16 +1030,12 @@ const handleTakeQuiz = (quizID, postID) => {
 } 
 
 const generateFileName = (fileID) => {
-    const files = [...filesList]
-    if (fileID) {
-        const result = files.filter((file) => file.fileID === fileID).map((file) => file.name)
+    if (fileID && filesList) {
+        const result = filesList.filter((file) => file.fileID === fileID).map((file) => file.name)
         const final = result[0]?.match(/[a-zA-Z0-9]/g).length > 20 ? result[0]?.substring(0, 20) + '...' : result[0]
         return final
     }
-
 }
-
-
 
 const handleUploadImageChange = (e) => {
     e.preventDefault()
@@ -1047,22 +1142,33 @@ const handleChooseHome = () => {
     setChoose('home')
 }
 
-const handleShowComments = (post) => {
-    const { replyID, postID } = post
-    setCurrentPostID(postID)
 
-    if (comments) {
-        const filter = comments.filter((coms) => coms.postID === replyID)
-        setFilteredComments(filter)
+//Handle function when click the comment icon
+const handleShowComments = (postID) => {
+
+    if (postID && commentsList) {
+        setSelectedPostID(postID)
+
+        //Filter the selected post by postID
+        const filterPost = currentPost.filter((data) => data.postID === postID)
+        console.log(filterPost)
+        setSelectedPost(filterPost[0])
+
+        //Filter the comments by postID
+        const filter = commentsList.filter((data) => data.postID === postID)
+        
+        if (filter) {
+            setSelectedComments(filter)
+        }
+
+        setshowComments(true)
     }
-    setcurrentComments(post)
-    setshowComments(true)
 }
 
 
 const getImageUrlsByImageID = (imageID) => {
     if (imageID && imageList) {
-        const url = 'http://localhost:5001/'
+        const url = 'http://localhost:5001/'       
         const filter = imageList.filter((data) => data.imageID === imageID).map((data) => url + data.data)
         return filter
     }
@@ -1094,68 +1200,81 @@ const getImageUrlsByImageID = (imageID) => {
         }
 
         {
-            showComments && currentComments && (
+            showComments && selectedPost && (
                 <div className={style.commentSection}>
                     <div className={style.commentCard}>
                         <div className={style.comTop}>
                             <div className='d-flex gap-2 align-items-center'>
-                                <img src={imageUserPost(currentComments.acctID)} alt="picture" id={style.comDP}/>
-                                <h2>{currentComments.name}</h2>
-                                <p style={{ fontSize: '7pt', margin: '0px'}}>({currentComments.datePosted} at {currentComments.timePosted})</p>
+                                <img src={imageUserPost(selectedPost.acctID)} alt="picture" id={style.comDP}/>
+                                <h2>{selectedPost.name}</h2>
+                                <p style={{ fontSize: '7pt', margin: '0px'}}>({selectedPost.datePosted} at {selectedPost.timePosted})</p>
                             </div>
                             <IoCloseCircle size={30} color='#F45050' cursor={'pointer'} onClick={() => setshowComments(false)}/>
                         </div>
-                        <div className={style.comContent} style={{ height: filteredComments.length > 0 ? '90%' : 'auto', border: '1px solid black' }}>
-                            <div className={style.textPost}>{currentComments.postContent}</div>
+                        <h1 id={style.textPost}>{selectedPost.postContent}</h1>
+                        <div className={style.comContent} >
                             {
-                                currentComments.imageID !== 'none' &&
-                                <div className={style.imgContainer} onClick={() => handleViewImage(data)}>
-                                    <img src={generatePic(currentComments.imageID)} alt="photo" id={style.imgSend}/>
-                                </div>
-                            }
-                            
-                            {
-                                currentComments.fileID !== 'none' && (
-                                    <div id={style.cardCommentFiles}>
-                                        <SiFiles size={30} color='#F45050'/>
-                                        <p>{generateFileName(currentComments.fileID)}</p>
+                                selectedPost.imageID !== 'none' && (
+                                    <div className={style.imageViewSlider}>
+                                        {
+                                            getImageUrlsByImageID(selectedPost.imageID).map((data) => (
+                                                <div className={style.imgContainer} onClick={() => handleViewImage(data)}>
+                                                    <img src={data} alt="photo" id={style.imgSend}/>
+                                                </div>  
+                                            ))  
+                                        }
                                     </div>
                                 )
+                                
+                                
                             }
-
-                            <div id={style.cardCommentFiles}>
-                                <SiFiles size={30} color='#F45050'/>
-                                <p>dsds</p>
-                            </div>
-                            
+                        
+                            {
+                                selectedPost.fileID !== 'none' && (
+                                    getFilesUrlsByFileID(selectedPost.fileID) &&
+                                    getFilesUrlsByFileID(selectedPost.fileID).map((data, index) => (
+                                        <div id={style.filePdf}>
+                                            <SiFiles size={30} color='#F45050'/>
+                                            <p>{shortenFileName(data.name)}</p>
+                                            {
+                                                checkIfPDFfile(data.data) && <div id={style.viewFile} onClick={() =>handleViewFile(data.data)}>View</div>
+                                            }
+                                            
+                                            <FiDownload size={20} cursor={'pointer'} color='#3E3F40' onClick={() =>handleDownload(data.data)}/>
+                                        </div>
+                                    ))
+                                )
+                            }    
 
                             {
-                                currentComments.quizID !== 'none' && (
+                                selectedPost.quizID !== 'none' && (
                                     <div id={style.cardCommentFiles}>
                                         <GiNotebook size={30} color='#4F6F52'/>
-                                        <p>{generateQuizname(currentComments.quizID)}</p>
+                                        <p>{generateQuizname(selectedPost.quizID)}</p>
                                     </div>
                                 )
                             }
+                            <hr/>
 
                             {
-                                filteredComments.length > 0 && 
+                                showComments && selectedComments && 
                                     <>
                                         <h1>Comments:</h1> {
-                                            filteredComments.map((coms) => (
+                                            selectedComments.map((coms) => (
                                                 <div className={style.comsLayout}>
                                                     <img src={imageUserPost(coms.acctID)} alt="picture" id={style.bubbleDP}/>
                                                     <div className={style.bubble}>
                                                         <div className={style.comsHeadPart}>
-                                                            <h2>{generateFullnameByAcctID(coms.acctID)}</h2>
+                                                            <h2>{coms.fullname}</h2>
                                                             <br />
                                                             <p style={{ fontSize: '8pt'}}>({coms.date} at {coms.time})</p>
                                                         </div>
                                                         <p style={{ fontSize: '12pt'}}>{coms.content}</p>
                                                         {
                                                             coms.imageID !== 'none' &&
-                                                            <img src={generatePic(coms.imageID)} alt="image" width={200} style={{ borderRadius: '10px'}}/>
+                                                            <img src={generatePic(coms.imageID)} alt="image" id={style.imgInCom}/>
                                                         }
+
                                                         {
                                                             coms.fileID !== 'none' &&
                                                             <div id={style.comsFiles}>
@@ -1164,7 +1283,8 @@ const getImageUrlsByImageID = (imageID) => {
                                                                 <FiDownload size={20} cursor={'pointer'} color='#3E3F40' onClick={() =>handleDownload(coms.fileID)}/>
                                                             </div>
                                                         }
-                                                            
+                                                        
+                                                        
                                                     </div>
                                                 </div>
                                             ))
@@ -1175,12 +1295,40 @@ const getImageUrlsByImageID = (imageID) => {
 
                         </div>
                         <div className={style.commentFooter}>
+                            {
+                                showComments && file && (
+                                    <img src={URL.createObjectURL(file[0])} alt='thumbnail' id={style.smallThumbnail}/>
+                                )
+                            } 
+                            {
+                                showComments && docxFiles && (
+                                    <FaFolderOpen size={25} color='#099AED' title='file'/>
+                                )
+                            }
+
                             <textarea onChange={(e) => setcommentContent(e.target.value)} placeholder='Insert comment...'></textarea>
+                            
                             <div className='d-flex flex-column'>
-                                <MdOutlineAttachment size={20} cursor={'pointer'} onClick={() => setshowChangeFileModal(true)}/>
-                                <FaRegImages size={18} cursor={'pointer'} onClick={() => setshowPostModal(true)}/>
+                                <MdOutlineAttachment size={20} cursor={'pointer'} onClick={() => inputFilesRefComment.current.click()}/>
+                                <FaRegImages size={18} cursor={'pointer'} onClick={() => inputImageFileRefComment.current.click()}/>
                             </div>
-                            <button size={29} id={style.sendBtnComs} onClick={handleSendReply}>Reply</button>
+
+                            <input 
+                                type='file'
+                                accept='image/*'
+                                style={{ display:'none'}}
+                                ref={inputImageFileRefComment}
+                                onChange={handleGetImage}
+                            />
+
+                            <input 
+                                type='file'
+                                accept=".doc, .docx, .pdf, .txt, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                                ref={inputFilesRefComment}
+                                style={{ display:'none'}}
+                                onChange={handleGetFiles}    
+                            />
+                            <button size={29} id={style.sendBtnComs} onClick={submitReply}>Reply</button>
                         </div>
                     </div>
                 </div>
@@ -1492,7 +1640,7 @@ const getImageUrlsByImageID = (imageID) => {
                                                 cursor={'pointer'}
                                                 size={20}
                                                 color='#508D69'
-                                                onClick={() =>handleShowComments(post)}
+                                                onClick={() =>handleShowComments(post.postID)}
                                             />
                                                 
                                             
