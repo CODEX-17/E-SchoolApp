@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 17, 2024 at 11:26 AM
+-- Generation Time: Apr 18, 2024 at 11:41 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -46,7 +46,7 @@ CREATE TABLE `accounts` (
 INSERT INTO `accounts` (`acctID`, `acctype`, `email`, `password`, `firstname`, `middlename`, `lastname`, `status`, `imageID`) VALUES
 ('Tk6Bxe8U', 'admin', 'mark@gmail.com', 'mark123', 'Mark', 'Langcay', 'Adduru', 'logout', 'Tk6Bxe8U'),
 ('un2kt7px', 'faculty', 'pamparor@gmail.com', 'rumar123', 'Rumar', 'Capoquian', 'Pamparo', 'online', 'un2kt7p1'),
-('VHXQ6s6O', 'student', 'allan@gmail.com', 'Allan123', 'Allan', 'Caranguioan', 'Caluigiran', 'logout', 'VHXQ6s6O');
+('VHXQ6s6O', 'student', 'allan@gmail.com', 'allan123', 'Allan', 'Caranguioan', 'Caluigiran', 'logout', 'VHXQ6s6O');
 
 -- --------------------------------------------------------
 
@@ -259,7 +259,10 @@ CREATE TABLE `class_list` (
 
 INSERT INTO `class_list` (`id`, `acctID`, `classCode`, `hidden`) VALUES
 (1, 'un2kt7px', 'IT-CAP2', 'false'),
-(1836, 'un2kt7px', 'IT-ELECT2', 'false');
+(1836, 'un2kt7px', 'IT-ELECT2', 'false'),
+(1844, 'Tk6Bxe8U', 'IT-ELECT2', 'false'),
+(1845, 'VHXQ6s6O', 'IT-CAP2', 'false'),
+(1846, 'VHXQ6s6O', 'IT-ELECT2', 'false');
 
 -- --------------------------------------------------------
 
@@ -297,7 +300,9 @@ INSERT INTO `comments` (`id`, `replyID`, `postID`, `classCode`, `acctID`, `fulln
 (26, 'DOann9lo', 'DOann9lo', 'IT-ELECT2', 'un2kt7px', 'Rumar C. Pamparo', '', '05:16 PM', 'Wed Apr 17 2024', 'kQueNYI2', 'none'),
 (27, 'SnScSSNM', 'SnScSSNM', 'IT-ELECT2', 'un2kt7px', 'Rumar C. Pamparo', 'ito files', '05:23 PM', 'Wed Apr 17 2024', '3GcnDxAn', 'none'),
 (28, 'SnScSSNM', 'SnScSSNM', 'IT-ELECT2', 'un2kt7px', 'Rumar C. Pamparo', '', '05:23 PM', 'Wed Apr 17 2024', '8Wh9S1LK', 'none'),
-(29, 'SnScSSNM', 'SnScSSNM', 'IT-ELECT2', 'un2kt7px', 'Rumar C. Pamparo', '', '05:25 PM', 'Wed Apr 17 2024', 'none', 'xTuZ12uV');
+(29, 'SnScSSNM', 'SnScSSNM', 'IT-ELECT2', 'un2kt7px', 'Rumar C. Pamparo', '', '05:25 PM', 'Wed Apr 17 2024', 'none', 'xTuZ12uV'),
+(30, 'gb3YpAQC', 'gb3YpAQC', 'IT-ELECT2', 'un2kt7px', 'Rumar C. Pamparo', 'astig perd', '04:34 PM', 'Thu Apr 18 2024', 'none', 'none'),
+(31, 'gb3YpAQC', 'gb3YpAQC', 'IT-ELECT2', 'VHXQ6s6O', 'Allan C. Caluigiran', 'petmalu', '04:38 PM', 'Thu Apr 18 2024', 'none', 'none');
 
 -- --------------------------------------------------------
 
@@ -334,7 +339,8 @@ INSERT INTO `files` (`id`, `name`, `type`, `data`, `dateUploaded`, `timeUploaded
 (55, 'BN_CERTIFICATE-DMIG215716208423.pdf', 'application/pdf', 'file_1713342638775.pdf', 'Wed Apr 17 2024', '04:30 PM', 'un2kt7px', 'IT-CAP2', 'PuA2vl6y'),
 (56, 'OR_DMIG215716208423.pdf', 'application/pdf', 'file_1713345403821.pdf', 'Wed Apr 17 2024', '05:16 PM', 'un2kt7px', 'IT-ELECT2', 'kQueNYI2'),
 (57, 'OR_DMIG215716208423.pdf', 'application/pdf', 'file_1713345789537.pdf', 'Wed Apr 17 2024', '05:23 PM', 'un2kt7px', 'IT-ELECT2', '3GcnDxAn'),
-(58, 'UNDERTAKING_DMIG215716208423.pdf', 'application/pdf', 'file_1713345832208.pdf', 'Wed Apr 17 2024', '05:23 PM', 'un2kt7px', 'IT-ELECT2', '8Wh9S1LK');
+(58, 'UNDERTAKING_DMIG215716208423.pdf', 'application/pdf', 'file_1713345832208.pdf', 'Wed Apr 17 2024', '05:23 PM', 'un2kt7px', 'IT-ELECT2', '8Wh9S1LK'),
+(59, 'OR_DMIG215716208423.pdf', 'application/pdf', 'file_1713429216114.pdf', 'Thu Apr 18 2024', '04:33 PM', 'Tk6Bxe8U', 'IT-ELECT2', 'gb3YpAQC');
 
 -- --------------------------------------------------------
 
@@ -497,16 +503,12 @@ INSERT INTO `image` (`id`, `name`, `type`, `data`, `dateUploaded`, `timeUploaded
 (1948, '423686914_439679775064082_7513696424590273516_n (1).jpg', 'image/jpeg', 'image_1713230102728.jpg', 'Tue Apr 16 2024', '09:15 AM', 'un2kt7px', 'IT-ELECT2', '1SXMpTpy'),
 (1949, 'Screenshot 2024-03-04 105655.png', 'image/png', 'image_1713230102733.png', 'Tue Apr 16 2024', '09:15 AM', 'un2kt7px', 'IT-ELECT2', '1SXMpTpy'),
 (1950, '423619598_7291313737588313_3862564192417168033_n.jpg', 'image/jpeg', 'image_1713230102736.jpg', 'Tue Apr 16 2024', '09:15 AM', 'un2kt7px', 'IT-ELECT2', '1SXMpTpy'),
-(1954, 'Your paragraph text (2).jpg', 'image/jpeg', 'image_1713319714588.jpg', 'Wed Apr 17 2024', '10:08 AM', 'un2kt7px', 'IT-ELECT2', 'SnScSSNM'),
-(1955, 'Your paragraph text (3).jpg', 'image/jpeg', 'image_1713319714590.jpg', 'Wed Apr 17 2024', '10:08 AM', 'un2kt7px', 'IT-ELECT2', 'SnScSSNM'),
-(1956, 'Your paragraph text.jpg', 'image/jpeg', 'image_1713319714592.jpg', 'Wed Apr 17 2024', '10:08 AM', 'un2kt7px', 'IT-ELECT2', 'SnScSSNM'),
-(1957, '435769762_380921994913719_4069441456034002861_n.jpg', 'image/jpeg', 'image_1713319714592.jpg', 'Wed Apr 17 2024', '10:08 AM', 'un2kt7px', 'IT-ELECT2', 'SnScSSNM'),
-(1958, 'testimony.png', 'image/png', 'image_1713319714591.png', 'Wed Apr 17 2024', '10:08 AM', 'un2kt7px', 'IT-ELECT2', 'SnScSSNM'),
 (1959, 'Your paragraph text (3).jpg', 'image/jpeg', 'image_1713342533252.jpg', 'undefined', 'undefined', 'un2kt7px', 'IT-CAP2', 'XgdtaIbB'),
 (1960, 'Your paragraph text (3).jpg', 'image/jpeg', 'image_1713342614235.jpg', 'undefined', 'undefined', 'un2kt7px', 'IT-CAP2', 'eW9BbVNK'),
 (1961, 'Your paragraph text (3).jpg', 'image/jpeg', 'image_1713342638774.jpg', 'undefined', 'undefined', 'un2kt7px', 'IT-CAP2', 'PuA2vl6y'),
 (1962, 'Your paragraph text (2).jpg', 'image/jpeg', 'image_1713345058500.jpg', 'undefined', 'undefined', 'un2kt7px', 'IT-CAP2', 'mRqjkzL5'),
-(1963, 'wonder drops.png', 'image/png', 'image_1713345902985.png', 'undefined', 'undefined', 'un2kt7px', 'IT-ELECT2', 'xTuZ12uV');
+(1963, 'wonder drops.png', 'image/png', 'image_1713345902985.png', 'undefined', 'undefined', 'un2kt7px', 'IT-ELECT2', 'xTuZ12uV'),
+(1964, '284493335_3064569063853706_2708312132206988290_n.jpg', 'image/jpeg', 'image_1713429216112.jpg', 'Thu Apr 18 2024', '04:33 PM', 'Tk6Bxe8U', 'IT-ELECT2', 'gb3YpAQC');
 
 -- --------------------------------------------------------
 
@@ -515,23 +517,26 @@ INSERT INTO `image` (`id`, `name`, `type`, `data`, `dateUploaded`, `timeUploaded
 --
 
 CREATE TABLE `members` (
-  `ID` int(10) NOT NULL,
+  `id` int(10) NOT NULL,
   `membersID` varchar(10) NOT NULL,
   `acctID` varchar(10) NOT NULL,
   `firstname` varchar(50) NOT NULL,
   `middlename` varchar(50) NOT NULL,
   `lastname` varchar(50) NOT NULL,
-  `memberType` varchar(10) NOT NULL
+  `memberType` varchar(10) NOT NULL,
+  `imageID` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `members`
 --
 
-INSERT INTO `members` (`ID`, `membersID`, `acctID`, `firstname`, `middlename`, `lastname`, `memberType`) VALUES
-(1, 'BiJ456Aj', 'VHXQ6s6O', 'Allan', 'Caranguioan', 'Caluigiran', 'member'),
-(3, 'BiJ456Aj', 'un2kt7px', 'Rumar', 'Capoquian', 'Pamparo', 'admin'),
-(1933, '42d8800e', 'un2kt7px', 'Rumar', 'Capoquian', 'Pamparo', 'admin');
+INSERT INTO `members` (`id`, `membersID`, `acctID`, `firstname`, `middlename`, `lastname`, `memberType`, `imageID`) VALUES
+(3, 'BiJ456Aj', 'un2kt7px', 'Rumar', 'Capoquian', 'Pamparo', 'admin', 'un2kt7px'),
+(1933, '42d8800e', 'un2kt7px', 'Rumar', 'Capoquian', 'Pamparo', 'admin', 'un2kt7px'),
+(1946, '42d8800e', 'Tk6Bxe8U', 'Mark', 'Langcay', 'Adduru', 'member', 'Tk6Bxe8U'),
+(1947, 'BiJ456Aj', 'VHXQ6s6O', 'Allan', 'Caranguioan', 'Caluigiran', 'member', 'VHXQ6s6O'),
+(1948, '42d8800e', 'VHXQ6s6O', 'Allan', 'Caranguioan', 'Caluigiran', 'member', 'VHXQ6s6O');
 
 -- --------------------------------------------------------
 
@@ -707,7 +712,7 @@ INSERT INTO `post` (`id`, `postID`, `acctID`, `name`, `timePosted`, `datePosted`
 (271, 'XlcYbqYk', 'un2kt7px', 'Rumar C. Pamparo', '11:49 AM', 'Mon Apr 15 2024', 'nel', 'XlcYbqYk', 'none', 'XlcYbqYk', 0, 0, 'IT-ELECT2', 'ENTREPRENEURSHIP 2', 'normal', 'none', 'none', 0, 'none'),
 (272, 'DOann9lo', 'un2kt7px', 'Rumar C. Pamparo', '09:14 AM', 'Tue Apr 16 2024', 'sample multiple post', 'DOann9lo', 'DOann9lo', 'DOann9lo', 0, 0, 'IT-ELECT2', 'ENTREPRENEURSHIP 2', 'normal', 'none', 'none', 0, 'none'),
 (273, '1SXMpTpy', 'un2kt7px', 'Rumar C. Pamparo', '09:15 AM', 'Tue Apr 16 2024', 'sample', '1SXMpTpy', '1SXMpTpy', 'none', 0, 0, 'IT-ELECT2', 'ENTREPRENEURSHIP 2', 'normal', 'none', 'none', 0, 'none'),
-(276, 'SnScSSNM', 'un2kt7px', 'Rumar C. Pamparo', '10:08 AM', 'Wed Apr 17 2024', 'testimony', 'SnScSSNM', 'SnScSSNM', 'none', 0, 0, 'IT-ELECT2', 'ENTREPRENEURSHIP 2', 'normal', 'none', 'none', 0, 'none');
+(277, 'gb3YpAQC', 'Tk6Bxe8U', 'Mark L. Adduru', '04:33 PM', 'Thu Apr 18 2024', 'sample lang perds', 'gb3YpAQC', 'gb3YpAQC', 'gb3YpAQC', 0, 0, 'IT-ELECT2', 'ENTREPRENEURSHIP 2', 'normal', 'none', 'none', 0, 'none');
 
 -- --------------------------------------------------------
 
@@ -1053,7 +1058,9 @@ INSERT INTO `reactions` (`id`, `reactID`, `postID`, `acctID`, `classCode`, `reac
 (43, 'kDBvDNOI', 'th5tRTPX', 'un2kt7px', 'IT 411', 'like'),
 (44, 'JbuyEy4q', 'th5tRTPX', 'un2kt7px', 'IT 411', 'heart'),
 (45, 'S63hVZAm', '1SXMpTpy', 'un2kt7px', 'IT-ELECT2', 'heart'),
-(46, '7jUiSBua', '1SXMpTpy', 'un2kt7px', 'IT-ELECT2', 'like');
+(46, '7jUiSBua', '1SXMpTpy', 'un2kt7px', 'IT-ELECT2', 'like'),
+(47, 'jAmPiGdS', 'gb3YpAQC', 'un2kt7px', 'IT-ELECT2', 'heart'),
+(48, 'fWhVAv6d', 'gb3YpAQC', 'VHXQ6s6O', 'IT-ELECT2', 'heart');
 
 -- --------------------------------------------------------
 
@@ -1266,7 +1273,7 @@ ALTER TABLE `image`
 -- Indexes for table `members`
 --
 ALTER TABLE `members`
-  ADD PRIMARY KEY (`ID`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `messages`
@@ -1342,19 +1349,19 @@ ALTER TABLE `class`
 -- AUTO_INCREMENT for table `class_list`
 --
 ALTER TABLE `class_list`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1837;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1847;
 
 --
 -- AUTO_INCREMENT for table `comments`
 --
 ALTER TABLE `comments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT for table `files`
 --
 ALTER TABLE `files`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
 
 --
 -- AUTO_INCREMENT for table `filllayout`
@@ -1372,13 +1379,13 @@ ALTER TABLE `friends`
 -- AUTO_INCREMENT for table `image`
 --
 ALTER TABLE `image`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1964;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1965;
 
 --
 -- AUTO_INCREMENT for table `members`
 --
 ALTER TABLE `members`
-  MODIFY `ID` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1934;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1949;
 
 --
 -- AUTO_INCREMENT for table `messages`
@@ -1390,7 +1397,7 @@ ALTER TABLE `messages`
 -- AUTO_INCREMENT for table `post`
 --
 ALTER TABLE `post`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=277;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=278;
 
 --
 -- AUTO_INCREMENT for table `questionbank`
@@ -1408,7 +1415,7 @@ ALTER TABLE `questions`
 -- AUTO_INCREMENT for table `reactions`
 --
 ALTER TABLE `reactions`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
 -- AUTO_INCREMENT for table `schedule`

@@ -6,6 +6,20 @@ const upload = multer()
 const fs = require('fs')
 const path = require('path')
 
+//API get accounts form database
+router.get('/getAccounts', (req, res) => {
+    const query = 'SELECT accounts.*, image.data FROM accounts INNER JOIN image ON accounts.imageID = image.imageID'
+
+    db.query(query, (error, data, fields) => {
+        if (error) {
+            console.error(error)
+            res.status(404).send(error)
+        } else {
+            res.status(200).json(data)
+        }
+    })
+})
+
 router.post('/verifyAccount', (req, res) => {
     const email = req.body.email
     const password = req.body.password

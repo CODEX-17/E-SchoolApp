@@ -15,88 +15,106 @@ import { ThreeDots } from  'react-loader-spinner';
 import { useImageStore } from '../stores/useImageStore'
 import { useAccountStore } from '../stores/useAccountsStore'
 
-const ClassMembers = ({ memberID }) => {
+const ClassMembers = ({ memberID, currentClassCode }) => {
 
   const notif = new Howl({ src: [notifSound]})
   const errSound = new Howl({ src: [erroSound]})
-  const [allMembers, setallMembers] = useState()
-
-  const [currentMembers, setcurrentMembers] = useState([])
-  const [suggestMembers, setsuggestMembers] = useState([])
-  const [selectState, setselectState] = useState(false)
-  
-  const [isShowLoading, setisShowLoading] = useState(false)
 
   const currentAccount = JSON.parse(localStorage.getItem('user'))
-  const [accounts, setAccounts] = useState()
-  const [images, setimages] = useState()
 
-  const { addMembers, deleteMembers, getMembers } = useMemberStore()
-  const { getAccounts } = useAccountStore()
-  const { getImages } =useImageStore()
+  //Pros variables
+  const currentMemberID = memberID
+  const classCode = currentClassCode
 
- 
+  //Variable for fetching in database
+  const [membersList, setMembersList] = useState(null)
+  const [currentMembersList, setCurrentMembersList] = useState(null)
+  const [suggestMembersList, setSuggestMembersList] = useState(null)
+  const [accountsList, setAccountsList] = useState(null)
+
+  //Show variables
+  const [isShowLoading, setisShowLoading] = useState(false)
+
+  const [adminMember, setAdminMember] = useState(null)
+
   useEffect(() => {
- 
-    getMembers()
-    getImages()
-    getAccounts()
+    getMembersAndAccounts()
 
-    refreshData()
   },[])
 
-  const refreshData = () => {
-    setisShowLoading(true)
-    getMembers()
-    getImages()
-    getAccounts()
+  const getMembersAndAccounts = () => {
 
-    setTimeout(() => {
-      setisShowLoading(false)
-      const members = JSON.parse(localStorage.getItem('members'))
-      const accounts = JSON.parse(localStorage.getItem('accounts'))
-      const images = JSON.parse(localStorage.getItem('images'))
+    axios.get('http://localhost:5001/members/getMembers')
+    .then((res) => {
+        const value = res.data
+        setMembersList(value)
 
-      setimages(images)
-      setallMembers(members)
-      setAccounts(accounts)
+        //Find the member by memberID
+        const currentMembersFilter = value.filter((data) => data.membersID === currentMemberID)
+        setCurrentMembersList(currentMembersFilter)
 
-      if (members) {
-        const filter = members.filter((member) => member.membersID === memberID && member.memberType !== 'admin')
+        //Find admin in currentMembers
+        const adminFilter = currentMembersFilter.filter((data) => data.memberType === 'admin')
+        setAdminMember(adminFilter[0])
+
+        //Fetch all accounts
+        axios.get('http://localhost:5001/accounts/getAccounts')
+        .then((res) => {
+              const result = res.data
+              setAccountsList(result)
+
+              //Find the suggested members
+              let suggestedMembers = []
+              let duplicate = false
+
+              if (currentMembersFilter) {
+
+                //Loop the fetch accounts and check if they exist in membersList
+                for (let i = 0; i < result.length; i++) {
+                  const acctID = result[i].acctID
+               
+
+                  //Loop of Current Members
+                  for (let x = 0; x < currentMembersFilter.length; x++) {
+                    const membersAcctID = currentMembersFilter[x].acctID
+                  
+                    //Check if they exist in membersList
+                    if (acctID === membersAcctID) {
+                      duplicate = true
+                    }
+
+                  }
+
+                  //If not it will push in variable
+                  if (!duplicate) {
+                    suggestedMembers.push({
+                      membersID: currentMemberID,
+                      acctID: result[i].acctID,
+                      firstname: result[i].firstname,
+                      middlename: result[i].middlename,
+                      lastname: result[i].lastname,
+                      memberType: 'member',
+                      imageID: result[i].imageID,
+                      data: result[i].data,
+                    })
+                  }else {
+                    duplicate = false
+                  }
+                  
+                }
+              
+              }
+
+              //Set the final result in variable
+              setSuggestMembersList(suggestedMembers)
+          })
+          .catch((err) => console.log(err))
         
-        for (let i = 0; i < filter.length; i++) {
-          filter[i].checked = false
-        }
 
-        console.log('filter',filter)
-        setcurrentMembers(filter)
-
-        let updatedData = []
-
-        for (let i = 0; i < accounts.length; i++) {
-          const number = filter.length
-          let count = 0
-          
-          for (let x = 0; x < filter.length; x++) {
-            if (accounts[i].acctID !== filter[x].acctID && accounts[i].acctID !== currentAccount.acctID) {
-                count += 1
-            }else {
-              continue
-            }
-          }
-
-          if (count === number) {
-              updatedData.push(accounts[i])
-          }
-
-        }
-        console.log(updatedData)
-        setsuggestMembers(updatedData)
-
-      }
-    }, 3000);
-
+    })
+    .catch((err) => console.log(err))
   }
+
 
   const notify = (message, state) => {
     console.log(message);
@@ -129,114 +147,106 @@ const ClassMembers = ({ memberID }) => {
     
   }
 
-  const generatePic = (imageID) => {
-    if (imageID) {
-      const currentImage = images.filter((img) => img.imageID === imageID).map((img) => img.data)
-      if (currentImage) {
-        return 'http://localhost:5001/' + currentImage[0]
-      }else {
-        return sample
-      }
-    }
-    
-  }
-
-  const generateDP = (acctID) => {
-    const imageID = accounts.filter((act) => act.acctID === acctID).map((act) => act.imageID)
-
-    if (imageID) {
-      const currentImage = images.filter((img) => img.imageID === imageID[0]).map((img) => img.data)
-      if (currentImage) {
-        return 'http://localhost:5001/' + currentImage[0]
-      }else {
-        return sample
-      }
-    }
-    
-  }
-
-  const findAdmin = () => {
-    console.log('allMembers',allMembers)
-    console.log('memberID',memberID)
-    if (allMembers && memberID) {
-      const result = allMembers.filter((mm) => mm.membersID === memberID && mm.memberType === 'admin')
-      if (result.length > 0)  {
-        const fullname = result[0].firstName + ' ' + result[0].midleName.charAt(0).toUpperCase() + ' ' + result[0].lastName
+  const generateFullname = (firstName, middleName, lastName) => {
+    if (firstName, middleName, lastName) {
+        const fullname = firstName + ' ' + middleName.charAt(0) + '. ' + lastName
         return fullname
-      }
-
-      return 'No admin'
     }
-    
-    
   }
 
-  const handleAddMember = (id, index) => {
-      let updated = [...currentMembers]
-      const addedMember = accounts.filter((act) => act.acctID === id)
+  
 
-        const membersID = memberID
-        const acctID = addedMember[0].acctID
-        const firstName = addedMember[0].firstname
-        const hidden = 'false'
-        const lastName = addedMember[0].lastname
-        const memberType = 'member'
-        const midleName = addedMember[0].middlename
+  const handleAddMember = (data, index) => {
 
-          updated.push(
-            {
-              ID: index,
-              acctID,
-              firstName,
-              hidden,
-              lastName,
-              memberType,
-              membersID,
-              midleName,
-          })
-        
+      const currentIndex = index
 
-        addMembers(membersID, acctID, firstName, midleName, lastName, memberType)
-        setcurrentMembers(updated)
+      axios.post('http://localhost:5001/members/addMembers', data)
+      .then((res) => {
+        const result = res.data
 
-        const filter = suggestMembers.filter((act) => act.acctID !== id)
-        console.log(filter)
-        setsuggestMembers(filter)
+        //Add new member in variable 
+        setCurrentMembersList((oldData) => [...oldData, data])
 
-        const message = 'Member added.'
-        notify(message, 'success')
-        refreshData()
+        //Remove the selected member in suggestedMembers
+        const filter = suggestMembersList.filter((data, index) => index !== currentIndex)
+        setSuggestMembersList(filter)
 
-  }
-
-  const handleDeleteMember = (acctID, index) => {
-      const updated = currentMembers.filter((act) => act.acctID !== acctID)
-      setcurrentMembers(updated)
-      deleteMembers(acctID)
-      const message = 'member successfully removed.'
-      notify(message, 'success')
-      refreshData()
-  }
-
-  const handleSelectAll = () => {
-    let updated = [...suggestMembers]
-
-      for (let i = 0; i < updated.length; i++) {
-        if (selectState) {
-            updated[i].checked = false
-            setselectState(false)
-        }else {
-            updated[i].checked = true
-            setselectState(true)
+        const newClass = {
+          acctID: data.acctID,
+          classCode: classCode,
+          hidden: 'false',
         }
-      }
-    
-    if (condition) {
-      
-    }
-    console.log('updated',updated)
-    setsuggestMembers(updated)
 
+        console.log(newClass)
+
+        //API to add class in member that added
+        axios.post('http://localhost:5001/classLists/addClassList', newClass)
+        .then((res) => {
+          const result = res.data
+          console.log(result.message)
+        })
+        .catch((err) => console.log(err))
+
+
+        const message = result.message
+        notify(message, 'success')
+
+      })
+      .catch((err) => console.log(err)) 
+
+  }
+
+  const handleDeleteMember = (member, index) => {
+      if (member, index) {
+
+        const id = member.id
+        const currentIndex = index
+
+        //API to delete member from database
+        axios.delete('http://localhost:5001/members/deleteMember/' + id)
+        .then((res) => {
+          const result = res.data
+          const message = result.message
+
+          //Delete classList by classCode & acctID
+          const params = {
+            classCode: classCode,
+            acctID: member.acctID,
+          }
+
+          axios.delete('http://localhost:5001/classLists/deleteClassList', { data: params })
+          .then((res) => {
+            const result = res.data
+            console.log(result.message)
+          })
+          .catch((err) => console.log(err))
+
+
+          //Remove the selected member in currentMemberList
+          const filter = currentMembersList.filter((data, index) => index !== currentIndex)
+          setCurrentMembersList(filter)
+
+          //Add in suggested members
+          setSuggestMembersList((oldData) => [...oldData, member])
+
+          notify(message, 'success')
+        })
+        .catch((err) => console.log(err))
+
+        
+      }
+  }
+
+  const generatePicture = (fileName) => {
+    if (fileName) {
+      const url = 'http://localhost:5001/'
+      const filePath = url + fileName
+      if (filePath) {
+        return filePath
+      }else {
+        console.error('no file path')
+      }
+    }
   }
 
   return (
@@ -262,8 +272,8 @@ const ClassMembers = ({ memberID }) => {
             <div className={style.head}>
               <h2 id={style.labelAdmin}>Class Admin</h2>
               <div className={style.card}>
-                <img src={sample} alt="dp" id={style.dpImg}/>
-                <p>{findAdmin()}</p>
+                <img src={adminMember && generatePicture(adminMember.data)} alt="dp" id={style.dpImg}/>
+                <p>{adminMember && generateFullname(adminMember.firstname, adminMember.middlename, adminMember.lastname)}</p>
               </div>
             </div>
             <div className={style.horizontal}>
@@ -275,15 +285,15 @@ const ClassMembers = ({ memberID }) => {
                   
                 <div className={style.listView}>
                   {
-                    currentMembers ? (
-                      currentMembers.map((member, index) => (
-                        
+                    currentMembersList ? (
+                      currentMembersList.map((member, index) => (
                           <div className={style.cardMember} key={index}>
-                            <img src={generateDP(member.acctID)} alt="dp" id={style.dpImg}/>
-                            <p>{member.firstName+' '+member.midleName+' '+member.lastName}</p>
+                            <img src={generatePicture(member.data)} alt="dp" id={style.dpImg}/>
+                            <p>{generateFullname(member.firstname,member.middlename,member.lastname)}</p>
+                            { member.memberType === 'admin' && <p id={style.subtitle}>(admin)</p>}
                             {
-                              currentAccount.acctype === 'faculty' && (
-                                <AiOutlineDelete id={style.deleteIcon} onClick={() => handleDeleteMember(member.acctID, index)}/>
+                              currentAccount.acctype === 'faculty' && member.memberType !== 'admin' && (
+                                <AiOutlineDelete id={style.deleteIcon} title='remove member' onClick={() => handleDeleteMember(member, index)}/>
                               )
                             }
                             
@@ -291,22 +301,24 @@ const ClassMembers = ({ memberID }) => {
 
                       ))) : (<p>Loading..</p>)
                   }
+                  
                 </div>
-
               </div>
+              
                   <div className={style.rightCon}>
                           <div className='d-flex justify-content-between position-relative'>
                             <h2>Add Members</h2>
                           </div>
                           <div className={style.accountList}>
                             {
-                              suggestMembers.map((acct, index) => (
+                              suggestMembersList &&
+                              suggestMembersList.map((acct, index) => (
                                 <div className={style.cardAccounts} key={index}>
-                                  <img src={generatePic(acct.imageID)} alt="dp" id={style.dpImg}/>
-                                  <p>{acct.firstname+' '+acct.middlename+' '+acct.lastname}</p>
+                                  <img src={generatePicture(acct.data)} alt="dp" id={style.dpImg}/>
+                                  <p>{generateFullname(acct.firstname, acct.middlename, acct.lastname)}</p>
                                     {
                                       currentAccount.acctype === 'faculty' &&
-                                      <RiUserAddFill id={style.addFriendIcon} onClick={() => handleAddMember(acct.acctID, index)}/>
+                                      <RiUserAddFill id={style.addFriendIcon} title='add mmember' onClick={() => handleAddMember(acct, index)}/>
                                     }
                                   </div>
                               ))

@@ -19,6 +19,8 @@ const postRoutes = require('./Routes/postRoutes')
 const reactsRoutes = require('./Routes/reactsRoutes')
 const filesRoutes = require('./Routes/filesRoutes')
 const commentRoutes = require('./Routes/commentRoutes')
+const membersRoutes = require('./Routes/membersRoutes')
+const classListRoutes = require('./Routes/classListRoutes')
 
 const corsOptions = {
     origin: '*', 
@@ -56,6 +58,8 @@ app.use('/post', postRoutes)
 app.use('/reacts', reactsRoutes)
 app.use('/files', filesRoutes)
 app.use('/comments', commentRoutes)
+app.use('/members', membersRoutes)
+app.use('/classLists', classListRoutes)
 
 const getSchedule = () => {
     const query = "SELECT * FROM schedule"

@@ -58,10 +58,8 @@ const socket = io.connect('http://localhost:5001')
 
 const ClassHome = ({ currentSubjectName, currentImageClass, classCodeCurrent, currentMemberID, backToHomePage, classDesc, currentclassID }) => {
 
-
-
  const { updateClass, getClass } = useClassStore()
- const [memberID, setmemberID] = useState(currentMemberID)
+
  const [heartReact, setheartReact] = useState(false)
  const [uniqueId, setuniqueId] = useState('')
  const [likeReact, setlikeReact] = useState(false)
@@ -146,27 +144,34 @@ const ClassHome = ({ currentSubjectName, currentImageClass, classCodeCurrent, cu
     weekday: 'short' 
  })
 
-
+ //Props variables
  const [currentClass, setCurrentClass] = useState(null)
  const [currentClassCode, setCurrentClassCode] = useState(classCodeCurrent)
- const [classesList, setclassesList] = useState([])
+ const [memberID, setmemberID] = useState(currentMemberID)
+ 
  const [updatedClassCode, setupdatedClassCode] = useState()
  const [updatedClassName, setupdatedClassName] = useState()
  const [updatedClassDesc, setupdatedClassDesc] = useState(classDescription)
  const [currentClassImageID, setcurrentClassImageID] = useState()
- const [reactionsList, setreactionsList] = useState(null)
- const [imageList, setimageList] = useState(null)
- const [filesLists, setfilesLists] = useState(null)
- const [commentsList, setcommentsList] = useState(null)
- const [acctImagesList, setacctImagesList] = useState(null)
+
+
+ const [isShowErrorMessage, setisShowErrorMessage] = useState(false)
  const [showViewImage, setshowViewImage] = useState(false)
 
+ //Selecting variables
  const [selectedPostID, setSelectedPostID] = useState(null)
  const [selectedPost, setSelectedPost] = useState(null)
  const [selectedComments, setSelectedComments] = useState(null)
 
+ //Variables for storing datas from fetching API
+ const [classesList, setclassesList] = useState([])
+ const [imageList, setimageList] = useState(null)
+ const [filesLists, setfilesLists] = useState(null)
+ const [commentsList, setcommentsList] = useState(null)
+ const [acctImagesList, setacctImagesList] = useState(null)
+ const [reactionsList, setreactionsList] = useState(null)
 
- const [isShowErrorMessage, setisShowErrorMessage] = useState(false)
+ //UseRef variables
  const inputRef = useRef(null)
 
  const generateClassImageByImageID = (imageID) => {
@@ -183,8 +188,6 @@ const ClassHome = ({ currentSubjectName, currentImageClass, classCodeCurrent, cu
  }
 
  useEffect(() => {
-
-    console.log(classCodeCurrent)
 
     if (currentClassCode) {
         axios.get('http://localhost:5001/classes/getClasses')
@@ -245,6 +248,8 @@ const ClassHome = ({ currentSubjectName, currentImageClass, classCodeCurrent, cu
 
  },[])
 
+ 
+
  const getCommentsByClassCode = () => (
 
     //GET COMMENTS BY CLASSCODE
@@ -289,20 +294,18 @@ const ClassHome = ({ currentSubjectName, currentImageClass, classCodeCurrent, cu
     })
  )
 
-
-useEffect(()=> {
-        // socket.on('postNow', (data) => {
+// socket.on('postNow', (data) => {
         //     let oldData = [...currentPost]
         //     oldData.push(data)
         //     console.log('oldData',oldData)
         //     setCurrentPost(oldData)
         //     uploadPost(data)
-        //     refreshData()
         //     const message = 'Successfully posted.'
         //     notify(message, 'success')
         // })
-    
-    
+        
+useEffect(()=> {
+
         getAccounts()
         getComments()
         getMembers()
@@ -314,9 +317,6 @@ useEffect(()=> {
         getFiles()
         getQuiz()
         getReactions()
-        refreshData()
-    
-
     
 },[])
 
@@ -345,54 +345,6 @@ const deleteFilesInPostModal = (currentIndex) => {
     const oldFiles = docxFiles
     const filter = oldFiles.filter((data, index) => index !== currentIndex)
     setdocxFiles(filter)
-}
-
-const refreshData = () => {
-    setshowLoading(true)
-    getScore()
-    getPost()
-    getImages()
-    getClass()
-    getFiles()
-    getQuiz()
-    getReactions()
-
-    setTimeout(() => {
-        setshowLoading(false)
-        const classes = JSON.parse(localStorage.getItem('class'))
-        const images = JSON.parse(localStorage.getItem('images'))
-        const post = JSON.parse(localStorage.getItem('post'))
-        const quiz = JSON.parse(localStorage.getItem('quiz'))
-        const score = JSON.parse(localStorage.getItem('scores'))
-        const members = JSON.parse(localStorage.getItem('members'))
-        const reactions = JSON.parse(localStorage.getItem('reactions'))
-        const files = JSON.parse(localStorage.getItem('files'))
-        const comments = JSON.parse(localStorage.getItem('comments'))
-        const accounts = JSON.parse(localStorage.getItem('accounts'))
-
-        setaccountsList(accounts)
-        setcomments(comments)
-        setfileList(files)
-        setMembers(members)
-        setscores(score)
-        setpostList(post)
-        setimagesList(images)
-        setclasses(classes)
-        setquiz(quiz)
-        setreactions(reactions)
-        const filter = classes.filter((cls) => cls.classID === currentclassID)
-      
-        const filterPost = post.filter((post) => post.classCode === currentClassCode)
-
-        
-
-        setCurrentPost(filterPost)  
-        setclassCode(filter[0].classCode)
-        setsubjectName(filter[0].className)
-        
-
-    }, 3000);
-    
 }
 
 const navigateClass = (choose, type, obj) => {
@@ -1118,7 +1070,6 @@ const checkIfPDFfile = (fileName) => {
 const getFilesUrlsByFileID = (fileID) => {
     if (fileID && filesLists) {
         const filter = filesLists.filter((data) => data.fileID === fileID)
-        console.log(filter)
         return filter
     }   
 }
@@ -1138,7 +1089,6 @@ const handleViewScore = (quizID) => {
 }
 
 const handleChooseHome = () => {
-    refreshData()
     setChoose('home')
 }
 
@@ -1659,9 +1609,9 @@ const getImageUrlsByImageID = (imageID) => {
             } 
             { choose === 'files' && <FilesClass/> }
             { choose === 'leaderboard' && <LeaderBoard/> }
-            { choose === 'quizSetup' && <ClassQuizSetup subjectName={subjectName} navigateClass={navigateClass} postType={postType} classCode={classCode} refreshData={refreshData}/> }
+            { choose === 'quizSetup' && <ClassQuizSetup subjectName={subjectName} navigateClass={navigateClass} postType={postType} classCode={classCode}/> }
             { choose === 'assignment' && <ClassAssignment postType={postType} quizObj={quizObj} handlePostAssignment={handlePostAssignment}/> }
-            { choose === 'members' && <ClassMembers memberID={memberID}/> }
+            { choose === 'members' && <ClassMembers memberID={memberID} currentClassCode={currentClassCode}/>}
 
         </div>
     </div>
