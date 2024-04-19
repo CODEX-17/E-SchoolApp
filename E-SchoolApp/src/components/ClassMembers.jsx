@@ -97,7 +97,7 @@ const ClassMembers = ({ memberID, currentClassCode }) => {
                       imageID: result[i].imageID,
                       data: result[i].data,
                     })
-                  }else {
+
                     duplicate = false
                   }
                   

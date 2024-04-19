@@ -1,97 +1,116 @@
 import React, { useEffect, useState } from 'react';
 import style from './FriendsPage.module.css'
 import { IoPersonAdd } from "react-icons/io5";
-import sample from '../assets/sample.jpg'
 import { AiOutlineUserDelete } from "react-icons/ai";
 import { FaSearch } from "react-icons/fa";
 import notifSound from '../assets/sound/notif.mp3';
 import erroSound from '../assets/sound/error.mp3';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useFriendStore } from '../stores/useFriendStore';
-import { useAccountStore } from '../stores/useAccountsStore';
-import { useImageStore } from '../stores/useImageStore';
 import { ThreeDots } from  'react-loader-spinner';
+import axios from 'axios';
 
 const CountdownTimer = () => {
 
   const notif = new Howl({ src: [notifSound]})
   const errSound = new Howl({ src: [erroSound]})
 
-  const [friends, setfriends] = useState()
-  const [accounts, setaccounts] = useState()
-  const [images, setimages] = useState()
-
-  const [userFriendList, setuserFriendList] = useState([])
-  const [userAccount, setuserAccount] = useState()
-  const [suggestedFriends, setsuggestedFriends] = useState([])
+  const [userAccount, setuserAccount] = useState(JSON.parse(localStorage.getItem('user')))
   const [resultFriends, setresultFriends] = useState([])
-
   const [showLoading, setshowLoading] = useState(true)
 
-  const { addFriend, deleteFriend, getFriend } = useFriendStore()
-  const { getAccounts } = useAccountStore()
-  const { getImages } =useImageStore()
+  //Variable for fetching data from database
+  const [friendList, setfriendList] = useState(null)
+  const [suggestedList, setSuggestedList] = useState(null)
 
   useEffect(() => {
-
-    getFriend()
-    getImages()
-    getAccounts()
-
-    setTimeout(() => {
-      setshowLoading(false)
-      refreshData()
-    }, 3000);
-
-    
+    setshowLoading(true)
+    getDatas()
   },[])
 
-  const refreshData = () => {
-    getFriend()
-    getImages()
-    getAccounts()
-
-    const friends = JSON.parse(localStorage.getItem('friends'))
-    setfriends(friends)
-    const accounts = JSON.parse(localStorage.getItem('accounts'))
-    setaccounts(accounts)
-    const user = JSON.parse(localStorage.getItem('user'))
-    setuserAccount(user)
-    const images = JSON.parse(localStorage.getItem('images'))
-    setimages(images)
-
-    const filter = friends.filter((friend) => friend.acctID === user.acctID)
-    console.log('filter',filter)
-    if (filter) {
-      setuserFriendList(filter)
+  //Generate fullname
+  const generateFullName = (firstName, middlename, lastName) => {
+    if (firstName && lastName && middlename) {
+      return firstName + ' ' + middlename.charAt(0) + '. ' + lastName
+    }else {
+      console.error('not complete details')
     }
-
-    let updatedData = []
-
-      for (let i = 0; i < accounts.length; i++) {
-        const number = filter.length
-        let count = 0
-        for (let x = 0; x < filter.length; x++) {
-          if (accounts[i].acctID !== filter[x].friendAcctID && accounts[i].acctID !== user.acctID) {
-              count += 1
-          }else {
-            continue
-          }
-        }
-        if (count === number) {
-            updatedData.push(accounts[i])
-        }
-
-      }
-
-      setsuggestedFriends(updatedData)
-    
   }
 
-  
-   
 
+  const getDatas = () => {
+    axios.get('http://localhost:5001/friends/getFriends')
+    .then((res) => {
+       const friends = res.data
+       console.log('friends:', friends)
+       setfriendList(friends)
+
+       if (friends) {
+          axios.get('http://localhost:5001/accounts/getAccounts')
+          .then((res) => {
+            const accounts = res.data
+            console.log('accounts:', accounts)
+
+              let duplicate = false
+              let suggetedFriends = []
+            //Loop accounts
+            for (let i = 0; i < accounts.length; i++) {
+              const acctID = accounts[i].acctID
+              
+              //Loop friendsList to see if this current acctID is existing
+              for (let x = 0; x < friends.length; x++) {
+                const friendAcctID = friends[x].friendAcctID;
+        
+
+                //It will true when this acctID is existing
+                if (friendAcctID === acctID) {
+                  duplicate = true
+                }
+              }
+
+              //If acctID is unique it will store in suggested variable
+              if (!duplicate) {
+
+                suggetedFriends.push({
+                  acctID: userAccount.acctID,
+                  friendAcctID: accounts[i].acctID,
+                  fullname: generateFullName(accounts[i].firstname, accounts[i].middlename ,accounts[i].lastname),
+                  imageID: accounts[i].imageID,
+                  data: accounts[i].data,
+                })
+
+                duplicate = false
+              }else {
+                duplicate = false
+              }
+
+            }
+
+              console.log('suggetedFriends', suggetedFriends)
+              setSuggestedList(suggetedFriends)
+
+            //After all process done the loading will disabled
+            
+            setshowLoading(false)
+
+          })
+          .catch((err) => console.log(err))
+       }
+        
+    })
+    .catch((err) => console.log(err))
+  }
+
+ 
+  //Generate filepath using filename
+  const generatePicture = (fileName) => {
+    if (fileName) {
+      const url = 'http://localhost:5001/'
+      return url + fileName
+    }else {
+      console.error('no file name')
+    }
+  }
 
   const notify = (message, state) => {
     console.log(message);
@@ -123,108 +142,94 @@ const CountdownTimer = () => {
     }
     
   }
-
-  const generatePic = (friendAcctID) => {
-
-    if (friendAcctID) {
-      const currentImageID = accounts.filter((act) => act.acctID === friendAcctID).map((act) => act.imageID)
-      const imageID = currentImageID[0]
-      if (imageID) {
-        const filter = images.filter((img) => img.imageID === imageID).map((img) => img.data)
-          if (filter) {
-            return 'http://localhost:5001/'+filter[0]
-          }
-      }
-    }
-    
-    return sample
-  }
-
- 
-
-  const handleAddFriend = (acctID) => {
   
-      const selectedAccounts = accounts.filter((act) => act.acctID === acctID)
-      const userAcctID = userAccount.acctID
+  const handleAddFriend = (data) => {
 
-      if (selectedAccounts) {
-        let oldData = [...userFriendList]
-        const number = userFriendList.length
-        const fullname = selectedAccounts[0].firstname+' '+selectedAccounts[0].middlename.charAt(0).toUpperCase()+' '+selectedAccounts[0].lastname
-        const myFullname = userAccount.firstname+' '+userAccount.middlename.charAt(0).toUpperCase()+' '+userAccount.lastname
-        let updatedList = [...suggestedFriends]
-        updatedList = updatedList.filter((act) => act.acctID !== acctID)
-        
-        setsuggestedFriends(updatedList)
+    if (data) {
+      const newFriendData = data
 
-        const newData = {
-          id: number,
-          acctID: userAcctID,
-          friendAcctID: acctID,
-          fullname,
-        }
+      axios.post('http://localhost:5001/friends/addFriends', newFriendData)
+      .then((res) => {
+          const result = res.data
+          const message = result.message
 
-        const fiendData = {
-          id: number,
-          acctID,
-          friendAcctID: userAcctID,
-          fullname: myFullname,
-        }
+          //Add to variable friendList
+          setfriendList((oldData) => [...oldData, newFriendData])
 
-        oldData.push(newData)
-        addFriend(fiendData)
-        addFriend(newData)
-        setuserFriendList(oldData)
-     }
+          //Remove from variable suggestedFriendList
+          const filter = suggestedList.filter((data) => data.friendAcctID !== newFriendData.friendAcctID)
+          setSuggestedList(filter)
 
-     if (resultFriends.length > 0) {
-        const filter = resultFriends.filter((act) => act.acctID !== acctID)
-        setresultFriends(filter)
-     }
+          //Remove from variable resultFriendList
+          const filterResult = resultFriends.filter((data) => data.friendAcctID !== newFriendData.friendAcctID)
+          setresultFriends(filterResult)
+
+
+
+          //After all the process it will notify
+          notify(message, 'success')
+      })
+      .then((err) => console.error(err))
+
+    }else {
+      console.log('no data received')
+    }
      
   }
 
-  const handleUnfriend = (friendAcctID) => {
-      let updated = userFriendList.filter((act) => act.friendAcctID !== friendAcctID)
-      setuserFriendList(updated)
-      
-      const selectedUser = accounts.filter((act) => act.acctID === friendAcctID)
-      deleteFriend(friendAcctID)
+  const handleUnfriend = (data, index) => {
+    console.log(index)
+     if (data) {
+        const friendData = data
+        const currentIndex = index
 
-      let newData = [...suggestedFriends]
-      newData.push(selectedUser[0])
-      console.log('friendAcctID',friendAcctID)
-      console.log('newData',newData)
-      setsuggestedFriends(newData)
+        const params = {
+          friendAcctID: friendData.friendAcctID,
+          acctID: friendData.acctID
+        }
+
+        axios.delete('http://localhost:5001/friends/deleteFriends', { data: params })
+        .then((res) => {
+            const result = res.data
+            const message = result.message
+
+             //Remove from variable friendList
+             const filter = friendList.filter((data, index) => index !== currentIndex)
+             setfriendList(filter)
+             
+             //Add to variable suggestedFriendList
+             setSuggestedList((oldData) => [...oldData, friendData])
+
+             //After all the process it will notify
+             notify(message, 'success')
+        })
+        .catch((err) => console.error(err))
+    
+     }
   }
 
   const handleSearch = (e) => {
-    e.preventDefault()
-    const search = e.target.value
-    let resultList = []
+    e.preventDefault();
+    const search = e.target.value.trim(); // Trim to remove leading/trailing whitespace
+    const charLength = search.length;
+    let resultList = [];
 
     if (search) {
+        for (let i = 0; i < suggestedList.length; i++) {
+            console.log(suggestedList)
+            const fullname = suggestedList[i].fullname.substring(0, charLength);
 
-      for (let i = 0; i < accounts.length; i++) {
-        const firstname = accounts[i].firstname
-        const lastname = accounts[i].lastname
-        const middlename = accounts[i].middlename
-
-        if (
-          firstname.toUpperCase() === search.toUpperCase() ||
-          middlename.toUpperCase() === search.toUpperCase() ||
-          lastname.toUpperCase() === search.toUpperCase()
-        ) {
-          resultList.push(accounts[i])
+            if (fullname.toUpperCase() === search.toUpperCase()) {
+                resultList.push(suggestedList[i]);
+            }
         }
-      }
-
-      console.log('resultList',resultList)
-      setresultFriends(resultList)
+    } else {
+        // If search is empty, you might want to reset the resultList
+        resultList = [];
     }
 
-
-  }
+    setresultFriends(resultList);
+};
 
 
   
@@ -251,18 +256,16 @@ const CountdownTimer = () => {
               <ToastContainer/>
                 <div className={style.left}>
                   <div className='d-flex justify-content-between'>
-                    <h2>FRIEND LIST</h2>
-                    <IoPersonAdd id={style.btnAdd} title='add friend'/>
+                    <h2>Friend List</h2>
                   </div>
                   <div className={style.listFriends}>
-
                     {
-                      userFriendList.length > 0 ? (
-                        userFriendList.map((friend, index) => (
-                          <div className={style.card} key={index}>
-                              <img src={generatePic(friend.friendAcctID)} alt="" id={style.profile}/>
+                      friendList ? (
+                        friendList.map((friend, index) => (
+                          <div className={style.cardFriend} key={index}>
+                              <img src={generatePicture(friend.data)} alt="profile" id={style.profile}/>
                               <h2>{friend.fullname}</h2>
-                              <AiOutlineUserDelete id={style.btnAdd} title='unfriend' onClick={() => handleUnfriend(friend.friendAcctID)}/>
+                              <AiOutlineUserDelete id={style.btnAdd} title='unfriend' onClick={() => handleUnfriend(friend, index)}/>
                           </div>
                         ))
                       ) : (
@@ -284,11 +287,11 @@ const CountdownTimer = () => {
                       <h2>Result:</h2>
                       <div className={style.listFriends}>
                         {
-                          resultFriends.map((friend) => (
+                          resultFriends.map((friend, index) => (
                             <div className={style.card}>
-                              <img src={generatePic(friend.acctID)} alt="" id={style.profile}/>
-                              <h2>{friend.firstname+' '+friend.middlename+' '+friend.lastname}</h2>
-                              <IoPersonAdd id={style.btnAdd} title='add friend' onClick={() => handleAddFriend(friend.acctID)}/>
+                              <img src={generatePicture(friend.data)} alt="" id={style.profile}/>
+                              <h2>{friend.fullname}</h2>
+                              <IoPersonAdd id={style.btnAdd} title='add friend' onClick={() => handleAddFriend(friend)}/>
                           </div>
                           ))
                         }
@@ -299,13 +302,15 @@ const CountdownTimer = () => {
                       <h2>Suggest:</h2>
                       <div className={style.listFriends}>
                         {
-                          suggestedFriends.map((friend) => (
-                            <div className={style.card}>
-                              <img src={generatePic(friend.acctID)} alt="" id={style.profile}/>
-                              <h2>{friend.firstname+' '+friend.middlename+' '+friend.lastname}</h2>
-                              <IoPersonAdd id={style.btnAdd} title='add friend' onClick={() => handleAddFriend(friend.acctID)}/>
-                          </div>
-                          ))
+                          suggestedList ?
+                            suggestedList.map((acct, index) => (
+                              <div className={style.card} key={index}>
+                                <img src={generatePicture(acct.data)} alt="profile" id={style.profile}/>
+                                <h2>{acct.fullname}</h2>
+                                <IoPersonAdd id={style.btnAdd} title='add friend' onClick={() => handleAddFriend(acct)}/>
+                            </div>
+                            ))
+                          : <p>No accounts.</p>
                         }
                         
 

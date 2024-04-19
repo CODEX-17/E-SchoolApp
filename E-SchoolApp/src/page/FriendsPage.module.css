@@ -1,5 +1,14 @@
+@font-face {
+  font-family: bold;
+  src: url('../assets/fonts/Montserrat-Bold.ttf');
+}
+@font-face {
+  font-family: normal;
+  src: url('../assets/fonts/Montserrat-Regular.ttf');
+}
+
 .container {
-    font-family: sanSemi;
+    font-family: normal;
     width: 60%;
     height: 90%;
     color: #3E3F40;
@@ -16,7 +25,7 @@
   align-items: center;
   justify-content: center;
   font-size: 15pt;
-  font-family: sanBold;
+  font-family: bold;
 }
 
 .left {
@@ -31,13 +40,14 @@
 .left h2, .right h2 {
     margin: 0;
     font-size: 15pt;
-    font-family: sanBold;
+    font-family: bold;
 }
 
 #btnAdd {
     width: 20px;
     height: 20px;
     cursor: pointer;
+    color: white;
 }
 
 #btnAdd:hover {
@@ -50,8 +60,28 @@
     margin-top: 10px;
 }
 
+.cardFriend {
+  background-color: #099AED;
+  padding-top: 2%;
+  padding-bottom: 2%;
+  padding-left: 5%;
+  padding-right: 5%;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+  color: white;
+  margin-bottom: 10px;
+}
+
+.cardFriend h2 {
+  margin: 0;
+  font-size: 10pt;
+}
+
 .card {
-    background-color: #D9D9D9;
+    background-color: #3E3F40;
     padding-top: 2%;
     padding-bottom: 2%;
     padding-left: 5%;
@@ -65,8 +95,9 @@
 }
 
 .card h2 {
-    font-size: 13pt;
+    font-size: 10pt;
     margin: 0;
+    color: white;
 }
 
 .right {
@@ -111,6 +142,8 @@
     width: 30px;
     height: 30px;
     border-radius: 30px;
+    background-color: white;
+    border: 2px solid white;
 }
 
 .resultBox {
@@ -119,14 +152,6 @@
     margin-bottom: 0;
 }
 
-@font-face {
-    font-family: sanBold;
-    src: url('../assets/fonts/sanBold.ttf');
-}
-@font-face {
-    font-family: sanSemi;
-    src: url('../assets/fonts/sanSemi.ttf');
-}
 
 @keyframes pop {
     0% {
