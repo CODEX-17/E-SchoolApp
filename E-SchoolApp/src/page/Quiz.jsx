@@ -71,8 +71,6 @@ const [fillLayout, setFillLayout] = useState([]) //obj
 const notif = new Howl({ src: [notifSound]})
 const errSound = new Howl({ src: [erroSound]})
 
-
-
 let currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit'})
 let currentDate = new Date().toDateString('en-US', { 
         year: 'numeric', 
@@ -859,8 +857,7 @@ const generateTotalPoints = () => {
                         }
                         <div className={style.left}>
                             <h1>Question Generator</h1>
-                            <h2 id={style.h2Top}>Title</h2>
-                            <input id={style.inputOne} value={quizTitle} type="text" required onChange={(e) => setQuizTitle(e.target.value)}/>
+                            <input id={style.inputOne} value={quizTitle} placeholder='Insert Title...' type="text" required onChange={(e) => setQuizTitle(e.target.value)}/>
                             <select className="form-select" id={style.select} value={subjectName} onChange={(e) => handleSelectSubjectNamee(e.target.value)}>
                                 <option id={style.option} selected={subjectName ? false : true}>Select subject</option>
                                 {

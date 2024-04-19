@@ -1420,6 +1420,7 @@ const getImageUrlsByImageID = (imageID) => {
                                     <button className={choose === 'quizSetup' ? style.btnNavActive : style.btnNav} onClick={() => setChoose('quizSetup')}>Create Quiz</button>
                                     <button className={choose === 'leaderboard' ? style.btnNavActive : style.btnNav} onClick={() => setChoose('leaderboard')}>Leaderboard</button>
                                     <button className={choose === 'assignment' ? style.btnNavActive : style.btnNav} onClick={() => setChoose('assignment')}>Assignment</button>
+                                    <button className={choose === 'files' ? style.btnNavActive : style.btnNav} onClick={() => setChoose('files')}>Files</button>
                                 </>
                             )
                         }

@@ -1,0 +1,95 @@
+@font-face {
+    font-family: bold;
+    src: url('../assets/fonts/Montserrat-Bold.ttf');
+}
+@font-face {
+    font-family: normal;
+    src: url('../assets/fonts/Montserrat-Regular.ttf');
+}
+
+.container {
+    height: 100%;
+    padding: 2%;
+}
+
+
+.header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.header h2 {
+    margin: 0;
+    font-size: 20pt;
+    font-family: bold;
+}
+
+.filerSection {
+    display: flex;
+    margin-top: 5%;
+    padding-right: 2%;
+    padding-left: 2%;
+    background-color: rgb(220, 217, 217);
+    justify-content: space-between;
+}
+
+.filerSection p {
+    margin: 0;
+}
+
+.filterDiv {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+}
+
+.filterDiv p {
+    margin: 0;
+    font-size: 15pt;
+}
+
+.select {
+    width: 150px;
+}
+
+.listContainer {
+    height: auto;
+    display: flex;
+    flex-wrap: wrap;
+    overflow-y: auto; /* Enable vertical scroll */
+    max-height: 90%; /* Set a fixed height */
+}
+
+.card {
+    width: calc(33.33% - 20px); 
+    height: 50px;
+    margin: 10px;
+    padding: 1%;
+    border-radius: 10px;
+    background-color: aquamarine;
+    box-sizing: border-box;
+}
+
+
+
+@keyframes pop {
+    0% {
+      transform: scale(0.5);
+    }
+    50% {
+      transform: scale(1);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes slideDown {
+    0% {
+      transform: translateY(-100%);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
