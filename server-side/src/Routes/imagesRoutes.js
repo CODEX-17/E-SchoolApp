@@ -10,6 +10,8 @@ router.delete('/deleteImage', (req, res) => {
     const imageID = req.body.imageID
     const imageNames = req.body.name
 
+    console.log('name', imageNames)
+
     const query = 'DELETE FROM image WHERE imageID =?'
 
     db.query(query, [imageID], (error, data, field) => {
