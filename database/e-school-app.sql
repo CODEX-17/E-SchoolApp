@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 18, 2024 at 11:41 AM
+-- Generation Time: Apr 29, 2024 at 11:05 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -416,28 +416,16 @@ CREATE TABLE `friends` (
   `id` int(10) NOT NULL,
   `acctID` varchar(10) NOT NULL,
   `friendAcctID` varchar(10) NOT NULL,
-  `fullname` varchar(50) NOT NULL
+  `fullname` varchar(50) NOT NULL,
+  `imageID` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `friends`
 --
 
-INSERT INTO `friends` (`id`, `acctID`, `friendAcctID`, `fullname`) VALUES
-(64, '116bd490', '8J26Xi2P', 'Christian James T Tuliao'),
-(71, 'un2kt7px', '116bd490', 'Mark Langcay Adduru'),
-(83, 'un2kt7px', '077e0510', 'Manolito P Cabactulan'),
-(84, 'un2kt7px', 'ced97302', 'Kyle F Arellano'),
-(88, 'VHXQ6s6O', '077e0510', 'Manolito Paloma Cabactulan'),
-(94, 'un2kt7px', 'VHXQ6s6O', 'Allan Jay C Caluigiran'),
-(96, 'un2kt7px', '43WRp7AF', 'Rosemarie T Dela Cruz'),
-(97, '077e0510', '43WRp7AF', 'Rosemarie T Dela Cruz'),
-(98, '43WRp7AF', '077e0510', 'Manolito P Cabactulan'),
-(100, 'un2kt7px', '8J26Xi2P', 'Christian James T Tuliao'),
-(102, 'un2kt7px', 'VHXQ6s6O', 'Allan Jay C Caluigiran'),
-(104, 'un2kt7px', '8C4px7jH', 'jco M drigo'),
-(107, 'VHXQ6s6O', '077e0510', 'Manolito P Cabactulan'),
-(108, '077e0510', 'VHXQ6s6O', 'Allan C Caluigiran');
+INSERT INTO `friends` (`id`, `acctID`, `friendAcctID`, `fullname`, `imageID`) VALUES
+(113, 'un2kt7px', 'Tk6Bxe8U', 'Mark L. Adduru', 'Tk6Bxe8U');
 
 -- --------------------------------------------------------
 
@@ -467,26 +455,9 @@ INSERT INTO `image` (`id`, `name`, `type`, `data`, `dateUploaded`, `timeUploaded
 (3, 'rumar.jpg', 'image/jpeg', 'image_1701691103989.jpg', 'Mon Jan 22 2024', '03:35 AM', 'un2kt7px', 'none', 'un2kt7px'),
 (4, 'mark.jpg', 'image/jpeg', 'image_1701691103982.jpg', 'Mon Jan 22 2024', '03:35 AM', 'un2kt7px', 'none', 'Tk6Bxe8U'),
 (5, 'allan.jpg', 'image/jpeg', 'image_1701668137802.png', 'Mon Jan 22 2024', '03:35 AM', 'un2kt7px', 'none', 'VHXQ6s6O'),
-(1911, 'csu.png', 'image/jpeg', 'image_17016911033.png', 'Mon Jan 22 2024', '03:35 AM', 'un2kt7px', 'IT-CAP2', '5B7Rww8K'),
-(1912, 'colab.png', 'image/jpeg', 'image_17016911034.png', 'Mon Jan 22 2024', '03:36 AM', 'un2kt7px', 'IT-CAP2', '5B7Rww8K'),
-(1913, 'wallpaper.png', 'image/jpeg', 'image_1701691103990.jpeg', 'Mon Jan 22 2024', '03:36 AM', 'un2kt7px', 'IT-CAP2', '5B7Rww8K'),
-(1914, 'cat.jpg', 'image/jpeg', 'image_1701691103998.jpeg', 'Mon Jan 22 2024', '03:39 AM', 'un2kt7px', 'IT-CAP2', '5B7Rww8K'),
-(1915, 'jaimee.jpg', 'image/jpeg', 'image_17016911035.JPG', 'Mon Jan 22 2024', '03:39 AM', 'un2kt7px', 'IT-CAP2', 'BgJ3t4MP'),
-(1916, '416052874_249732241406647_1413292149803446007_n.jpg', 'image/jpeg', 'image_1713095412757.jpg', 'Sun Apr 14 2024', '07:50 PM', 'un2kt7px', 'IT-CAP2', 'mORXxJYo'),
-(1917, '0735DB9D-D3E9-44FC-A09E-FC12319D1C45.JPG', 'image/jpeg', 'image_1713095412759.JPG', 'Sun Apr 14 2024', '07:50 PM', 'un2kt7px', 'IT-CAP2', 'mORXxJYo'),
-(1918, '0735DB9D-D3E9-44FC-A09E-FC12319D1C45 2.JPG', 'image/jpeg', 'image_1713095412753.JPG', 'Sun Apr 14 2024', '07:50 PM', 'un2kt7px', 'IT-CAP2', 'mORXxJYo'),
-(1919, 'gaelle-marcel-YnbJwNXy0YQ-unsplash.jpg', 'image/jpeg', 'image_1713096153387.jpg', 'Sun Apr 14 2024', '08:02 PM', 'un2kt7px', 'IT-CAP2', 'dNf522yo'),
-(1920, 'header text.jpg', 'image/jpeg', 'image_1713096153398.jpg', 'Sun Apr 14 2024', '08:02 PM', 'un2kt7px', 'IT-CAP2', 'dNf522yo'),
-(1921, 'Premium Photo _ A cat sits on a shelf in front of books and a plant.jpeg', 'image/jpeg', 'image_1713096153399.jpeg', 'Sun Apr 14 2024', '08:02 PM', 'un2kt7px', 'IT-CAP2', 'dNf522yo'),
 (1922, 'MIRACLE LOTION PNG.png', 'image/png', 'image_1713096266041.png', 'Sun Apr 14 2024', '08:04 PM', 'un2kt7px', 'IT-CAP2', 'Bd4lkWFD'),
 (1923, 'lemon_rub-removebg-preview.png', 'image/png', 'image_1713096266037.png', 'Sun Apr 14 2024', '08:04 PM', 'un2kt7px', 'IT-CAP2', 'Bd4lkWFD'),
 (1924, 'FAKE STORE.jpg', 'image/jpeg', 'image_1713096266032.jpg', 'Sun Apr 14 2024', '08:04 PM', 'un2kt7px', 'IT-CAP2', 'Bd4lkWFD'),
-(1925, 'wonder drops.png', 'image/png', 'image_1713096682479.png', 'Sun Apr 14 2024', '08:11 PM', 'un2kt7px', 'IT-CAP2', 'QhjAYld2'),
-(1926, 'lemon_rub-removebg-preview.png', 'image/png', 'image_1713096682496.png', 'Sun Apr 14 2024', '08:11 PM', 'un2kt7px', 'IT-CAP2', 'QhjAYld2'),
-(1927, 'FAKE STORE.jpg', 'image/jpeg', 'image_1713097253899.jpg', 'Sun Apr 14 2024', '08:20 PM', 'un2kt7px', 'IT-CAP2', 'A0eXOL80'),
-(1928, 'lemon_rub-removebg-preview.png', 'image/png', 'image_1713097253903.png', 'Sun Apr 14 2024', '08:20 PM', 'un2kt7px', 'IT-CAP2', 'A0eXOL80'),
-(1929, 'MIRACLE LOTION PNG.png', 'image/png', 'image_1713097275875.png', 'Sun Apr 14 2024', '08:21 PM', 'un2kt7px', 'IT-CAP2', 'A0eXOL80'),
-(1930, 'wonder drops.png', 'image/png', 'image_1713097275883.png', 'Sun Apr 14 2024', '08:21 PM', 'un2kt7px', 'IT-CAP2', 'A0eXOL80'),
 (1935, 'FAKE STORE.jpg', 'image/jpeg', 'image_1713097527223.jpg', 'Sun Apr 14 2024', '08:25 PM', 'un2kt7px', 'IT-CAP2', 'lOGS8BIH'),
 (1936, 'lemon_rub-removebg-preview.png', 'image/png', 'image_1713097527225.png', 'Sun Apr 14 2024', '08:25 PM', 'un2kt7px', 'IT-CAP2', 'lOGS8BIH'),
 (1937, 'MIRACLE LOTION PNG.png', 'image/png', 'image_1713097543326.png', 'Sun Apr 14 2024', '08:25 PM', 'un2kt7px', 'IT-CAP2', 'lOGS8BIH'),
@@ -505,7 +476,6 @@ INSERT INTO `image` (`id`, `name`, `type`, `data`, `dateUploaded`, `timeUploaded
 (1950, '423619598_7291313737588313_3862564192417168033_n.jpg', 'image/jpeg', 'image_1713230102736.jpg', 'Tue Apr 16 2024', '09:15 AM', 'un2kt7px', 'IT-ELECT2', '1SXMpTpy'),
 (1959, 'Your paragraph text (3).jpg', 'image/jpeg', 'image_1713342533252.jpg', 'undefined', 'undefined', 'un2kt7px', 'IT-CAP2', 'XgdtaIbB'),
 (1960, 'Your paragraph text (3).jpg', 'image/jpeg', 'image_1713342614235.jpg', 'undefined', 'undefined', 'un2kt7px', 'IT-CAP2', 'eW9BbVNK'),
-(1961, 'Your paragraph text (3).jpg', 'image/jpeg', 'image_1713342638774.jpg', 'undefined', 'undefined', 'un2kt7px', 'IT-CAP2', 'PuA2vl6y'),
 (1962, 'Your paragraph text (2).jpg', 'image/jpeg', 'image_1713345058500.jpg', 'undefined', 'undefined', 'un2kt7px', 'IT-CAP2', 'mRqjkzL5'),
 (1963, 'wonder drops.png', 'image/png', 'image_1713345902985.png', 'undefined', 'undefined', 'un2kt7px', 'IT-ELECT2', 'xTuZ12uV'),
 (1964, '284493335_3064569063853706_2708312132206988290_n.jpg', 'image/jpeg', 'image_1713429216112.jpg', 'Thu Apr 18 2024', '04:33 PM', 'Tk6Bxe8U', 'IT-ELECT2', 'gb3YpAQC');
@@ -704,9 +674,6 @@ INSERT INTO `post` (`id`, `postID`, `acctID`, `name`, `timePosted`, `datePosted`
 (258, 'mORXxJYo', 'un2kt7px', 'Rumar C. Pamparo', '07:50 PM', 'Sun Apr 14 2024', 'test', 'mORXxJYo', 'mORXxJYo', 'none', 0, 0, 'IT-CAP2', 'CAPSTONE 2', 'normal', 'none', 'none', 0, 'none'),
 (259, 'dNf522yo', 'un2kt7px', 'Rumar C. Pamparo', '08:02 PM', 'Sun Apr 14 2024', 'try nga', 'dNf522yo', 'dNf522yo', 'none', 0, 0, 'IT-CAP2', 'CAPSTONE 2', 'normal', 'none', 'none', 0, 'none'),
 (260, 'Bd4lkWFD', 'un2kt7px', 'Rumar C. Pamparo', '08:04 PM', 'Sun Apr 14 2024', 'test1', 'Bd4lkWFD', 'Bd4lkWFD', 'none', 0, 0, 'IT-CAP2', 'CAPSTONE 2', 'normal', 'none', 'none', 0, 'none'),
-(261, 'QhjAYld2', 'un2kt7px', 'Rumar C. Pamparo', '08:11 PM', 'Sun Apr 14 2024', 'tes3', 'QhjAYld2', 'QhjAYld2', 'none', 0, 0, 'IT-CAP2', 'CAPSTONE 2', 'normal', 'none', 'none', 0, 'none'),
-(262, 'A0eXOL80', 'un2kt7px', 'Rumar C. Pamparo', '08:20 PM', 'Sun Apr 14 2024', 'new', 'A0eXOL80', 'A0eXOL80', 'none', 0, 0, 'IT-CAP2', 'CAPSTONE 2', 'normal', 'none', 'none', 0, 'none'),
-(263, 'A0eXOL80', 'un2kt7px', 'Rumar C. Pamparo', '08:21 PM', 'Sun Apr 14 2024', 'sample new post', 'A0eXOL80', 'A0eXOL80', 'none', 0, 0, 'IT-CAP2', 'CAPSTONE 2', 'normal', 'none', 'none', 0, 'none'),
 (269, 'TDVJI3IY', 'un2kt7px', 'Rumar C. Pamparo', '11:32 AM', 'Mon Apr 15 2024', 'pdf sample', 'TDVJI3IY', 'none', 'TDVJI3IY', 0, 0, 'IT-ELECT2', 'ENTREPRENEURSHIP 2', 'normal', 'none', 'none', 0, 'none'),
 (270, 'iwPl3xFW', 'un2kt7px', 'Rumar C. Pamparo', '11:37 AM', 'Mon Apr 15 2024', 'sample multiple', 'iwPl3xFW', 'none', 'iwPl3xFW', 0, 0, 'IT-ELECT2', 'ENTREPRENEURSHIP 2', 'normal', 'none', 'none', 0, 'none'),
 (271, 'XlcYbqYk', 'un2kt7px', 'Rumar C. Pamparo', '11:49 AM', 'Mon Apr 15 2024', 'nel', 'XlcYbqYk', 'none', 'XlcYbqYk', 0, 0, 'IT-ELECT2', 'ENTREPRENEURSHIP 2', 'normal', 'none', 'none', 0, 'none'),
@@ -1373,7 +1340,7 @@ ALTER TABLE `filllayout`
 -- AUTO_INCREMENT for table `friends`
 --
 ALTER TABLE `friends`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=109;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=115;
 
 --
 -- AUTO_INCREMENT for table `image`
