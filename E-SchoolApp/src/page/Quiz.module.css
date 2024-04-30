@@ -8,16 +8,35 @@
 }
 
 .container {
-    width: 60%;
+    width: 75%;
     height: auto;
     background-color: white;
     border-radius: 20px;
-    box-shadow: 0px 2px 14px -1px rgba(0,0,0,0.49);
-    -webkit-box-shadow: 0px 2px 14px -1px rgba(0,0,0,0.49);
-    -moz-box-shadow: 0px 2px 14px -1px rgba(0,0,0,0.49);
     padding: 3.5%;
     position: relative;
     animation: pop 0.5s ease;
+}
+
+.tipsContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 1%;
+}
+
+.tipsContainer h2 {
+  font-family: bold;
+  font-size: 15pt;
+  margin: 0;
+  color: #099AED;
+}
+
+#tipsContent {
+  font-family: normal;
+  font-size: 10pt;
+  margin: 0;
+  color: #3E3F40;
+  animation: fade 0.5 ease-in-out;
 }
 
 .container p, b {
@@ -36,6 +55,8 @@
 #previewQuiz, .ListPreviewQuiz {
   animation: fade 0.5s ease;
 }
+
+
 
 .content {
     position: relative;
@@ -57,21 +78,22 @@
   font-size: 10pt;
 }
 
-.content .left {
-    flex: 40%;
-    padding: 1%;
-    width: auto;
-    height: auto;
+.left {
+    flex: 20%;
     display: flex;
+    height: fit-content;
+    color: white;
     flex-direction: column;
-    align-items: start;
+    align-items: center;
     justify-content: center;
+    border-radius: 10px;
+    background-color: #099AED;
  }
  
 .left h1 {
-    color: #099AED;
+    color: white;
     font-family: bold;
-    font-size: 18pt;
+    font-size: 15pt;
     margin: 0;
 }
 
@@ -88,10 +110,10 @@
     margin-left: 10px;
 }
 
-.left #inputOne {
-    background-color: #EFECEC;
+#inputOne {
+    background-color: white;
     border: none;
-    width: 364px;
+    width: 100%;
     height: 41px;
     outline: none;
     border-radius: 5px;
@@ -99,7 +121,6 @@
     font-family: normal;
     font-size: 15px;
     margin-bottom: 5%;
-    margin-top: 5%;
 }
 
 .left #inputOne::placeholder {
@@ -236,11 +257,174 @@
   color: #777575;
 }
 
-.content .right {
+.right {
     flex: 60%;
     border-left: 2px solid #dddbdb;
-    padding-left: 3%;
+    padding-left: 1%;
     position: relative;
+ }
+
+.headMenu {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.queNumCard {
+  background-color: #099AED;
+  width: fit-content;
+  padding-top: 0.5%;
+  padding-bottom: 0.5%;
+  padding-left: 1%;
+  padding-right: 1%;
+  border-radius: 5px;
+  color: white;
+  font-size: 10pt;
+  font-family: bold;
+ }
+
+ #btnSubmitQues {
+  background-color: #3E3F40;
+  color: white;
+  font-family: bold;
+  font-size: 12 pt;
+  width: 150px;
+  height: 40px;
+  border-radius: 5px;
+ }
+
+ #btnSubmitQues:hover {
+    background-color: #5c5d5e;
+ }
+
+ .contentQuestion {
+    border-radius: 10px;
+    margin-top: 10px;
+    height: 80%;
+    padding: 4%;
+    border: 3px solid #099AED;
+ }
+
+ .headMenuContent {
+    display: flex;
+    flex-direction: column;
+ }
+
+ .listBtnMenu {
+  display: flex;
+  gap: 2%;
+  align-items: center;
+  justify-content: space-between;
+ }
+
+ .contentFillQuestion {
+    border: 1px solid red;
+    margin-top: 2%;
+    height: 80%;
+ }
+
+ .btnQuesType {
+    background-color: #3E3F40;
+    color: white;
+    border: none;
+    width: 25%;
+    height: 30px;
+    font-size: 10pt;
+    font-family: bold;
+    border-radius: 5px;
+ }
+
+ .btnQuesType:hover {
+    opacity: 0.5;
+ }
+
+ .btnQuesTypeActive {
+    background-color: #099AED;
+    color: white;
+    border: none;
+    width: 25%;
+    height: 30px;
+    font-size: 10pt;
+    font-family: bold;
+    border-radius: 5px;
+ }
+
+ .headMenuContent h1 {
+    color: #099AED;
+    font-size: 15pt;
+    font-family: bold;
+ }
+
+ .bottomMenuQues {
+    margin-top: 10px;
+    color: white;
+    padding-top: 1%;
+    padding-bottom: 1%;
+    padding-left: 2%;
+    padding-right: 2%;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #3E3F40;
+ }
+
+ .bottomMenuQues p {
+    color: white;
+    margin: 0;
+    font-family: bold;
+    font-size: 10pt;
+ }
+
+ .bottomMenuQues input {
+    border: none;
+    outline: none;
+    width: 60px;
+    height: 25px;
+    border-radius: 5px;
+    font-family: bold;
+    font-size: 10pt;
+    text-align: center;
+ }
+
+ .bottomMenuQues button {
+    background-color: #099AED;
+    border: none;
+    color: white;
+    width: 150px;
+    height: 30px;
+    font-size: 10pt;
+    font-family: bold;
+    border-radius: 5px;
+
+ }
+
+ .bottomMenuQues button:hover {
+    background-color: #4bb9f9;
+ }
+
+ #checkBox {
+    width: 15px;
+    height: 15px;
+    border: none;
+    outline: none;
+    cursor: pointer;
+ }
+
+
+ .circleBtn {
+    background-color: #099AED;
+    color: white;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+ }
+
+ .circleBtn:hover {
+    transform: scale(110%);
  }
 
  .horizontal {
@@ -877,6 +1061,15 @@
     }
     100% {
       transform: translateY(0);
+    }
+  }
+
+  @keyframes fade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
     }
   }
 

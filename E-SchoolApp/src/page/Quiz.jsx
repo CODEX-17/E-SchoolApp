@@ -19,12 +19,19 @@ import { InfinitySpin } from  'react-loader-spinner';
 import sample from '../assets/sample.jpg'
 import { FaInfoCircle } from "react-icons/fa";
 import { useBankStore } from '../stores/useBankStore'
+import { FaThList } from "react-icons/fa";
+import { MdOutlinePreview } from "react-icons/md";
+import MiniQuizDashboard from '../components/MiniQuizDashboard'
+import QuestionEnumeration from '../components/QuestionEnumeration'
+import QuestionFillintheBlank from '../components/QuestionFillintheBlank'
+import QuestionChoicesQuiz from '../components/QuestionChoicesQuiz'
+import QuestionTrueOrFalse from '../components/QuestionTrueOrFalse'
 
 
 export const Quiz = () => {
 
 const [isShowChoices, setisShowChoices] = useState(false)
-const [showQuizType, setshowQuizType] = useState('')
+const [selectedQuestionType, setselectedQuestionType] = useState('')
 const [showPreview, setshowPreview] = useState('generator')
 const [isNoChoices, setNoChoices] = useState(false)
 const [tempChoices, setTempChoices] = useState([])
@@ -110,13 +117,10 @@ const [choicesD, setChoicesD] = useState({
 useEffect(() => {
     generateUniqueId()
 
-    return () => {
-        clearInterval(tipsInterval)
-    }
 },[])
 
-const tipsInterval = setInterval(() => {
-    setisShowTips(true)
+
+ const generateTips = () => {
     const tips = [
         'When you create questions it will be store in question bank.',
         'You can create a different type of questions.',
@@ -124,9 +128,10 @@ const tipsInterval = setInterval(() => {
         'Only faculty account can generate quizes.',
         'You can select any category of subjects.',
     ]
+
     const random = Math.floor(Math.random() * tips.length)
-    setTips(tips[random])
- }, 10000);
+    return tips[random]
+ }
 
 useEffect(()=>{
     getAnalytics()
@@ -230,7 +235,7 @@ const handleCorrect = (isCorrect, letter, Id) => {
 }
 
 const handleMenus = (choice) => {
-    setshowQuizType(choice)
+    setselectedQuestionType(choice)
     if (uniqueId.length === 0) {
         generateUniqueId()
     }
@@ -817,11 +822,16 @@ const generateTotalPoints = () => {
         {
             showPreview === 'generator' && (
                 <div className={style.container}>
-                    {
-                        isShowTips && <p><b><FaInfoCircle/> YOU NEED TO KNOW: </b>{tips}</p>
-                    }
+                    <div className={style.tipsContainer}>
+                        <div className='d-flex align-items-center gap-2'>
+                            <FaInfoCircle size={19} color='#099AED'/>
+                            <h2>YOU NEED TO KNOW:</h2>
+                        </div>
+                        <p id={style.tipsContent}>{generateTips()}</p>
+                    </div>
+                    
                     <div className={style.content}>
-                        <ToastContainer/>
+                        <ToastContainer/>   
                         {
                             isShowImageModal && (
                                 <div className={style.imageModal}>
@@ -856,8 +866,12 @@ const generateTotalPoints = () => {
                             )
                         }
                         <div className={style.left}>
-                            <h1>Question Generator</h1>
-                            <input id={style.inputOne} value={quizTitle} placeholder='Insert Title...' type="text" required onChange={(e) => setQuizTitle(e.target.value)}/>
+                            <MiniQuizDashboard 
+                                questionObj={questionObj}
+                                setsubjectName={setsubjectName}
+                            />
+                            {/* <h1>Question Title</h1>
+                            <input id={style.inputOne} value={quizTitle} type="text" required onChange={(e) => setQuizTitle(e.target.value)}/>
                             <select className="form-select" id={style.select} value={subjectName} onChange={(e) => handleSelectSubjectNamee(e.target.value)}>
                                 <option id={style.option} selected={subjectName ? false : true}>Select subject</option>
                                 {
@@ -902,13 +916,64 @@ const generateTotalPoints = () => {
                                         <h2 id={style.detailContent}>{questionObj.filter((q)=> q.questionType === 'True Or False').length}</h2>
                                     </div>
                                 </div>
-                            </div>
+                            </div> */}
                         </div>
         
                         <div className={style.right}>
-                            <div className={style.horizontal}>
+                            <div className={style.headMenu}>
+                                <div className={style.queNumCard}>
+                                    Question Number: 1
+                                </div>
+                                <div className='d-flex gap-2 align-items-center'>
+                                    <div className={style.circleBtn} title='Preview'>
+                                        <MdOutlinePreview size={18} color='white' cursor={'pointer'}/>
+                                    </div>
+                                    <div className={style.circleBtn} title='List'>
+                                        <FaThList size={15} color='white' cursor={'pointer'}/>
+                                    </div>
+                                    <button id={style.btnSubmitQues}>Submit</button>
+                                </div>
+                                
+                            </div>
+                            <div className={style.contentQuestion}>
+                                <div className={style.headMenuContent}>
+                                    <h1>Question Type:</h1>
+                                    <div className={style.listBtnMenu}>
+                                        <button className={selectedQuestionType === 'enumeration' ? style.btnQuesTypeActive : style.btnQuesType} onClick={() => setselectedQuestionType('enumeration')}>Enumeration</button>
+                                        <button className={selectedQuestionType === 'choices' ? style.btnQuesTypeActive : style.btnQuesType} onClick={() => setselectedQuestionType('choices')}>Choices Quiz</button>
+                                        <button className={selectedQuestionType === 'fill' ? style.btnQuesTypeActive : style.btnQuesType} onClick={() => setselectedQuestionType('fill')}>Fill in the Blank</button>
+                                        <button className={selectedQuestionType === 'TOR' ? style.btnQuesTypeActive : style.btnQuesType} onClick={() => setselectedQuestionType('TOR')}>True or False</button>
+                                    </div>
+                                </div>
+                                <div className={style.contentFillQuestion}>
+                                    {selectedQuestionType === 'enumeration' &&  <QuestionEnumeration/>}
+                                    {selectedQuestionType === 'choices' &&  <QuestionChoicesQuiz/>}
+                                    {selectedQuestionType === 'fill' &&  <QuestionFillintheBlank/>}
+                                    {selectedQuestionType === 'TOR' &&  <QuestionTrueOrFalse/>}
+                                </div>
+                            </div>
+                            <div className={style.bottomMenuQues}>
+                                
+                                <div className='d-flex gap-4 align-items-center'>
+                                <div className='d-flex gap-2 align-items-center'>
+                                    <p>Points</p>
+                                    <input type='number' min={1}/>
+                                </div>
+                                    <div className="d-flex gap-2 align-items-center">
+                                        <input type='checkbox' id={style.checkBox}/>
+                                        <p>Key sensitive</p>
+                                    </div>
+                                    <div className="d-flex gap-2 align-items-center">
+                                        <input type='checkbox' id={style.checkBox}/>
+                                        <p>Required</p>
+                                    </div>
+                                    
+                                </div>
+                                <button>Add question</button>
+                            </div>
+                            {/* <div className={style.horizontal}>
                                 {
-                                    showQuizType === '' && (
+                                    selectedQuestionType === '' && (
                                         <button className={style.btnAddQuiz} onClick={() => setisShowChoices(true)}>Add quiz +</button>
                                     )
                                 }
@@ -918,21 +983,21 @@ const generateTotalPoints = () => {
                                     )
                                 }
                                 
-                            </div>
+                            </div> */}
             
-                            {
+                            {/* {
                                 isShowChoices && (
                                     <div className={style.menu}>
-                                        <button className={showQuizType === 'text' ? style.btnMenuActived : style.btnMenu } onClick={() => handleMenus('Enumeration')}>Enumeration</button>
-                                        <button className={showQuizType === 'choices' ? style.btnMenuActived : style.btnMenu } onClick={() =>  handleMenus('choices')}>Choices quiz</button>
-                                        <button className={showQuizType === 'fill' ? style.btnMenuActived : style.btnMenu }  onClick={() => handleMenus('fill')}>Fill in the blank</button>
-                                        <button className={showQuizType === 'TOrF' ? style.btnMenuActived : style.btnMenu }  onClick={() => handleMenus('TOrF')}>True Or False</button>
+                                        <button className={selectedQuestionType === 'text' ? style.btnMenuActived : style.btnMenu } onClick={() => handleMenus('Enumeration')}>Enumeration</button>
+                                        <button className={selectedQuestionType === 'choices' ? style.btnMenuActived : style.btnMenu } onClick={() =>  handleMenus('choices')}>Choices quiz</button>
+                                        <button className={selectedQuestionType === 'fill' ? style.btnMenuActived : style.btnMenu }  onClick={() => handleMenus('fill')}>Fill in the blank</button>
+                                        <button className={selectedQuestionType === 'TOrF' ? style.btnMenuActived : style.btnMenu }  onClick={() => handleMenus('TOrF')}>True Or False</button>
                                     </div>
                                 )
                             }
             
                             {
-                                showQuizType === 'Enumeration' && (
+                                selectedQuestionType === 'Enumeration' && (
                         
                                     <div className={style.quizContainer}>
                                         <form id={style.formControl} action="" onSubmit={handleEnumerationAdd}>
@@ -971,7 +1036,7 @@ const generateTotalPoints = () => {
                             }
 
                             {
-                                showQuizType === 'TOrF' && (
+                                selectedQuestionType === 'TOrF' && (
                         
                                     <div className={style.quizContainer}>
                                        
@@ -1012,7 +1077,7 @@ const generateTotalPoints = () => {
                             }
             
                             {
-                                showQuizType === 'choices' && (
+                                selectedQuestionType === 'choices' && (
                                     <div className={style.quizContainer}>
                                         <div className={style.quizForm}>
                                             <div className='d-flex align-items-center justify-content-between'>
@@ -1191,7 +1256,7 @@ const generateTotalPoints = () => {
                             }
 
                             {
-                                showQuizType === 'fill' && (
+                                selectedQuestionType === 'fill' && (
                                     <div className={style.fillContainer}>
                                         <div className={style.fillContent}>
                                             <div className='d-flex align-items-center justify-content-between mb-4'>
@@ -1264,13 +1329,13 @@ const generateTotalPoints = () => {
                             }
 
                             {
-                                showQuizType !== '' && (
+                                selectedQuestionType !== '' && (
                                     <div className={style.menuButtons}>
                                         <button className={style.btnSave} disabled={questionObj.length <= 0 ? true : false} onClick={() => previewShow('previewList')}>Edit</button>
                                         <button className={style.btnSave} disabled={questionObj.length <= 0 ? true : false} onClick={handleFinalQuestion}>Save</button>    
                                     </div>
                                 )
-                            }
+                            } */}
                             
 
                         </div>

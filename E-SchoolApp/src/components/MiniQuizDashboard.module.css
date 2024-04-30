@@ -1,0 +1,157 @@
+@font-face {
+    font-family: bold;
+    src: url('../assets/fonts/Montserrat-Bold.ttf');
+}
+@font-face {
+    font-family: normal;
+    src: url('../assets/fonts/Montserrat-Regular.ttf');
+}
+
+.container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 2%;
+    padding: 10%;
+    color: white;
+}
+
+h1, h2, p {
+    margin: 0;
+}
+
+.container h1 {
+    font-family: bold;
+    font-size: 12pt;
+    color: white;
+    margin-bottom: 2%;
+}
+
+.inputTitle {
+    border: none;
+    outline: none;
+    width: 100%;
+    border-radius: 5px;
+    padding: 3%;
+    font-family: normal;
+    font-size: 10pt;
+}
+
+#textArea {
+    background-color: white;
+    padding: 3%;
+    border: none;
+    outline: none;
+    font-family: normal;
+    font-size: 10pt;
+}
+
+select {
+    border: 3px solid white;
+    outline: none;
+    padding: 10px;
+    border-radius: 20px;
+    font-family: bold;
+    color: white;
+    font-size: 10pt;
+    background-color: #099AED;
+}
+
+option {
+    color: white;
+    padding: 2%;
+}
+
+.cardDash {
+    background-color: #3E3F40;
+    color: white;
+    padding: 5%;
+    border-radius: 10px;
+    margin-top: 2%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.cardDash h1 {
+    margin: 0;
+    font-size: 10pt;
+}
+
+
+
+.cardDash2 {
+    background-color: #3E3F40;
+    color: white;
+    padding: 4%;
+    border-radius: 10px;
+    margin-top: 2%;
+    flex: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.cardDash2 h1 {
+    margin: 0;
+    font-size: 8pt;
+}
+
+
+.cardDash3 {
+    background-color: #3E3F40;
+    color: white;
+    padding-left: 5%;
+    padding-right: 5%;
+    padding-top: 2%;
+    padding-bottom: 2%;
+    gap: 5%;
+    flex: 50%;
+    border-radius: 10px;
+    margin-top: 2%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.cardDash3 p {
+    color: white;
+    font-family: normal;
+    margin: 0;
+}
+
+.cardDash3 h1 {
+    font-size: 8pt;
+}
+
+@keyframes pop {
+    0% {
+      transform: scale(0.5);
+    }
+    50% {
+      transform: scale(1);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes slideDown {
+    0% {
+      transform: translateY(-100%);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
