@@ -31,7 +31,7 @@ import QuestionTrueOrFalse from '../components/QuestionTrueOrFalse'
 export const Quiz = () => {
 
 const [isShowChoices, setisShowChoices] = useState(false)
-const [selectedQuestionType, setselectedQuestionType] = useState('')
+const [selectedQuestionType, setselectedQuestionType] = useState('enumeration')
 const [showPreview, setshowPreview] = useState('generator')
 const [isNoChoices, setNoChoices] = useState(false)
 const [tempChoices, setTempChoices] = useState([])
@@ -289,7 +289,9 @@ const handleImageModal = () => {
 
 const handleFileInputChange = (e) => {
     e.preventDefault()
+    
     const file = e.target.files[0]
+    console.log(file)
     if (file && isImageType(file)) {
         setSelectedImage(file)
     } else {
@@ -752,6 +754,11 @@ const generateTotalPoints = () => {
     return 0
 }
 
+
+const handleDataFromChild = (data) => {
+    setSelectedImage(data)
+}
+
   return (
     <>
 
@@ -946,10 +953,10 @@ const generateTotalPoints = () => {
                                     </div>
                                 </div>
                                 <div className={style.contentFillQuestion}>
-                                    {selectedQuestionType === 'enumeration' &&  <QuestionEnumeration/>}
-                                    {selectedQuestionType === 'choices' &&  <QuestionChoicesQuiz/>}
-                                    {selectedQuestionType === 'fill' &&  <QuestionFillintheBlank/>}
-                                    {selectedQuestionType === 'TOR' &&  <QuestionTrueOrFalse/>}
+                                    {selectedQuestionType === 'enumeration' &&  <QuestionEnumeration selectedImage={selectedImage} handleDataFromChild={handleDataFromChild}/>}
+                                    {selectedQuestionType === 'choices' &&  <QuestionChoicesQuiz selectedImage={selectedImage} handleDataFromChild={handleDataFromChild}/>}
+                                    {selectedQuestionType === 'fill' &&  <QuestionFillintheBlank selectedImage={selectedImage} handleDataFromChild={handleDataFromChild}/>}
+                                    {selectedQuestionType === 'TOR' &&  <QuestionTrueOrFalse selectedImage={selectedImage} handleDataFromChild={handleDataFromChild}/>}
                                 </div>
                             </div>
                             <div className={style.bottomMenuQues}>

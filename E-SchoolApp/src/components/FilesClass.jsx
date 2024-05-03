@@ -137,14 +137,14 @@ const FilesClass = ({classCode}) => {
   
           <FaFilter size={15}/>
 
-          <select className={style.select} onChange={handleFilterData}>
+          <select id={style.select} onChange={handleFilterData}>
             <option value='all'>All</option>
             <option value='image'>Image</option>
             <option value='doc'>Docs</option>
           </select>
 
-          <select className={style.select}>
-            <option value='all'>all</option>
+          <select id={style.select}>
+            <option value='all'>All</option>
           {
             filesList.length > 0 && (
               listTheYears().map((data, index) => (

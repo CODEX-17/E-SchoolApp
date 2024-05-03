@@ -26,6 +26,7 @@
 
 .filerSection {
     display: flex;
+    align-items: center;
     margin-top: 2%;
     padding-right: 2%;
     padding-left: 2%;
@@ -35,6 +36,7 @@
 
 .filerSection p {
     margin: 0;
+    font-family: normal;
 }
 
 .filterDiv {
@@ -49,11 +51,21 @@
     font-size: 15pt;
 }
 
-.select {
+#select {
     width: 150px;
     border-radius: 5px;
     font-family: bold;
     font-size: 10pt;
+    height: 40px;
+    color: #3E3F40;
+    border: 1px solid #3E3F40;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    background-color: transparent;
+}
+
+#select option {
+  background-color: #3E3F40;
 }
 
 .listContainer {
