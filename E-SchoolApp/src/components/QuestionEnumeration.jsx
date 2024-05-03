@@ -2,18 +2,17 @@ import React, { useEffect, useRef, useState } from 'react'
 import style from './QuestionEnumeration.module.css'
 import { CiCirclePlus } from "react-icons/ci";
 
-const QuestionEnumeration = ({ selectedImage, handleDataFromChild }) => {
+const QuestionEnumeration = ({ selectedImage, handleSetSelectedImage, handleSetQuestionContent, handleSetQuestionAnswerText }) => {
 
   const inputImageRef = useRef(null)
-  const [image, setImage] = useState(null)
-
+ 
   const handleClickDragImage = () => {
-    inputImageRef.current.click()
+    inputImageRef.current.click() 
   }
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
-    handleDataFromChild(file)
+    handleSetSelectedImage(file)
   }
 
   return (
@@ -21,11 +20,11 @@ const QuestionEnumeration = ({ selectedImage, handleDataFromChild }) => {
       <div className={style.left}>
         <div>
           <h1>Question:</h1>
-          <input type="text" />
+          <input type="text" onChange={(e) => handleSetQuestionContent(e.target.value)}/>
         </div>
         <div className='mt-2'>
           <h1>Answer:</h1>
-          <textarea type="text" />
+          <textarea type="text" onChange={(e) => handleSetQuestionAnswerText(e.target.value)}/>
         </div>
       </div>
       <div className={style.right}>

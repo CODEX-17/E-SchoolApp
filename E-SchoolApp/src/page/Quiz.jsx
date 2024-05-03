@@ -754,9 +754,16 @@ const generateTotalPoints = () => {
     return 0
 }
 
-
-const handleDataFromChild = (data) => {
+const handleSetSelectedImage = (data) => {
     setSelectedImage(data)
+}
+
+const handleSetQuestionContent = (data) => {
+    setQuestionContent(data)
+}
+
+const handleSetQuestionAnswerText = (data) => {
+    setQuestionAnswerText(data)
 }
 
   return (
@@ -953,7 +960,14 @@ const handleDataFromChild = (data) => {
                                     </div>
                                 </div>
                                 <div className={style.contentFillQuestion}>
-                                    {selectedQuestionType === 'enumeration' &&  <QuestionEnumeration selectedImage={selectedImage} handleDataFromChild={handleDataFromChild}/>}
+                                    {selectedQuestionType === 'enumeration' &&  
+                                        <QuestionEnumeration 
+                                            selectedImage={selectedImage}
+                                            handleSetSelectedImage={handleSetSelectedImage}
+                                            handleSetQuestionAnswerText={handleSetQuestionAnswerText}
+                                            handleSetQuestionContent={handleSetQuestionContent}
+                                        />
+                                    }
                                     {selectedQuestionType === 'choices' &&  <QuestionChoicesQuiz selectedImage={selectedImage} handleDataFromChild={handleDataFromChild}/>}
                                     {selectedQuestionType === 'fill' &&  <QuestionFillintheBlank selectedImage={selectedImage} handleDataFromChild={handleDataFromChild}/>}
                                     {selectedQuestionType === 'TOR' &&  <QuestionTrueOrFalse selectedImage={selectedImage} handleDataFromChild={handleDataFromChild}/>}
@@ -966,10 +980,15 @@ const handleDataFromChild = (data) => {
                                     <p>Points</p>
                                     <input type='number' min={1}/>
                                 </div>
-                                    <div className="d-flex gap-2 align-items-center">
-                                        <input type='checkbox' id={style.checkBox}/>
-                                        <p>Key sensitive</p>
-                                    </div>
+                                    {
+                                        selectedQuestionType !== 'TOR' && (
+                                            <div className="d-flex gap-2 align-items-center">
+                                                <input type='checkbox' id={style.checkBox}/>
+                                                <p>Key sensitive</p>
+                                            </div>
+                                        )
+                                    }
+                                    
                                     <div className="d-flex gap-2 align-items-center">
                                         <input type='checkbox' id={style.checkBox}/>
                                         <p>Required</p>

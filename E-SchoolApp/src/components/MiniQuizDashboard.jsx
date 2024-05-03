@@ -6,7 +6,6 @@ const MiniQuizDashboard = ({ questionObj, setsubjectName }) => {
 
   const questions = questionObj
 
- 
 
   return (
     <div className={style.container}>

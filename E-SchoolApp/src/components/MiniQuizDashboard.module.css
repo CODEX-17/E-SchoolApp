@@ -48,10 +48,10 @@ h1, h2, p {
 }
 
 select {
-    border: 3px solid white;
+    border: 2px solid white;
     outline: none;
     padding: 10px;
-    border-radius: 20px;
+    border-radius: 10px;
     font-family: bold;
     color: white;
     font-size: 10pt;
@@ -61,6 +61,7 @@ select {
 option {
     color: white;
     padding: 2%;
+    background-color: #3E3F40;
 }
 
 .cardDash {
