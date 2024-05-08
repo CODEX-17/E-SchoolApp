@@ -1,0 +1,106 @@
+@font-face {
+    font-family: bold;
+    src: url('../assets/fonts/Montserrat-Bold.ttf');
+}
+@font-face {
+    font-family: normal;
+    src: url('../assets/fonts/Montserrat-Regular.ttf');
+}
+
+
+.container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    font-family: bold;
+    gap: 2%;
+}
+
+.left {
+    flex: 70%;
+}
+
+.left h1 {
+    font-size: 10pt;
+    color: #099AED;
+}
+
+.left input {
+    border: 2px solid #099AED;
+    border-radius: 5px;
+    height: 50px;
+    width: 100%;
+    font-size: 10pt;
+    outline: none;
+    padding-left: 2%;
+    color: #099AED;
+}
+
+.left button {
+    width: 150px;
+    font-size: 12pt;
+    height: 50px;
+    color: #099AED;
+    border-radius: 10px;
+    background-color: transparent;
+    border: 2px solid #099AED;
+}
+
+.left button:hover {
+    background-color: #bddff38b;
+}
+
+.right {
+    flex: 20%;
+}
+
+.dragImage {
+    border: 4px dashed #099AED;
+    height: 100%;
+    width: 100%;
+    color: #099AED;
+    display: flex;
+    font-size: 10pt;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+#img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+@keyframes pop {
+    0% {
+      transform: scale(0.5);
+    }
+    50% {
+      transform: scale(1);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes slideDown {
+    0% {
+      transform: translateY(-100%);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }

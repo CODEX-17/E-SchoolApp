@@ -1032,7 +1032,6 @@ const handleSaveSetting = () => {
 const handleDownload = (fileName) => {
     if (fileName) {
         const filePath = 'http://localhost:5001/' + fileName
-        console.log('filePath',filePath)
         window.location.href = filePath
     }
    
@@ -1608,7 +1607,7 @@ const getImageUrlsByImageID = (imageID) => {
                     </>
                 )
             } 
-            { choose === 'files' && <FilesClass/> }
+            { choose === 'files' && <FilesClass classCode={classCode}/> }
             { choose === 'leaderboard' && <LeaderBoard/> }
             { choose === 'quizSetup' && <ClassQuizSetup subjectName={subjectName} navigateClass={navigateClass} postType={postType} classCode={classCode}/> }
             { choose === 'assignment' && <ClassAssignment postType={postType} quizObj={quizObj} handlePostAssignment={handlePostAssignment}/> }

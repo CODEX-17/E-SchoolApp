@@ -9,6 +9,7 @@ const fs = require('fs')
 router.delete('/deleteFiles', (req, res) => {
     const fileID = req.body.fileID
     const fileNames = req.body.name
+    console.log('details:', fileID, fileNames)
 
     const query = 'DELETE FROM files WHERE fileID =?'
 
@@ -45,7 +46,32 @@ router.delete('/deleteFiles', (req, res) => {
     })
 })
 
+//API get all files and images by ClassCode
+router.get('/getAllFilesAndImages/:classCode', (req, res) => {
+    const classCode =  req.params.classCode
+    const queryImages = "SELECT * FROM image WHERE classCode=?"
+    db.query(queryImages, [classCode], (error, data, field) => {
+        if (error) {
+            res.status(404).json(error)
+        } else {
+            const imagesList = data
+           
+            const queryFiles = "SELECT * FROM files WHERE classCode=?"
 
+            db.query(queryFiles, [classCode], (error, data, field) => {
+                if (error) {
+                    res.status(404).json(error)
+                } else {
+                    const filesList = imagesList.concat(data)
+                    res.status(200).json(filesList)
+                }
+            })
+        }
+    })
+})
+
+
+//API get all files by ClassCode
 router.get('/getFilesByClassCode/:classCode', (req, res) => {
     const classCode =  req.params.classCode
     const query = "SELECT * FROM files WHERE classCode=?"
