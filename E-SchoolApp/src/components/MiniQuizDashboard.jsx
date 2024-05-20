@@ -2,10 +2,9 @@ import React, { useEffect } from 'react'
 import style from './MiniQuizDashboard.module.css'
 import axios from 'axios'
 
-const MiniQuizDashboard = ({ questionObj, setsubjectName }) => {
+const MiniQuizDashboard = ({ finalQuestionSet, subjectNameList, handleSetSubjectName }) => {
 
-  const questions = questionObj
-
+  const questions = finalQuestionSet
 
   return (
     <div className={style.container}>
@@ -23,11 +22,14 @@ const MiniQuizDashboard = ({ questionObj, setsubjectName }) => {
             <textarea type='text' id={style.textArea}/>
         </div>
 
-        <select onChange={(e) => setsubjectName(e.target.value)}>
+        <select onChange={(e) => handleSetSubjectName(e.target.value)}>
             <option>Select Subject</option>
-            <option value={'english'}>english</option>
-            <option value={'math'}>math</option>
-            
+            {
+                subjectNameList && 
+                subjectNameList.map((data, index) => (
+                    <option key={index} value={data.subjectName}>{data.subjectName}</option>
+                ))  
+            }
         </select>
 
         <div className={style.cardDash} style={{ marginTop: '20px' }}>

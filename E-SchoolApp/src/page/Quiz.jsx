@@ -37,7 +37,7 @@ const [isNoChoices, setNoChoices] = useState(false)
 const [tempChoices, setTempChoices] = useState([])
 const [isShowImageModal ,setisShowImageModal] = useState(false)
 const [isShowThumbnail, setisShowThumbnail] = useState(false)
-const [uniqueId, setuniqueId] = useState('')
+const [uniqueId, setuniqueId] = useState('') // variable for uniqueID
 const [allQuestionData, setAllQuestionData] = useState([])
 const [showLoading, setShowLoading] = useState(false)
 const [isShowTips, setisShowTips] = useState(false)
@@ -58,20 +58,26 @@ const [content, setContent] = useState('');
 const [correct, setCorrect] = useState(false);
 
 const [quizTitle, setQuizTitle] = useState();
-const [quizInstructions, setQuizInstructions] = useState();
-const [questionContent, setQuestionContent] = useState();
-const [subjectName, setsubjectName]  = useState();
-const [subjectNameList, setsubjectNameList] = useState([])
+const [quizInstructions, setQuizInstructions] = useState()
+const [subjectName, setsubjectName]  = useState(null) // variable for selected question subject
+const [subjectNameList, setsubjectNameList] = useState(null) // storage for subjectname lists
 const [required, setrequired] = useState(false);
 const [points, setpoints] = useState(1);
-const [questionAnswerText, setQuestionAnswerText] = useState();
+const [questionContent, setQuestionContent] = useState(null) // variable for question content
+const [questionAnswerText, setQuestionAnswerText] = useState(null) // variable for text-answer to the questions
+const [questionNumber, setQuestionNumber] = useState(1) // variable for number per questions
 const [keySensitive, setKeySensitive] = useState(false)
-const [selectedImage, setSelectedImage] = useState(null)
+const [numberOfAnswer, setNumberOfAnswer] = useState(1) // number of answer per questions
+const [selectedImage, setSelectedImage] = useState(null) //Storage for uploaded images
 const [imageSetQuestion, setImageSetQuestion] = useState([])
+const [choicesID, setChoicesID] = useState(null)
 const [trueORFalseAnswer, setTrueOrFalseAnswer] = useState(null)
 const [tips, setTips] = useState('')
 
+const [finalQuestionSet, setFinalQuestionSet] = useState([]) // varaible for final set of questions
+
 const [choices, setChoices] = useState([]) //obj
+
 const [questionObj, setQuestionObj] = useState([]) //obj;
 const [fillLayout, setFillLayout] = useState([]) //obj
 
@@ -115,7 +121,12 @@ const [choicesD, setChoicesD] = useState({
 })
 
 useEffect(() => {
-    generateUniqueId()
+    // create a uniqueID for the questionsSet when mount this page
+    setuniqueId(generateUniqueID()) 
+
+    axios.get('http://localhost:5001/getSubjects')
+    .then(res => setsubjectNameList(res.data))
+    .catch(err => console.error(err))
 
 },[])
 
@@ -135,7 +146,6 @@ useEffect(() => {
 
 useEffect(()=>{
     getAnalytics()
-    getSubjects()
 },[questionObj, choicesA])
 
 const generateFullname = () => {
@@ -179,7 +189,7 @@ const notify = (message, state) => {
     
 }
 
-const generateUniqueId = () => {
+const generateUniqueID = () => {
     const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
     const length = 8
     let result = ''
@@ -187,7 +197,8 @@ const generateUniqueId = () => {
         const randomIndex = Math.floor(Math.random() * charset.length)
         result += charset.charAt(randomIndex)
     }
-    setuniqueId(result)
+   
+    return result
 }
 
 const deleteAllData = () => {
@@ -200,11 +211,7 @@ const deleteAllData = () => {
     setQuizInstructions('')
 }
 
-const getSubjects = () => {
-    axios.get('http://localhost:5001/getSubjects')
-    .then(res => setsubjectNameList(res.data))
-    .catch(err => console.error(err))
-}
+
 
 const previewShow = (data) => {
     setshowPreview(data)
@@ -237,7 +244,7 @@ const handleCorrect = (isCorrect, letter, Id) => {
 const handleMenus = (choice) => {
     setselectedQuestionType(choice)
     if (uniqueId.length === 0) {
-        generateUniqueId()
+        generateUniqueID()
     }
 }
 
@@ -259,7 +266,7 @@ const resetValues = (level) => {
         setTrueOrFalseAnswer(null)
         setSelectedImage(null)
         setTempChoices([])
-        generateUniqueId()
+        generateUniqueID()
         setLetter('A')
         setQuestionContent('')
         setrequired(false)
@@ -373,6 +380,56 @@ const handleUpdatedQuestion = (title, instructions, subject, ques, choicesSet, i
     if (fillLayout) {
         setfillLayoutSet(fillLayout)
     }
+}
+
+//Add questions to variable questionObject
+const handleAddQuestions = (e) => {
+
+    //If theirs no image uploaded in questions it will return none
+    const imageID = selectedImage ? generateUniqueID() : 'none'
+
+    if (selectedQuestionType === 'enumeration') {
+
+        const question = {
+            questionID: uniqueId,
+            questionNumber: questionNumber,
+            questionContent: questionContent,
+            questionType: selectedQuestionType,
+            points: points,
+            required: required,
+            keySensitive: keySensitive,
+            questionAnswerText: questionAnswerText,
+            numberOfAns: numberOfAnswer,
+            choicesID: 'none',
+            imageID: imageID,
+            fillLayoutID: 'none',
+            subjectName: subjectName,
+        }
+
+        setFinalQuestionSet((prevData) => [...prevData, question])
+        
+    }else if (selectedQuestionType === 'choices') {
+
+        const question = {
+            questionID: uniqueId,
+            questionNumber: questionNumber,
+            questionContent: questionContent,
+            questionType: selectedQuestionType,
+            points: points,
+            required: required,
+            keySensitive: keySensitive,
+            questionAnswerText: questionAnswerText,
+            numberOfAns: numberOfAnswer,
+            choicesID: choicesID,
+            imageID: imageID,
+            fillLayoutID: 'none',
+            subjectName: subjectName,
+        }
+
+        setFinalQuestionSet((prevData) => [...prevData, question])
+        
+    }
+
 }
 
 const handleAnswerTORF = (answer) => {
@@ -525,7 +582,7 @@ const handleChoicesQuestionAdd = (e) => {
 
                 updatedChoices=[]
                 resetValues(1)
-                generateUniqueId()
+                generateUniqueID()
                 setChoicesA({
                     choicesID: uniqueId,
                     letter: 'A',
@@ -766,6 +823,23 @@ const handleSetQuestionAnswerText = (data) => {
     setQuestionAnswerText(data)
 }
 
+const handleSetNumberOfAnswer= (data) => {
+    setNumberOfAnswer(data)
+}
+
+const handleSetSubjectName = (data) => {
+    setsubjectName(data)
+}
+
+const handleSetChoices = (data) => {
+    setChoices(data)
+}
+
+const handleNotificationFromChild = (message, type) => {
+    notify(message, type)
+}
+
+
   return (
     <>
 
@@ -881,8 +955,9 @@ const handleSetQuestionAnswerText = (data) => {
                         }
                         <div className={style.left}>
                             <MiniQuizDashboard 
-                                questionObj={questionObj}
-                                setsubjectName={setsubjectName}
+                                finalQuestionSet={finalQuestionSet}
+                                subjectNameList={subjectNameList}
+                                handleSetSubjectName={handleSetSubjectName}
                             />
                             {/* <h1>Question Title</h1>
                             <input id={style.inputOne} value={quizTitle} type="text" required onChange={(e) => setQuizTitle(e.target.value)}/>
@@ -966,9 +1041,17 @@ const handleSetQuestionAnswerText = (data) => {
                                             handleSetSelectedImage={handleSetSelectedImage}
                                             handleSetQuestionAnswerText={handleSetQuestionAnswerText}
                                             handleSetQuestionContent={handleSetQuestionContent}
+                                            handleSetNumberOfAnswer={handleSetNumberOfAnswer}
                                         />
                                     }
-                                    {selectedQuestionType === 'choices' &&  <QuestionChoicesQuiz selectedImage={selectedImage} handleDataFromChild={handleDataFromChild}/>}
+                                    {selectedQuestionType === 'choices' && 
+                                        <QuestionChoicesQuiz 
+                                            selectedImage={selectedImage}
+                                            handleSetSelectedImage={handleSetSelectedImage}
+                                            handleSetChoices={handleSetChoices}
+                                            handleNotificationFromChild={handleNotificationFromChild}
+                                        />
+                                    }
                                     {selectedQuestionType === 'fill' &&  <QuestionFillintheBlank selectedImage={selectedImage} handleDataFromChild={handleDataFromChild}/>}
                                     {selectedQuestionType === 'TOR' &&  <QuestionTrueOrFalse selectedImage={selectedImage} handleDataFromChild={handleDataFromChild}/>}
                                 </div>
@@ -995,7 +1078,7 @@ const handleSetQuestionAnswerText = (data) => {
                                     </div>
                                     
                                 </div>
-                                <button>Add question</button>
+                                <button onClick={handleAddQuestions}>Add question</button>
                             </div>
                             {/* <div className={style.horizontal}>
                                 {

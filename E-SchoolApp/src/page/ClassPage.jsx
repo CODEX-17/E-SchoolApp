@@ -205,8 +205,6 @@ const handleAddClass = (e) => {
     formData.append('memberType', 'admin')
     formData.append('image', imageFile)
 
-    console.log(className)
-
     axios.post('http://localhost:5001/classes/addClass', formData, {
         headers: {
             'Content-Type':'multipart/form-data'

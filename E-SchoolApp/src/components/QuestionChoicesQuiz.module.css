@@ -15,6 +15,101 @@
     gap: 2%;
 }
 
+.modal {
+  background-color: white;
+  border: 2px solid #099AED;
+  border-radius: 10px;
+  padding: 2%;
+  width: 90%;
+  height: 55%;
+  position: absolute;
+  animation: pop 0.5s ease;
+  z-index: 3;
+  display: flex;
+}
+
+.leftPart {
+  border: 1px solid #099AED;
+  border-radius: 5px;
+  flex: 30%;
+  padding: 2%;
+  overflow-y: auto;
+}
+
+.smallCard {
+  border-radius: 5px;
+  padding: 2%;
+  font-family: normal;
+  user-select: none;
+  cursor: pointer;
+  font-size: 10pt;
+  gap: 2px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.smallCard b {
+  color: #3E3F40;
+}
+
+.rightPart {
+  flex: 70%;
+  padding: 2%;
+}
+
+.headRightPart {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+#addMoreChoices {
+  border: none;
+  background-color: #099AED;
+  font-size: 8pt;
+  color: white;
+  padding-left: 2%;
+  padding-right: 2%;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  border-radius: 5px;
+  width: 100px;
+}
+
+.headRightPart h2, .headRightPart p {
+  font-size: 10pt;
+  margin: 0;
+  font-family: bold;
+}
+
+#textarea {
+  padding: 2%;
+  font-size: 10pt;
+  width: 100%;
+  max-height: 70%;
+  margin-top: 2%;
+}
+
+#textarea::placeholder {
+  font-size: 10pt;
+  font-family: normal;
+}
+
+#btnSave {
+  border: none;
+  background-color: #099AED;
+  color: white;
+  border-radius: 5px;
+  font-size: 10pt;
+  width: 100%;
+  height: 40px;
+}
+
+#btnSave:hover, #addMoreChoices:hover {
+  opacity: 0.5;
+}
 
 .left {
     flex: 70%;
@@ -64,7 +159,7 @@
 
 .card {
     width: calc(33.33% - 20px); 
-    height: 50px;
+    height: 30px;
     padding: 2%;
     gap: 10px;
     display: flex;
@@ -72,18 +167,15 @@
     justify-content: space-between;
     box-sizing: border-box;
     margin: 2px;
+    border-radius: 5px;
+    background-color: rgba(9, 153, 237, 0.52);
 }
 
-.card input {
-    border: 2px solid #099AED;
-    height: 40px;
-    padding-left: 5px;
-}
-
-.card h1 {
-    font-size: 15pt;
+.card b {
+    font-size: 10pt;
     margin: 0;
     font-family: bold;
+    color: #3E3F40;
 }
 
 .listChoices {
@@ -92,30 +184,23 @@
     flex-wrap: wrap;
     overflow-y: auto;
     display: flex;
+    margin-bottom: 2%;
 }
 
 .bottomMenu {
     display: flex;
-    border-radius: 5px;
-    padding: 2%;
-    gap: 2%;
     align-items: center;
-    background-color: #3E3F40;
+    justify-content: center;
 }
 
-.bottomMenu h1 {
-    font-size: 15pt;
-    margin: 0;
-    color: white;
-}
 
 .bottomMenu button {
     border: none;
     background-color: #099AED;
     color: white;
-    font-size: 8pt;
-    width: 150px;
-    height: 30px;
+    font-size: 10pt;
+    width: 100%;
+    height: 40px;
     border-radius: 5px;
 }
 
@@ -123,16 +208,6 @@
     opacity: 0.5;
 }
 
-#inputContent {
-    border-radius: 5px;
-    background-color: white;
-    color: #3E3F40;
-    border: none;
-    height: 30px;
-    font-size: 10pt;
-    font-family: normal;
-    outline: none;
-}
 
 
 @keyframes pop {
