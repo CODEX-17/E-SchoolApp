@@ -107,6 +107,10 @@
   height: 40px;
 }
 
+#btnSave:disabled {
+  background-color: rgba(161, 163, 165, 0.337);
+}
+
 #btnSave:hover, #addMoreChoices:hover {
   opacity: 0.5;
 }
@@ -189,10 +193,10 @@
 
 .bottomMenu {
     display: flex;
+    gap: 2%;
     align-items: center;
     justify-content: center;
 }
-
 
 .bottomMenu button {
     border: none;

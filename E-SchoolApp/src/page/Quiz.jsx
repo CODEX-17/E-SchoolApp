@@ -811,6 +811,26 @@ const generateTotalPoints = () => {
     return 0
 }
 
+// Check if the questions is valid it will enabled the button
+const checkIfTheQuestionIsValid = () => {
+
+    if (selectedQuestionType === 'enumeration') {
+        if (questionContent && questionAnswerText) {
+            return false
+        }else {
+            return true
+        }
+    }
+
+    if (selectedQuestionType === 'choices') {
+        if (choices.length !== 0 && questionContent) {
+            return false
+        }else {
+            return true
+        }
+    }
+}
+
 const handleSetSelectedImage = (data) => {
     setSelectedImage(data)
 }
@@ -837,6 +857,18 @@ const handleSetChoices = (data) => {
 
 const handleNotificationFromChild = (message, type) => {
     notify(message, type)
+}
+
+//Reset all questions variables
+const resetQuestionsVariables = () => {
+    setChoices([])
+    setQuestionAnswerText(null)
+    setQuestionContent(null)
+    setpoints(1)
+    setrequired(false)
+    setKeySensitive(false)
+    setSelectedImage(null)
+    setTrueOrFalseAnswer(null)
 }
 
 
@@ -1028,10 +1060,10 @@ const handleNotificationFromChild = (message, type) => {
                                 <div className={style.headMenuContent}>
                                     <h1>Question Type:</h1>
                                     <div className={style.listBtnMenu}>
-                                        <button className={selectedQuestionType === 'enumeration' ? style.btnQuesTypeActive : style.btnQuesType} onClick={() => setselectedQuestionType('enumeration')}>Enumeration</button>
-                                        <button className={selectedQuestionType === 'choices' ? style.btnQuesTypeActive : style.btnQuesType} onClick={() => setselectedQuestionType('choices')}>Choices Quiz</button>
-                                        <button className={selectedQuestionType === 'fill' ? style.btnQuesTypeActive : style.btnQuesType} onClick={() => setselectedQuestionType('fill')}>Fill in the Blank</button>
-                                        <button className={selectedQuestionType === 'TOR' ? style.btnQuesTypeActive : style.btnQuesType} onClick={() => setselectedQuestionType('TOR')}>True or False</button>
+                                        <button className={selectedQuestionType === 'enumeration' ? style.btnQuesTypeActive : style.btnQuesType} onClick={() => {setselectedQuestionType('enumeration'), resetQuestionsVariables()}}>Enumeration</button>
+                                        <button className={selectedQuestionType === 'choices' ? style.btnQuesTypeActive : style.btnQuesType} onClick={() => {setselectedQuestionType('choices'), resetQuestionsVariables()}}>Choices Quiz</button>
+                                        <button className={selectedQuestionType === 'fill' ? style.btnQuesTypeActive : style.btnQuesType} onClick={() => {setselectedQuestionType('fill'), resetQuestionsVariables()}}>Fill in the Blank</button>
+                                        <button className={selectedQuestionType === 'TOR' ? style.btnQuesTypeActive : style.btnQuesType} onClick={() => {setselectedQuestionType('TOR'), resetQuestionsVariables()}}>True or False</button>
                                     </div>
                                 </div>
                                 <div className={style.contentFillQuestion}>
@@ -1044,15 +1076,26 @@ const handleNotificationFromChild = (message, type) => {
                                             handleSetNumberOfAnswer={handleSetNumberOfAnswer}
                                         />
                                     }
+
                                     {selectedQuestionType === 'choices' && 
                                         <QuestionChoicesQuiz 
                                             selectedImage={selectedImage}
                                             handleSetSelectedImage={handleSetSelectedImage}
                                             handleSetChoices={handleSetChoices}
                                             handleNotificationFromChild={handleNotificationFromChild}
+                                            handleSetQuestionContent={handleSetQuestionContent}
+                                            questionContent={questionContent}
                                         />
                                     }
-                                    {selectedQuestionType === 'fill' &&  <QuestionFillintheBlank selectedImage={selectedImage} handleDataFromChild={handleDataFromChild}/>}
+
+                                    {selectedQuestionType === 'fill' &&  
+                                        <QuestionFillintheBlank 
+                                            selectedImage={selectedImage}
+                                            handleSetSelectedImage={handleSetSelectedImage}
+                                            handleNotificationFromChild={handleNotificationFromChild}
+                                        />
+                                    }
+
                                     {selectedQuestionType === 'TOR' &&  <QuestionTrueOrFalse selectedImage={selectedImage} handleDataFromChild={handleDataFromChild}/>}
                                 </div>
                             </div>
@@ -1078,7 +1121,7 @@ const handleNotificationFromChild = (message, type) => {
                                     </div>
                                     
                                 </div>
-                                <button onClick={handleAddQuestions}>Add question</button>
+                                <button onClick={handleAddQuestions} disabled={checkIfTheQuestionIsValid()}>Add question</button>
                             </div>
                             {/* <div className={style.horizontal}>
                                 {

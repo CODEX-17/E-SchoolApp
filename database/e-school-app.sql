@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 29, 2024 at 11:05 AM
--- Server version: 10.4.28-MariaDB
--- PHP Version: 8.2.4
+-- Generation Time: May 24, 2024 at 11:23 AM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -302,7 +302,9 @@ INSERT INTO `comments` (`id`, `replyID`, `postID`, `classCode`, `acctID`, `fulln
 (28, 'SnScSSNM', 'SnScSSNM', 'IT-ELECT2', 'un2kt7px', 'Rumar C. Pamparo', '', '05:23 PM', 'Wed Apr 17 2024', '8Wh9S1LK', 'none'),
 (29, 'SnScSSNM', 'SnScSSNM', 'IT-ELECT2', 'un2kt7px', 'Rumar C. Pamparo', '', '05:25 PM', 'Wed Apr 17 2024', 'none', 'xTuZ12uV'),
 (30, 'gb3YpAQC', 'gb3YpAQC', 'IT-ELECT2', 'un2kt7px', 'Rumar C. Pamparo', 'astig perd', '04:34 PM', 'Thu Apr 18 2024', 'none', 'none'),
-(31, 'gb3YpAQC', 'gb3YpAQC', 'IT-ELECT2', 'VHXQ6s6O', 'Allan C. Caluigiran', 'petmalu', '04:38 PM', 'Thu Apr 18 2024', 'none', 'none');
+(31, 'gb3YpAQC', 'gb3YpAQC', 'IT-ELECT2', 'VHXQ6s6O', 'Allan C. Caluigiran', 'petmalu', '04:38 PM', 'Thu Apr 18 2024', 'none', 'none'),
+(32, 'Bd4lkWFD', 'Bd4lkWFD', 'IT-CAP2', 'un2kt7px', 'Rumar C. Pamparo', 'nice', '02:50 PM', 'Fri May 03 2024', 'none', 'none'),
+(33, 'Bd4lkWFD', 'Bd4lkWFD', 'IT-CAP2', 'un2kt7px', 'Rumar C. Pamparo', 'dsads', '05:03 PM', 'Wed May 08 2024', 'none', 'none');
 
 -- --------------------------------------------------------
 
@@ -679,7 +681,8 @@ INSERT INTO `post` (`id`, `postID`, `acctID`, `name`, `timePosted`, `datePosted`
 (271, 'XlcYbqYk', 'un2kt7px', 'Rumar C. Pamparo', '11:49 AM', 'Mon Apr 15 2024', 'nel', 'XlcYbqYk', 'none', 'XlcYbqYk', 0, 0, 'IT-ELECT2', 'ENTREPRENEURSHIP 2', 'normal', 'none', 'none', 0, 'none'),
 (272, 'DOann9lo', 'un2kt7px', 'Rumar C. Pamparo', '09:14 AM', 'Tue Apr 16 2024', 'sample multiple post', 'DOann9lo', 'DOann9lo', 'DOann9lo', 0, 0, 'IT-ELECT2', 'ENTREPRENEURSHIP 2', 'normal', 'none', 'none', 0, 'none'),
 (273, '1SXMpTpy', 'un2kt7px', 'Rumar C. Pamparo', '09:15 AM', 'Tue Apr 16 2024', 'sample', '1SXMpTpy', '1SXMpTpy', 'none', 0, 0, 'IT-ELECT2', 'ENTREPRENEURSHIP 2', 'normal', 'none', 'none', 0, 'none'),
-(277, 'gb3YpAQC', 'Tk6Bxe8U', 'Mark L. Adduru', '04:33 PM', 'Thu Apr 18 2024', 'sample lang perds', 'gb3YpAQC', 'gb3YpAQC', 'gb3YpAQC', 0, 0, 'IT-ELECT2', 'ENTREPRENEURSHIP 2', 'normal', 'none', 'none', 0, 'none');
+(277, 'gb3YpAQC', 'Tk6Bxe8U', 'Mark L. Adduru', '04:33 PM', 'Thu Apr 18 2024', 'sample lang perds', 'gb3YpAQC', 'gb3YpAQC', 'gb3YpAQC', 0, 0, 'IT-ELECT2', 'ENTREPRENEURSHIP 2', 'normal', 'none', 'none', 0, 'none'),
+(278, 'Ciaq97Dj', 'un2kt7px', 'Rumar C. Pamparo', '05:03 PM', 'Wed May 08 2024', 'sads', 'Ciaq97Dj', 'Ciaq97Dj', 'Ciaq97Dj', 0, 0, 'IT-CAP2', 'CAPSTONE 2', 'normal', 'none', 'none', 0, 'none');
 
 -- --------------------------------------------------------
 
@@ -1322,7 +1325,7 @@ ALTER TABLE `class_list`
 -- AUTO_INCREMENT for table `comments`
 --
 ALTER TABLE `comments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT for table `files`
@@ -1364,7 +1367,7 @@ ALTER TABLE `messages`
 -- AUTO_INCREMENT for table `post`
 --
 ALTER TABLE `post`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=278;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=279;
 
 --
 -- AUTO_INCREMENT for table `questionbank`

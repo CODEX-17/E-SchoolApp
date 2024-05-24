@@ -3,7 +3,7 @@ import style from './QuestionChoicesQuiz.module.css'
 import { CiCirclePlus } from "react-icons/ci";
 import { AiOutlineCloseCircle, AiFillCheckCircle } from "react-icons/ai"
 
-const QuestionChoicesQuiz = ({selectedImage, handleSetSelectedImage, handleSetChoices, handleNotificationFromChild}) => {
+const QuestionChoicesQuiz = ({selectedImage, handleSetSelectedImage, handleSetChoices, handleNotificationFromChild, handleSetQuestionContent, questionContent}) => {
 
   const generateUniqueID = () => {
     const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
@@ -161,6 +161,36 @@ const QuestionChoicesQuiz = ({selectedImage, handleSetSelectedImage, handleSetCh
     setChoices(newChoices)
   }
 
+  // Check if all choices have content
+  const checkIfAllChoiceAreValid = () => {
+    console.log(questionContent)
+
+    //check if theirs a question content
+    if (questionContent === '' || questionContent === null) {
+      return true
+    }
+
+    let noContent = 0
+
+    for (let i = 0; i < choices.length; i++) {
+      if (choices[i].content === '') {
+        noContent += 1
+      }
+    }
+
+    if (noContent === 0) {
+      console.log(noContent)
+      return false
+    }else {
+      console.log(noContent)
+      return true
+    }
+    
+  }
+
+
+
+
   return (
     <div className={style.container}>
       {
@@ -207,8 +237,7 @@ const QuestionChoicesQuiz = ({selectedImage, handleSetSelectedImage, handleSetCh
 
               </textarea>
               <div className='d-flex gap-2'>
-                <button id={style.btnSave} onClick={submitChoices}>Save</button>
-                <button id={style.btnSave} style={{ backgroundColor: '#3E3F40', flex: '30%' }} onClick={() => setShowModal(false)}>Close</button>
+                <button id={style.btnSave} style={{ backgroundColor: '#3E3F40' }} onClick={() => setShowModal(false)}>Close</button>
               </div>
               
             </div>
@@ -219,14 +248,14 @@ const QuestionChoicesQuiz = ({selectedImage, handleSetSelectedImage, handleSetCh
       <div className={style.left}>
         <div>
           <h1>Question:</h1>
-          <input type="text" />
+          <input type="text" onChange={(e) =>handleSetQuestionContent(e.target.value)}/>
         </div>
         <div className='mt-2'>
           <h1>Choices:</h1>
           <div className={style.listChoices}>
             {
               choices.map((data, index) => (
-                 <div className={style.card} key={index}>
+                 <div className={style.card} key={index} onClick={() => {setSelectedIndex(index), setShowModal(true)}}>
                     <b>{data.letter}</b><p>{limitTheStringLength(data.content)}</p>
                     {data.correct ? <AiFillCheckCircle color='green'/> : <AiOutlineCloseCircle/>}
                  </div>
@@ -237,6 +266,7 @@ const QuestionChoicesQuiz = ({selectedImage, handleSetSelectedImage, handleSetCh
         <h1>Add more choices</h1>
         <div className={style.bottomMenu}>
           <button onClick={() => setShowModal(true)}>Edit Choices</button>
+          <button id={style.btnSave} onClick={submitChoices} disabled={checkIfAllChoiceAreValid()}>Save</button>
         </div>
       </div>
       <div className={style.right}>
