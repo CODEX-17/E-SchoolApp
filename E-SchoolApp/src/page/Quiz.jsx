@@ -383,16 +383,17 @@ const handleUpdatedQuestion = (title, instructions, subject, ques, choicesSet, i
 }
 
 //Add questions to variable questionObject
-const handleAddQuestions = (e) => {
+const handleAddQuestions = () => {
 
     //If theirs no image uploaded in questions it will return none
     const imageID = selectedImage ? generateUniqueID() : 'none'
+    const questionID = generateUniqueID()
 
     if (selectedQuestionType === 'enumeration') {
 
         const question = {
-            questionID: uniqueId,
-            questionNumber: questionNumber,
+            questionID,
+            questionNumber: finalQuestionSet.length + 1,
             questionContent: questionContent,
             questionType: selectedQuestionType,
             points: points,
@@ -411,8 +412,8 @@ const handleAddQuestions = (e) => {
     }else if (selectedQuestionType === 'choices') {
 
         const question = {
-            questionID: uniqueId,
-            questionNumber: questionNumber,
+            questionID,
+            questionNumber: finalQuestionSet.length + 1,
             questionContent: questionContent,
             questionType: selectedQuestionType,
             points: points,
@@ -420,7 +421,47 @@ const handleAddQuestions = (e) => {
             keySensitive: keySensitive,
             questionAnswerText: questionAnswerText,
             numberOfAns: numberOfAnswer,
-            choicesID: choicesID,
+            choicesID: questionID,
+            imageID: imageID,
+            fillLayoutID: 'none',
+            subjectName: subjectName,
+        }
+
+        setFinalQuestionSet((prevData) => [...prevData, question])
+        
+    }else if (selectedQuestionType === 'fill') {
+
+        const question = {
+            questionID,
+            questionNumber: finalQuestionSet.length + 1,
+            questionContent: questionContent,
+            questionType: selectedQuestionType,
+            points: points,
+            required: required,
+            keySensitive: keySensitive,
+            questionAnswerText: 'none',
+            numberOfAns: numberOfAnswer,
+            choicesID: 'none',
+            imageID: imageID,
+            fillLayoutID: questionID,
+            subjectName: subjectName,
+        }
+
+        setFinalQuestionSet((prevData) => [...prevData, question])
+        
+    }else if (selectedQuestionType === 'TOR') {
+
+        const question = {
+            questionID,
+            questionNumber: finalQuestionSet.length + 1,
+            questionContent: questionContent,
+            questionType: selectedQuestionType,
+            points: points,
+            required: required,
+            keySensitive: keySensitive,
+            questionAnswerText: questionAnswerText,
+            numberOfAns: numberOfAnswer,
+            choicesID: 'none',
             imageID: imageID,
             fillLayoutID: 'none',
             subjectName: subjectName,
@@ -429,6 +470,8 @@ const handleAddQuestions = (e) => {
         setFinalQuestionSet((prevData) => [...prevData, question])
         
     }
+
+    console.log(finalQuestionSet)
 
 }
 
@@ -814,7 +857,7 @@ const generateTotalPoints = () => {
 // Check if the questions is valid it will enabled the button
 const checkIfTheQuestionIsValid = () => {
 
-    if (selectedQuestionType === 'enumeration') {
+    if (selectedQuestionType === 'enumeration' || selectedQuestionType === 'TOR') {
         if (questionContent && questionAnswerText) {
             return false
         }else {
@@ -829,6 +872,15 @@ const checkIfTheQuestionIsValid = () => {
             return true
         }
     }
+
+    if (selectedQuestionType === 'fill') {
+        if (fillLayout.length !== 0) {
+            return false
+        }else {
+            return true
+        }
+    }
+
 }
 
 const handleSetSelectedImage = (data) => {
@@ -853,6 +905,14 @@ const handleSetSubjectName = (data) => {
 
 const handleSetChoices = (data) => {
     setChoices(data)
+}
+
+const handleSetFillLayout = (data) => {
+    setFillLayout(data)
+}
+
+const handleSetUniqueID = (data) => {
+    setuniqueId(data)
 }
 
 const handleNotificationFromChild = (message, type) => {
@@ -1080,11 +1140,11 @@ const resetQuestionsVariables = () => {
                                     {selectedQuestionType === 'choices' && 
                                         <QuestionChoicesQuiz 
                                             selectedImage={selectedImage}
+                                            questionContent={questionContent}
                                             handleSetSelectedImage={handleSetSelectedImage}
                                             handleSetChoices={handleSetChoices}
                                             handleNotificationFromChild={handleNotificationFromChild}
                                             handleSetQuestionContent={handleSetQuestionContent}
-                                            questionContent={questionContent}
                                         />
                                     }
 
@@ -1093,10 +1153,20 @@ const resetQuestionsVariables = () => {
                                             selectedImage={selectedImage}
                                             handleSetSelectedImage={handleSetSelectedImage}
                                             handleNotificationFromChild={handleNotificationFromChild}
+                                            handleSetFillLayout={handleSetFillLayout}
                                         />
                                     }
 
-                                    {selectedQuestionType === 'TOR' &&  <QuestionTrueOrFalse selectedImage={selectedImage} handleDataFromChild={handleDataFromChild}/>}
+                                    {selectedQuestionType === 'TOR' && 
+                                        <QuestionTrueOrFalse 
+                                            selectedImage={selectedImage}
+                                            questionAnswerText={questionAnswerText}
+                                            handleSetSelectedImage={handleSetSelectedImage}
+                                            handleNotificationFromChild={handleNotificationFromChild}
+                                            handleSetQuestionContent={handleSetQuestionContent}
+                                            handleSetQuestionAnswerText={handleSetQuestionAnswerText}
+                                        />
+                                    }
                                 </div>
                             </div>
                             <div className={style.bottomMenuQues}>

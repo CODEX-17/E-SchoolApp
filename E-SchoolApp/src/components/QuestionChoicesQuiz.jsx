@@ -3,7 +3,7 @@ import style from './QuestionChoicesQuiz.module.css'
 import { CiCirclePlus } from "react-icons/ci";
 import { AiOutlineCloseCircle, AiFillCheckCircle } from "react-icons/ai"
 
-const QuestionChoicesQuiz = ({selectedImage, handleSetSelectedImage, handleSetChoices, handleNotificationFromChild, handleSetQuestionContent, questionContent}) => {
+const QuestionChoicesQuiz = ({selectedImage, questionContent, handleSetSelectedImage, handleSetChoices, handleNotificationFromChild, handleSetQuestionContent}) => {
 
   const generateUniqueID = () => {
     const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
@@ -50,6 +50,7 @@ const QuestionChoicesQuiz = ({selectedImage, handleSetSelectedImage, handleSetCh
   ])
 
   const [showModal, setShowModal] = useState(false)
+  const [modalMode, setModalMode] = useState('editor') // editor | question
 
   const handleClickDragImage = () => {
     inputImageRef.current.click()
@@ -189,66 +190,75 @@ const QuestionChoicesQuiz = ({selectedImage, handleSetSelectedImage, handleSetCh
   }
 
 
-
-
   return (
     <div className={style.container}>
       {
         showModal && (
           <div className={style.modal}>
-            <div className={style.leftPart}>
-              {
-                choices.map((data, index) => (
-                  <div className={style.smallCard} style={{ backgroundColor: data.content !== '' ? '#0999ed85' : '#d410105b'}} key={index} onClick={() => setSelectedIndex(index)}>
-                    <b>{data.letter}</b> {data.content === '' ? 'insert answer...' : limitTheStringLength(data.content)}
-                    {data.correct ? <AiFillCheckCircle color='green'/> : <AiOutlineCloseCircle/>}
-                  </div>
-                ))
-              }
-              
-            </div>
-            <div className={style.rightPart}>
-              <div className={style.headRightPart}>
-                <div className='d-flex gap-2'><h2>Letter:</h2><p>{choices[selectedIndex].letter}</p></div>
-                <div className='d-flex gap-2 justify-content-end'>
+            {
+              modalMode === 'editor' ? (
+                <>
+                  <div className={style.leftPart}>
                     {
-                      choices[selectedIndex].correct ? 
-                        <button id={style.addMoreChoices} onClick={() =>handleMakeCorrectionChange(false)} style={{ backgroundColor: '#D24545'}}>Make it Wrong</button>
-                        :
-                        <button id={style.addMoreChoices} onClick={() =>handleMakeCorrectionChange(true)} style={{ backgroundColor: '#337357'}}>Make it Correct</button>
+                      choices.map((data, index) => (
+                        <div className={style.smallCard} style={{ backgroundColor: data.content !== '' ? '#0999ed85' : '#d410105b'}} key={index} onClick={() => setSelectedIndex(index)}>
+                          <b>{data.letter}</b> {data.content === '' ? 'insert answer...' : limitTheStringLength(data.content)}
+                          {data.correct ? <AiFillCheckCircle color='green'/> : <AiOutlineCloseCircle/>}
+                        </div>
+                      ))
                     }
-                   
-                   <button id={style.addMoreChoices} onClick={handleAddChoices}>Add Choices +</button>
-                   {
-                    choices.length > 4 && 
-                     <button id={style.addMoreChoices} style={{ backgroundColor: '#BF3131'}} onClick={handleDeleteChoices}>Delete</button>
-                   }
-                  
-                </div>
-               
-              </div>
-              <textarea 
-                  id={style.textarea}
-                  cols="30" rows="10"
-                  placeholder='Insert answer...'
-                  value={choices[selectedIndex].content}
-                  onChange={handleSettheContent}
-                >
+                    
+                  </div>
+                  <div className={style.rightPart}>
+                    <div className={style.headRightPart}>
+                      <div className='d-flex gap-2'><h2>Letter:</h2><p>{choices[selectedIndex].letter}</p></div>
+                      <div className='d-flex gap-2 justify-content-end'>
+                          {
+                            choices[selectedIndex].correct ? 
+                              <button id={style.addMoreChoices} onClick={() =>handleMakeCorrectionChange(false)} style={{ backgroundColor: '#D24545'}}>Make it Wrong</button>
+                              :
+                              <button id={style.addMoreChoices} onClick={() =>handleMakeCorrectionChange(true)} style={{ backgroundColor: '#337357'}}>Make it Correct</button>
+                          }
+                        
+                        <button id={style.addMoreChoices} onClick={handleAddChoices}>Add Choices +</button>
+                        {
+                          choices.length > 4 && 
+                          <button id={style.addMoreChoices} style={{ backgroundColor: '#BF3131'}} onClick={handleDeleteChoices}>Delete</button>
+                        }
+                        
+                      </div>
+                    
+                    </div>
+                    <textarea 
+                        id={style.textarea}
+                        cols="30" rows="10"
+                        placeholder='Insert answer...'
+                        value={choices[selectedIndex].content}
+                        onChange={handleSettheContent}
+                      >
 
-              </textarea>
-              <div className='d-flex gap-2'>
-                <button id={style.btnSave} style={{ backgroundColor: '#3E3F40' }} onClick={() => setShowModal(false)}>Close</button>
-              </div>
-              
-            </div>
-              
+                    </textarea>
+                    <div className='d-flex gap-2'>
+                      <button id={style.btnSave} style={{ backgroundColor: '#3E3F40' }} onClick={() => setShowModal(false)}>Close</button>
+                    </div>
+                    
+                  </div>
+                </>
+              ) : (
+                <div className={style.questionModal}>
+                  <textarea placeholder='Insert question...' value={questionContent} onChange={(e) => handleSetQuestionContent(e.target.value)}></textarea>
+                  <button onClick={() => {setShowModal(false), setModalMode('editor')}}>Close</button>
+                </div>
+              )
+            }
+
           </div>
         )
       }
       <div className={style.left}>
         <div>
           <h1>Question:</h1>
-          <input type="text" onChange={(e) =>handleSetQuestionContent(e.target.value)}/>
+          <input type="text" value={questionContent} onClick={() => {setShowModal(true), setModalMode('question')}}/>
         </div>
         <div className='mt-2'>
           <h1>Choices:</h1>
@@ -265,7 +275,7 @@ const QuestionChoicesQuiz = ({selectedImage, handleSetSelectedImage, handleSetCh
         </div>
         <h1>Add more choices</h1>
         <div className={style.bottomMenu}>
-          <button onClick={() => setShowModal(true)}>Edit Choices</button>
+          <button onClick={() => {setShowModal(true), setModalMode('editor')}}>Edit Choices</button>
           <button id={style.btnSave} onClick={submitChoices} disabled={checkIfAllChoiceAreValid()}>Save</button>
         </div>
       </div>

@@ -28,6 +28,28 @@
   display: flex;
 }
 
+.questionModal {
+  display: flex;
+  width: 100%;
+  gap: 5%;
+  flex-direction: column;
+}
+
+.questionModal textarea {
+  width: 100%;
+  height: 80%;
+  border-radius: 5px;
+}
+
+.questionModal button {
+  width: 100%;
+  border: none;
+  background-color: #3E3F40;
+  color: white;
+  border-radius: 5px;
+  height: 50px;
+}
+
 .leftPart {
   border: 1px solid #099AED;
   border-radius: 5px;

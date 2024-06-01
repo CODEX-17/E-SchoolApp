@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import style from './QuestionEnumeration.module.css'
 import { CiCirclePlus } from "react-icons/ci";
 
-const QuestionEnumeration = ({ selectedImage, handleSetSelectedImage, handleSetQuestionContent, handleSetQuestionAnswerText }) => {
+const QuestionEnumeration = ({ selectedImage, handleSetSelectedImage, handleSetQuestionContent, handleSetQuestionAnswerText, handleSetUniqueID }) => {
 
   const inputImageRef = useRef(null)
  

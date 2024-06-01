@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react'
 import style from './QuestionTrueOrFalse.module.css'
 import { CiCirclePlus } from "react-icons/ci"
 
-const QuestionTrueOrFalse = ({ selectedImage, handleDataFromChild }) => {
+const QuestionTrueOrFalse = ({ selectedImage, questionAnswerText, handleDataFromChild, handleSetQuestionContent, handleSetQuestionAnswerText }) => {
   
   const inputImageRef = useRef(null)
   const [image, setImage] = useState(null)
@@ -21,13 +21,20 @@ const QuestionTrueOrFalse = ({ selectedImage, handleDataFromChild }) => {
       <div className={style.left}>
         <div>
           <h1>Question:</h1>
-          <input type="text" />
+          <input type="text" onChange={(e) =>handleSetQuestionContent(e.target.value)}/>
         </div>
         <div className='mt-5'>
           <h1>Choices Answer:</h1>
           <div className='d-flex gap-2 justify-content-center'>
-             <button>True</button>
-             <button>False</button>
+             <button style={{ 
+                backgroundColor: questionAnswerText === 'true' ? '#099AED' : 'white',
+                color: questionAnswerText === 'true' ? 'white' : '#099AED' 
+                }} onClick={() => handleSetQuestionAnswerText('true')}>True</button>
+
+             <button style={{ 
+                backgroundColor: questionAnswerText === 'false' ? '#099AED' : 'white',
+                color: questionAnswerText === 'false' ? 'white' : '#099AED' 
+                }} onClick={() => handleSetQuestionAnswerText('false')}>False</button>
           </div>
          
         </div>
