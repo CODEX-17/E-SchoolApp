@@ -411,6 +411,8 @@ const handleAddQuestions = () => {
         
     }else if (selectedQuestionType === 'choices') {
 
+        console.log('add q choiceID:', choicesID)
+
         const question = {
             questionID,
             questionNumber: finalQuestionSet.length + 1,
@@ -421,7 +423,7 @@ const handleAddQuestions = () => {
             keySensitive: keySensitive,
             questionAnswerText: questionAnswerText,
             numberOfAns: numberOfAnswer,
-            choicesID: questionID,
+            choicesID,
             imageID: imageID,
             fillLayoutID: 'none',
             subjectName: subjectName,
@@ -883,6 +885,14 @@ const checkIfTheQuestionIsValid = () => {
 
 }
 
+const handleSetQuestionTitle = (data) => {
+    setQuizTitle(data)
+}
+
+const handleSetQuestionDescription = (data) => {
+    setQuizInstructions(data)
+}
+
 const handleSetSelectedImage = (data) => {
     setSelectedImage(data)
 }
@@ -904,7 +914,12 @@ const handleSetSubjectName = (data) => {
 }
 
 const handleSetChoices = (data) => {
-    setChoices(data)
+    setChoices((oldData) => [...oldData, data])
+}
+
+const handleSetFinalQuestionSet = (data) => {
+    console.log('data', data)
+    setFinalQuestionSet((oldData) => [...oldData, data])
 }
 
 const handleSetFillLayout = (data) => {
@@ -917,6 +932,10 @@ const handleSetUniqueID = (data) => {
 
 const handleNotificationFromChild = (message, type) => {
     notify(message, type)
+}
+
+const handleSetChoicesID = (data) => {
+    setChoicesID(data)
 }
 
 //Reset all questions variables
@@ -962,6 +981,7 @@ const resetQuestionsVariables = () => {
                     subjectNameList={subjectNameList}
                     handleUpdatedQuestion={handleUpdatedQuestion}
                     deleteAllData={deleteAllData}
+                    
                 />
             )
         }
@@ -995,6 +1015,7 @@ const resetQuestionsVariables = () => {
                     choices={choices}
                     fillLayoutSet={fillLayoutSet}
                     imageSetQuestion={imageSetQuestion}
+                    finalQuestionSet={finalQuestionSet}
                 />
             )  
         }
@@ -1050,6 +1071,8 @@ const resetQuestionsVariables = () => {
                                 finalQuestionSet={finalQuestionSet}
                                 subjectNameList={subjectNameList}
                                 handleSetSubjectName={handleSetSubjectName}
+                                handleSetQuestionTitle={handleSetQuestionTitle}
+                                handleSetQuestionDescription={handleSetQuestionDescription}
                             />
                             {/* <h1>Question Title</h1>
                             <input id={style.inputOne} value={quizTitle} type="text" required onChange={(e) => setQuizTitle(e.target.value)}/>
@@ -1103,11 +1126,11 @@ const resetQuestionsVariables = () => {
                         <div className={style.right}>
                             <div className={style.headMenu}>
                                 <div className={style.queNumCard}>
-                                    Question Number: 1
+                                    Question Number: {finalQuestionSet.length + 1}
                                 </div>
                                 <div className='d-flex gap-2 align-items-center'>
                                     <div className={style.circleBtn} title='Preview'>
-                                        <MdOutlinePreview size={18} color='white' cursor={'pointer'}/>
+                                        <MdOutlinePreview size={18} color='white' cursor={'pointer'} onClick={() => setshowPreview('preview')}/>
                                     </div>
                                     <div className={style.circleBtn} title='List'>
                                         <FaThList size={15} color='white' cursor={'pointer'}/>
@@ -1139,12 +1162,11 @@ const resetQuestionsVariables = () => {
 
                                     {selectedQuestionType === 'choices' && 
                                         <QuestionChoicesQuiz 
-                                            selectedImage={selectedImage}
-                                            questionContent={questionContent}
-                                            handleSetSelectedImage={handleSetSelectedImage}
+                                            finalQuestionSet={finalQuestionSet}
+                                            subjectName={subjectName}
                                             handleSetChoices={handleSetChoices}
+                                            handleSetFinalQuestionSet={handleSetFinalQuestionSet}
                                             handleNotificationFromChild={handleNotificationFromChild}
-                                            handleSetQuestionContent={handleSetQuestionContent}
                                         />
                                     }
 

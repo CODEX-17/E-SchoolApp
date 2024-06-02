@@ -3,7 +3,7 @@ import style from './QuestionChoicesQuiz.module.css'
 import { CiCirclePlus } from "react-icons/ci";
 import { AiOutlineCloseCircle, AiFillCheckCircle } from "react-icons/ai"
 
-const QuestionChoicesQuiz = ({selectedImage, questionContent, handleSetSelectedImage, handleSetChoices, handleNotificationFromChild, handleSetQuestionContent}) => {
+const QuestionChoicesQuiz = ({finalQuestionSet, subjectName, handleSetChoices, handleSetFinalQuestionSet, handleNotificationFromChild}) => {
 
   const generateUniqueID = () => {
     const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
@@ -18,8 +18,16 @@ const QuestionChoicesQuiz = ({selectedImage, questionContent, handleSetSelectedI
   }
 
   const inputImageRef = useRef(null)
-  const choicesID = generateUniqueID()
+  const [choicesID, setChoicesID] = useState(generateUniqueID()) 
   const [selectedIndex, setSelectedIndex] = useState(0)
+  let numberOfAns = 0
+  const [points, setPoints] = useState(1)
+  const [keySensitive, setKeySensitive] = useState(false)
+  const [required, setRequired] = useState(false)
+  const [questionContent, setQuestionContent] = useState('')
+  const [image, setImage] = useState(null)
+  const questionNumber = finalQuestionSet.length + 1
+
 
   //by default theirs a default choices [A,B,C,D]
   const [choices, setChoices] = useState([
@@ -52,13 +60,55 @@ const QuestionChoicesQuiz = ({selectedImage, questionContent, handleSetSelectedI
   const [showModal, setShowModal] = useState(false)
   const [modalMode, setModalMode] = useState('editor') // editor | question
 
+
+  // Check if all choices have content
+  const checkIfAllChoiceAreValid = () => {
+    console.log(questionContent)
+    console.log('choices',choices)
+
+    //check if theirs a question content
+    if (questionContent === '') {
+      return true
+    }
+
+    let noContent = 0
+    let correctAnswer = 0
+
+    //Check if the choices have atleast one correct answer and no empty content
+    for (let i = 0; i < choices.length; i++) {
+      if (choices[i].content === '') {
+        noContent += 1
+      }
+
+      if (choices[i].correct === true || choices[i].correct === 'true') {
+        correctAnswer += 1
+      }
+    }
+
+    if (noContent === 0) {
+      if (correctAnswer === 0) {
+        return true
+      }
+
+      numberOfAns = correctAnswer
+      return false
+    }else {
+      return true
+    }
+    
+  }
+
+
   const handleClickDragImage = () => {
     inputImageRef.current.click()
   }
 
   const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    handleSetSelectedImage(file)
+    const file = e.target.files[0]
+    setImage({
+      imageID: generateUniqueID(),
+      file: file
+    })
   }
 
   const handleSettheContent = (e) => {
@@ -101,10 +151,10 @@ const QuestionChoicesQuiz = ({selectedImage, questionContent, handleSetSelectedI
     setChoices((oldData) => [...oldData, newChoice])
   }
 
+
   const handleDeleteChoices = () => {
 
     let newChoices = choices.filter((data, index) => index !== selectedIndex)
-
     for (let i = 0; i < newChoices.length; i++) {
       newChoices[i].letter = String.fromCharCode(65 + i)
     }
@@ -115,38 +165,65 @@ const QuestionChoicesQuiz = ({selectedImage, questionContent, handleSetSelectedI
   }
 
   //Set choices to parent choices variable
-  const submitChoices = () => {
+  const submitQuestion = () => {
 
-    let complete = 0
-    let numberOfCorrectChoices = 0
+    const question = {
+      questionID: choices[0].choicesID,
+      questionNumber,
+      questionContent: questionContent,
+      questionType: 'choices',
+      points,
+      required,
+      keySensitive,
+      questionAnswerText: 'none',
+      numberOfAns,
+      choicesID: choices[0].choicesID,
+      imageID: image ? image.imageID : 'none',
+      fillLayoutID: 'none',
+      subjectName,
+    } 
 
-    for (let i = 0; i < choices.length; i++) {
-      if (choices[i].content !== '') {
-        complete += 1
-        if (choices[i].correct) {
-          numberOfCorrectChoices += 1
-        }
-      }
-    }
+    //submit to parent the final choices
+    handleSetChoices(choices)
+    //submit to parent the final question
+    handleSetFinalQuestionSet(question)
+        
+    setShowModal(false)
 
-    if (complete === choices.length) {
+    //reset
+    setChoicesID(generateUniqueID())
+    setChoices([
+      {
+        choicesID,
+        letter: 'A',  
+        content: '',
+        correct: false,
+      },
+      {
+        choicesID,
+        letter: 'B',
+        content: '',
+        correct: false,
+      },
+      {
+        choicesID,
+        letter: 'C',
+        content: '',
+        correct: false,
+      },
+      {
+        choicesID,
+        letter: 'D',
+        content: '',
+        correct: false,
+      },
+    ])
+    setImage(null)
 
-      //The set of choices must be atleast one correct answer
-      if (numberOfCorrectChoices > 0) {
-        handleSetChoices(choices)
-        setShowModal(false)
-        const message = `Successfully saved ${complete} choices.`
-        handleNotificationFromChild(message, 'success')
-      }else {
-        const message = 'Choices must have atleast one correct answer.'
-        handleNotificationFromChild(message, 'err')
-      }
+    //notify
+    const message = `Successfully saved ${complete} choices.`
+    handleNotificationFromChild(message, 'success')
       
-    }else {
-      const message = 'Please fill all the choices content.'
-      handleNotificationFromChild(message, 'err')
-    }
-
   }
 
   const handleMakeCorrectionChange = (data) => {
@@ -162,32 +239,7 @@ const QuestionChoicesQuiz = ({selectedImage, questionContent, handleSetSelectedI
     setChoices(newChoices)
   }
 
-  // Check if all choices have content
-  const checkIfAllChoiceAreValid = () => {
-    console.log(questionContent)
 
-    //check if theirs a question content
-    if (questionContent === '' || questionContent === null) {
-      return true
-    }
-
-    let noContent = 0
-
-    for (let i = 0; i < choices.length; i++) {
-      if (choices[i].content === '') {
-        noContent += 1
-      }
-    }
-
-    if (noContent === 0) {
-      console.log(noContent)
-      return false
-    }else {
-      console.log(noContent)
-      return true
-    }
-    
-  }
 
 
   return (
@@ -246,7 +298,7 @@ const QuestionChoicesQuiz = ({selectedImage, questionContent, handleSetSelectedI
                 </>
               ) : (
                 <div className={style.questionModal}>
-                  <textarea placeholder='Insert question...' value={questionContent} onChange={(e) => handleSetQuestionContent(e.target.value)}></textarea>
+                  <textarea placeholder='Insert question...' value={questionContent} onChange={(e) => setQuestionContent(e.target.value)}></textarea>
                   <button onClick={() => {setShowModal(false), setModalMode('editor')}}>Close</button>
                 </div>
               )
@@ -255,47 +307,69 @@ const QuestionChoicesQuiz = ({selectedImage, questionContent, handleSetSelectedI
           </div>
         )
       }
-      <div className={style.left}>
-        <div>
-          <h1>Question:</h1>
-          <input type="text" value={questionContent} onClick={() => {setShowModal(true), setModalMode('question')}}/>
-        </div>
-        <div className='mt-2'>
-          <h1>Choices:</h1>
-          <div className={style.listChoices}>
-            {
-              choices.map((data, index) => (
-                 <div className={style.card} key={index} onClick={() => {setSelectedIndex(index), setShowModal(true)}}>
-                    <b>{data.letter}</b><p>{limitTheStringLength(data.content)}</p>
-                    {data.correct ? <AiFillCheckCircle color='green'/> : <AiOutlineCloseCircle/>}
-                 </div>
-              ))
-            }
+      <div className='d-flex gap-2'>
+        <div className={style.left}>
+          <div>
+            <h1>Question:</h1>
+            <input type="text" value={questionContent} onClick={() => {setShowModal(true), setModalMode('question')}}/>
+          </div>
+          <div className='mt-2'>
+            <h1>Choices:</h1>
+            <div className={style.listChoices}>
+              {
+                choices.map((data, index) => (
+                  <div className={style.card} key={index} onClick={() => {setSelectedIndex(index), setShowModal(true)}}>
+                      <b>{data.letter}</b><p>{limitTheStringLength(data.content)}</p>
+                      {data.correct ? <AiFillCheckCircle color='green'/> : <AiOutlineCloseCircle/>}
+                  </div>
+                ))
+              }
+            </div>
+          </div>
+          <h1>Add more choices</h1>
+          <div className={style.bottomMenu}>
+            <button onClick={() => {setShowModal(true), setModalMode('editor')}}>Edit Choices</button>
           </div>
         </div>
-        <h1>Add more choices</h1>
-        <div className={style.bottomMenu}>
-          <button onClick={() => {setShowModal(true), setModalMode('editor')}}>Edit Choices</button>
-          <button id={style.btnSave} onClick={submitChoices} disabled={checkIfAllChoiceAreValid()}>Save</button>
+        <div className={style.right}>
+          {
+            image ? (
+              <div className={style.dragImage} title='add image' onClick={handleClickDragImage}>
+                <img id={style.img} src={URL.createObjectURL(image.file)} alt="image" />
+              </div>
+            ) : (
+              <div className={style.dragImage} title='add image' onClick={handleClickDragImage}>
+                <CiCirclePlus size={30}/>
+                Add image here
+              </div>
+
+              
+            ) 
+          }
+          
+          <input type="file" accept='image/*' ref={inputImageRef} onChange={handleImageUpload} style={{ display: 'none' }}/>
         </div>
       </div>
-      <div className={style.right}>
-        {
-          selectedImage ? (
-            <div className={style.dragImage} title='add image' onClick={handleClickDragImage}>
-              <img id={style.img} src={URL.createObjectURL(selectedImage)} alt="image" />
-            </div>
-          ) : (
-            <div className={style.dragImage} title='add image' onClick={handleClickDragImage}>
-              <CiCirclePlus size={30}/>
-              Add image here
-            </div>
 
-            
-          ) 
-        }
-        
-        <input type="file" accept='image/*' ref={inputImageRef} onChange={handleImageUpload} style={{ display: 'none' }}/>
+
+      <div className={style.bottomMenuQues}>
+          <div className='d-flex gap-4 align-items-center'>
+            <div className='d-flex gap-2 align-items-center'>
+                <p>Points</p>
+                <input type='number' min={1} value={points} id={style.inputPoints} onChange={(e) => setPoints(e.target.value)}/>
+            </div>
+            <div className="d-flex gap-2 align-items-center">
+                <input type='checkbox' style={{ cursor: 'pointer' }} id={style.checkBox} checked={keySensitive} onChange={(e) => setKeySensitive(e.target.checked)}/>
+                <p>Key sensitive</p>
+            </div>
+                   
+            <div className="d-flex gap-2 align-items-center">
+                <input type='checkbox' style={{ cursor: 'pointer' }} id={style.checkBox} checked={required} onChange={(e) => setRequired(e.target.checked)}/>
+                <p>Required</p>
+            </div>
+          </div>
+
+          <button onClick={submitQuestion} disabled={checkIfAllChoiceAreValid()}>Add question</button>
       </div>
     </div>
   )

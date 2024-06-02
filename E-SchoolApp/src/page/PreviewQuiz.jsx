@@ -6,12 +6,21 @@ import sample from '../assets/sample.jpg'
 import { SlPrinter } from "react-icons/sl";
 
 
-const PreviewQuiz = ({ onData, quizTitle, choices, questionObj, imageSetQuestion, fillLayoutSet}) => {
+const PreviewQuiz = ({ onData, quizTitle, choices, questionObj, imageSetQuestion, fillLayoutSet, finalQuestionSet}) => {
 
-const questionSet = questionObj
+const questionSet = finalQuestionSet
 const imageSet = imageSetQuestion
 const choicesSet = choices
 const fillLayout = fillLayoutSet
+
+console.log(finalQuestionSet)
+console.log('choices:', choices)
+
+useEffect(() => {
+    choicesSet.filter((data) => data.choicesID === 'cPc8PQ5T').map((data) => console.log('filter:', data))
+},[])
+
+
 
   return (
     <div className={style.container}>
@@ -27,11 +36,11 @@ const fillLayout = fillLayoutSet
             </div>
            
             {
-                questionSet.map((questions, index) => (
-
+                questionSet?.map((questions, index) => (
+                    console.log('question:', questionSet),
                     questions.questionType === 'enumeration' && questions.imageID === 'none' && (
 
-                        <div className={style.quizContainer}>
+                        <div className={style.quizContainer} key={index}>
                             <div className={style.topquizContainer}>
                                 <div id={style.circle}>Q{questions.questionNumber}</div>
                                 <div className={style.titlesDiv}>
@@ -52,7 +61,7 @@ const fillLayout = fillLayoutSet
 
                     questions.questionType === 'enumeration' && questions.imageID != 'none' && (
 
-                        <div className={style.quizContainer}>
+                        <div className={style.quizContainer} key={index}>
                             <div className={style.topquizContainer}>
                                 <div id={style.circle}>Q{questions.questionNumber}</div>
                                 <div className={style.titlesDiv}>
@@ -89,7 +98,7 @@ const fillLayout = fillLayoutSet
 
                     questions.questionType === 'choices' && questions.imageID === 'none' && (
 
-                        <div className={style.quizContainer}>
+                        <div className={style.quizContainer} key={index}>
                             <div className={style.topquizContainer}>
                                 <div id={style.circle}>Q{questions.questionNumber}</div>
                                 <div className={style.titlesDiv}>
@@ -108,7 +117,7 @@ const fillLayout = fillLayoutSet
 
                     questions.questionType === 'choices' && questions.imageID != 'none' && (
 
-                        <div className={style.quizContainer}>
+                        <div className={style.quizContainer} key={index}>
                             <div className={style.topquizContainer}>
                                 <div id={style.circle}>Q{questions.questionNumber}</div>
                                 <div className={style.titlesDiv}>
@@ -120,7 +129,8 @@ const fillLayout = fillLayoutSet
                             <div className={style.botquizContainerImage}>
                                 <div className={style.botLeft}>
                                     <div className={style.botListChoices}>
-                                    {choicesSet.filter((choices) => choices.choicesID === questions.choicesID).map((choice, index) => (
+                                    {choicesSet.filter((choices) => choices.choicesID === questions.choicesID)
+                                    .map((choice, index) => (
                                         <div key={index} className={choice.correct ? style.choicesActiveImage : style.choicesImage }>{choice.letter}. {choice.content}</div>
                                     ))}
                                     </div>
@@ -145,7 +155,7 @@ const fillLayout = fillLayoutSet
 
                     questions.questionType === 'fill' && questions.imageID === 'none' && (
 
-                        <div className={style.quizContainer}>
+                        <div className={style.quizContainer} key={index}>
                             <div className={style.topquizContainer}>
                                 <div id={style.circle}>Q{questions.questionNumber}</div>
                                 <div className={style.titlesDiv}>
@@ -168,7 +178,7 @@ const fillLayout = fillLayoutSet
                     ) || 
 
                     questions.questionType === 'fill' && questions.imageID !== 'none' && (
-                        <div className={style.quizContainer}>
+                        <div className={style.quizContainer} key={index}>
                             <div className={style.topquizContainer}>
                                 <div className={style.leftDivFill}>
                                     <div id={style.circle}>Q{questions.questionNumber}</div>
@@ -210,7 +220,7 @@ const fillLayout = fillLayoutSet
 
                     questions.questionType === 'True Or False' && questions.imageID === 'none' && (
 
-                        <div className={style.quizContainer}>
+                        <div className={style.quizContainer} key={index}>
                             <div className={style.topquizContainer}>
                                 <div id={style.circle}>Q{questions.questionNumber}</div>
                                 <div className={style.titlesDiv}>
@@ -232,7 +242,7 @@ const fillLayout = fillLayoutSet
 
                     questions.questionType === 'True Or False' && questions.imageID != 'none' && (
 
-                        <div className={style.quizContainer}>
+                        <div className={style.quizContainer} key={index}>
                             <div className={style.topquizContainer}>
                                 <div id={style.circle}>Q{questions.questionNumber}</div>
                                 <div className={style.titlesDiv}>
