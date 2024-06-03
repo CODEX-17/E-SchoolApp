@@ -3,7 +3,7 @@ import style from './QuestionChoicesQuiz.module.css'
 import { CiCirclePlus } from "react-icons/ci";
 import { AiOutlineCloseCircle, AiFillCheckCircle } from "react-icons/ai"
 
-const QuestionChoicesQuiz = ({finalQuestionSet, subjectName, handleSetChoices, handleSetFinalQuestionSet, handleNotificationFromChild}) => {
+const QuestionChoicesQuiz = ({finalQuestionSet, subjectName, handleSetChoices, handleSetImageSetQuestion, handleSetFinalQuestionSet, handleNotificationFromChild}) => {
 
   const generateUniqueID = () => {
     const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
@@ -187,41 +187,49 @@ const QuestionChoicesQuiz = ({finalQuestionSet, subjectName, handleSetChoices, h
     handleSetChoices(choices)
     //submit to parent the final question
     handleSetFinalQuestionSet(question)
-        
+
+    setQuestionContent('')
+
+    if (image) {
+      //submit ro parent the image
+      handleSetImageSetQuestion(image)
+    }
+
     setShowModal(false)
 
     //reset
-    setChoicesID(generateUniqueID())
+    const uniqueID = generateUniqueID()
     setChoices([
       {
-        choicesID,
+        choicesID: uniqueID,
         letter: 'A',  
         content: '',
         correct: false,
       },
       {
-        choicesID,
+        choicesID: uniqueID,
         letter: 'B',
         content: '',
         correct: false,
       },
       {
-        choicesID,
+        choicesID: uniqueID,
         letter: 'C',
         content: '',
         correct: false,
       },
       {
-        choicesID,
+        choicesID: uniqueID,
         letter: 'D',
         content: '',
         correct: false,
       },
     ])
     setImage(null)
+    setSelectedIndex(0)
 
     //notify
-    const message = `Successfully saved ${complete} choices.`
+    const message = `Successfully added question.`
     handleNotificationFromChild(message, 'success')
       
   }

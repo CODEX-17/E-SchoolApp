@@ -15,6 +15,7 @@ const fillLayout = fillLayoutSet
 
 console.log(finalQuestionSet)
 console.log('choices:', choices)
+console.log('fill:', fillLayout)
 
 useEffect(() => {
     choicesSet.filter((data) => data.choicesID === 'cPc8PQ5T').map((data) => console.log('filter:', data))
@@ -59,7 +60,7 @@ useEffect(() => {
 
                     ) ||
 
-                    questions.questionType === 'enumeration' && questions.imageID != 'none' && (
+                    questions.questionType === 'enumeration' && questions.imageID !== 'none' && (
 
                         <div className={style.quizContainer} key={index}>
                             <div className={style.topquizContainer}>
@@ -115,7 +116,7 @@ useEffect(() => {
                         </div>
                     ) ||
 
-                    questions.questionType === 'choices' && questions.imageID != 'none' && (
+                    questions.questionType === 'choices' && questions.imageID !== 'none' && (
 
                         <div className={style.quizContainer} key={index}>
                             <div className={style.topquizContainer}>
@@ -232,8 +233,8 @@ useEffect(() => {
                             <div className={style.botquizContainer}>
                                 <p style={{ margin: '0', fontSize: '10pt'}}>Answer:</p>
                                 <div className='d-flex justify-content-center'>
-                                    <div className={questions.questionAnswerText === true ? style.choicesActive : style.choices }>true</div>
-                                    <div className={questions.questionAnswerText === false ? style.choicesActive : style.choices }>false</div>
+                                    <div className={questions.questionAnswerText === 'true' ? style.choicesActive : style.choices }>true</div>
+                                    <div className={questions.questionAnswerText === 'false' ? style.choicesActive : style.choices }>false</div>
                                 </div>
                             </div>
                         </div>
@@ -255,8 +256,8 @@ useEffect(() => {
                                 <div className={style.botLeft}>
                                     <p style={{ margin: '0', fontSize: '10pt'}}>Answer:</p>
                                     <div className='d-flex'>
-                                        <div className={questions.questionAnswerText === true ? style.choicesActive : style.choices }>true</div>
-                                        <div className={questions.questionAnswerText === false ? style.choicesActive : style.choices }>false</div>
+                                        <div className={questions.questionAnswerText === 'true' ? style.choicesActive : style.choices }>true</div>
+                                        <div className={questions.questionAnswerText === 'false' ? style.choicesActive : style.choices }>false</div>
                                     </div>
                                 </div>
                                 <div className={style.botRight}>

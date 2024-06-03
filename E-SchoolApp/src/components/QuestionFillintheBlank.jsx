@@ -3,7 +3,7 @@ import style from './QuestionFillintheBlank.module.css'
 import { CiCirclePlus } from "react-icons/ci"
 import { IoCloseCircle } from "react-icons/io5"
 
-const QuestionFillintheBlank = ({ selectedImage, handleSetSelectedImage, handleNotificationFromChild, handleSetFillLayout }) => {
+const QuestionFillintheBlank = ({ finalQuestionSet, subjectName, handleSetFillLayout, handleSetImageSetQuestion, handleSetFinalQuestionSet, handleNotificationFromChild }) => {
  
   const generateUniqueID = () => {
     const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
@@ -18,9 +18,15 @@ const QuestionFillintheBlank = ({ selectedImage, handleSetSelectedImage, handleN
   }
 
   const inputImageRef = useRef(null)
-  const [image, setImage] = useState(null)
-  const fillLayoutID = generateUniqueID()
+  const [fillLayoutID, setFillLayoutID] = useState(generateUniqueID())
   const [selectedIndex, setSelectedIndex] = useState(0)
+  let numberOfAns = 0
+  const [points, setPoints] = useState(1)
+  const [keySensitive, setKeySensitive] = useState(false)
+  const [required, setRequired] = useState(false)
+  const [questionContent, setQuestionContent] = useState('')
+  const [image, setImage] = useState(null)
+  const questionNumber = finalQuestionSet.length + 1
 
   const [fillLayout, setFillLayout] = useState(
     [
@@ -41,8 +47,11 @@ const QuestionFillintheBlank = ({ selectedImage, handleSetSelectedImage, handleN
   }
 
   const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    handleSetSelectedImage(file)
+    const file = e.target.files[0]
+    setImage({
+      imageID: generateUniqueID(),
+      file: file
+    })
   }
 
   const limitTheStringLength = (data) => {
@@ -113,35 +122,50 @@ const QuestionFillintheBlank = ({ selectedImage, handleSetSelectedImage, handleN
   //Set choices to parent choices variable
   const submitFillLayout = () => {
 
-    let complete = 0
-    let numberOfBlanks = 0
-
-    for (let i = 0; i < fillLayout.length; i++) {
-      if (fillLayout[i].fillContent !== '') {
-        complete += 1
-        if (fillLayout[i].fillType === 'blank') {
-          numberOfBlanks += 1
-        }
-      }
+    const question = {
+      questionID: fillLayout[0].fillLayoutID,
+      questionNumber,
+      questionContent: questionContent,
+      questionType: 'fill',
+      points,
+      required,
+      keySensitive,
+      questionAnswerText: 'none',
+      numberOfAns,
+      choicesID: 'none',
+      imageID: image ? image.imageID : 'none',
+      fillLayoutID: fillLayout[0].fillLayoutID,
+      subjectName,
     }
 
-    if (complete === fillLayout.length) {
+    console.log('finalQuest:', question)
 
-      //The set of fillLayout must be atleast one blank
-      if (numberOfBlanks > 0) {
-        handleSetFillLayout(fillLayout)
-        setShowModal(false)
-        const message = `Successfully saved ${complete} FillLayout.`
-        handleNotificationFromChild(message, 'success')
-      }else {
-        const message = 'Choices must have atleast one blank.'
-        handleNotificationFromChild(message, 'err')
-      }
-      
-    }else {
-      const message = 'Please fill all the layout content.'
-      handleNotificationFromChild(message, 'err')
+    //submit to parent the final fillLayout
+    handleSetFillLayout(fillLayout)
+    //submit to parent the final question
+    handleSetFinalQuestionSet(question)
+    
+    if (image) {
+      //submit ro parent the image
+      handleSetImageSetQuestion(image)
     }
+
+    //reset
+    const uniqueID = generateUniqueID()
+    setFillLayout([
+      {
+        fillContent: '',
+        fillType: 'text',
+        fillPosition: 1,
+        fillLayoutID: uniqueID,
+      },
+    ])
+    setImage(null)
+    setSelectedIndex(0)
+
+    //notify
+    const message = `Successfully added question.`
+    handleNotificationFromChild(message, 'success')
 
   }
 
@@ -149,22 +173,31 @@ const QuestionFillintheBlank = ({ selectedImage, handleSetSelectedImage, handleN
     const checkIfAllChoiceAreValid = () => {
  
       let noContent = 0
+      let numberOfBlanks = 0
 
       if (fillLayout.length === 1) {
         return true
       }
-  
+      
+      //Check layout if theres empty content and must be atleast one blank type
       for (let i = 0; i < fillLayout.length; i++) {
         if (fillLayout[i].fillContent === '') {
           noContent += 1
         }
+
+        if (fillLayout[i].fillType === 'blank') {
+          numberOfBlanks += 1
+        }
       }
   
       if (noContent === 0) {
-        console.log(noContent)
+        if (numberOfBlanks === 0) {
+          return true
+        }
+
+        numberOfAns = numberOfBlanks
         return false
       }else {
-        console.log(noContent)
         return true
       }
       
@@ -228,7 +261,8 @@ const QuestionFillintheBlank = ({ selectedImage, handleSetSelectedImage, handleN
           </div>
         )
       }
-      <div className={style.left}>
+      <div className='d-flex w-100 gap-2'>
+        <div className={style.left}>
         <div>
           <h1>Question:</h1>
           <div className={style.listView}>
@@ -260,29 +294,50 @@ const QuestionFillintheBlank = ({ selectedImage, handleSetSelectedImage, handleN
           </div>
         </div>
         <div className='d-flex gap-2'>
-          <button id={style.btnEdit} onClick={() => setShowModal(true)}>Edit</button>
-          <button id={style.btnEdit} onClick={submitFillLayout} disabled={checkIfAllChoiceAreValid()}>Save</button>
+          <button id={style.btnEdit} onClick={() => setShowModal(true)}>Edit Layout</button>
         </div>
         
-      </div>
-      <div className={style.right}>
-        {
-          selectedImage ? (
-            <div className={style.dragImage} title='add image' onClick={handleClickDragImage}>
-              <img id={style.img} src={URL.createObjectURL(selectedImage)} alt="image" />
-            </div>
-          ) : (
-            <div className={style.dragImage} title='add image' onClick={handleClickDragImage}>
-              <CiCirclePlus size={30}/>
-              Add image here
-            </div>
+        </div>
+        <div className={style.right}>
+          {
+            image ? (
+              <div className={style.dragImage} title='add image' onClick={handleClickDragImage}>
+                <img id={style.img} src={URL.createObjectURL(image.file)} alt="image" />
+              </div>
+            ) : (
+              <div className={style.dragImage} title='add image' onClick={handleClickDragImage}>
+                <CiCirclePlus size={30}/>
+                Add image here
+              </div>
 
-            
-          ) 
-        }
-        
-        <input type="file" accept='image/*' ref={inputImageRef} onChange={handleImageUpload} style={{ display: 'none' }}/>
+              
+            ) 
+          }
+          
+          <input type="file" accept='image/*' ref={inputImageRef} onChange={handleImageUpload} style={{ display: 'none' }}/>
+        </div>
       </div>
+
+      <div className={style.bottomMenuQues}>
+          <div className='d-flex gap-4 align-items-center'>
+            <div className='d-flex gap-2 align-items-center'>
+                <p>Points</p>
+                <input type='number' min={1} value={points} id={style.inputPoints} onChange={(e) => setPoints(e.target.value)}/>
+            </div>
+            <div className="d-flex gap-2 align-items-center">
+                <input type='checkbox' style={{ cursor: 'pointer' }} id={style.checkBox} checked={keySensitive} onChange={(e) => setKeySensitive(e.target.checked)}/>
+                <p>Key sensitive</p>
+            </div>
+                   
+            <div className="d-flex gap-2 align-items-center">
+                <input type='checkbox' style={{ cursor: 'pointer' }} id={style.checkBox} checked={required} onChange={(e) => setRequired(e.target.checked)}/>
+                <p>Required</p>
+            </div>
+          </div>
+
+          <button onClick={submitFillLayout} disabled={checkIfAllChoiceAreValid()}>Add question</button>
+      </div>
+
     </div>
   )
 

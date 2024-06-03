@@ -300,7 +300,7 @@
  .contentQuestion {
     border-radius: 10px;
     margin-top: 10px;
-    height: 80%;
+    height: 90%;
     padding: 4%;
     border: 3px solid #099AED;
  }
@@ -423,6 +423,7 @@
     align-items: center;
     justify-content: center;
     border-radius: 50%;
+    animation: pop 0.5s ease-in-out;
  }
 
  .circleBtn:hover {

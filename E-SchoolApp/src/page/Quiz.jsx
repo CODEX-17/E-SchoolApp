@@ -57,8 +57,8 @@ const [letter, setLetter] = useState('E');
 const [content, setContent] = useState('');
 const [correct, setCorrect] = useState(false);
 
-const [quizTitle, setQuizTitle] = useState();
-const [quizInstructions, setQuizInstructions] = useState()
+const [quizTitle, setQuizTitle] = useState('');
+const [quizDescription, setQuizDescription] = useState('')
 const [subjectName, setsubjectName]  = useState(null) // variable for selected question subject
 const [subjectNameList, setsubjectNameList] = useState(null) // storage for subjectname lists
 const [required, setrequired] = useState(false);
@@ -208,7 +208,7 @@ const deleteAllData = () => {
     setImageSetQuestion([])
     setsubjectName('')
     setQuizTitle('')
-    setQuizInstructions('')
+    setQuizDescription('')
 }
 
 
@@ -259,7 +259,7 @@ const resetValues = (level) => {
         notify(message, 'success')
     }else {
         setQuizTitle('')
-        setQuizInstructions('')
+        setQuizDescription('')
         setQuestionObj([])
     }
         setfillPosition(1)
@@ -365,7 +365,7 @@ const handleUpdatedQuestion = (title, instructions, subject, ques, choicesSet, i
     if (ques) {
         setQuestionObj(ques)
         setQuizTitle(title)
-        setQuizInstructions(instructions)
+        setQuizDescription(instructions)
         setsubjectName(subject)
     }
 
@@ -885,12 +885,18 @@ const checkIfTheQuestionIsValid = () => {
 
 }
 
+const handleSubmitFinalQuestions = () => {
+    console.log('choices:',choices)
+    console.log('fillLayout:',fillLayout)
+    console.log('final:',finalQuestionSet)
+}
+
 const handleSetQuestionTitle = (data) => {
     setQuizTitle(data)
 }
 
 const handleSetQuestionDescription = (data) => {
-    setQuizInstructions(data)
+    setQuizDescription(data)
 }
 
 const handleSetSelectedImage = (data) => {
@@ -913,8 +919,13 @@ const handleSetSubjectName = (data) => {
     setsubjectName(data)
 }
 
+const handleSetImageSetQuestion = (data) => {
+    setImageSetQuestion((oldData) => [...oldData, data])
+}
+
 const handleSetChoices = (data) => {
-    setChoices((oldData) => [...oldData, data])
+    console.log('update choices:', choices)
+    setChoices((oldData) => [...oldData, ...data])
 }
 
 const handleSetFinalQuestionSet = (data) => {
@@ -923,7 +934,7 @@ const handleSetFinalQuestionSet = (data) => {
 }
 
 const handleSetFillLayout = (data) => {
-    setFillLayout(data)
+    setFillLayout((oldData) => [...oldData, ...data])
 }
 
 const handleSetUniqueID = (data) => {
@@ -992,8 +1003,8 @@ const resetQuestionsVariables = () => {
                     className={style.ListPreviewQuiz}
                     previewShow={previewShow}
                     quizTitle={quizTitle}
-                    quizInstructions={quizInstructions}
-                    questionObj={questionObj}
+                    quizDescription={quizDescription}
+                    finalQuestionSet={finalQuestionSet}
                     choices={choices}
                     imageSetQuestion={imageSetQuestion}
                     fillLayoutSet={fillLayoutSet}
@@ -1013,7 +1024,7 @@ const resetQuestionsVariables = () => {
                     quizInstructions={quizInstructions}
                     questionObj={questionObj}
                     choices={choices}
-                    fillLayoutSet={fillLayoutSet}
+                    fillLayoutSet={fillLayout}
                     imageSetQuestion={imageSetQuestion}
                     finalQuestionSet={finalQuestionSet}
                 />
@@ -1129,13 +1140,27 @@ const resetQuestionsVariables = () => {
                                     Question Number: {finalQuestionSet.length + 1}
                                 </div>
                                 <div className='d-flex gap-2 align-items-center'>
-                                    <div className={style.circleBtn} title='Preview'>
-                                        <MdOutlinePreview size={18} color='white' cursor={'pointer'} onClick={() => setshowPreview('preview')}/>
-                                    </div>
-                                    <div className={style.circleBtn} title='List'>
-                                        <FaThList size={15} color='white' cursor={'pointer'}/>
-                                    </div>
-                                    <button id={style.btnSubmitQues}>Submit</button>
+                                    {
+                                        finalQuestionSet.length > 0 &&
+                                        <>
+                                            <div 
+                                                className={style.circleBtn} 
+                                                title='Preview' 
+                                                onClick={() => setshowPreview('preview')}
+                                            >
+                                                <MdOutlinePreview size={18} color='white' cursor={'pointer'}/>
+                                            </div>
+                                            <div 
+                                                className={style.circleBtn} 
+                                                title='List' 
+                                                onClick={() => setshowPreview('previewList')}
+                                            >
+                                                <FaThList size={15} color='white' cursor={'pointer'}/>
+                                            </div>
+                                        </>
+                                    }
+
+                                    <button id={style.btnSubmitQues} onClick={handleSubmitFinalQuestions}>Submit</button>
                                 </div>
                                 
                             </div>
@@ -1143,20 +1168,20 @@ const resetQuestionsVariables = () => {
                                 <div className={style.headMenuContent}>
                                     <h1>Question Type:</h1>
                                     <div className={style.listBtnMenu}>
-                                        <button className={selectedQuestionType === 'enumeration' ? style.btnQuesTypeActive : style.btnQuesType} onClick={() => {setselectedQuestionType('enumeration'), resetQuestionsVariables()}}>Enumeration</button>
-                                        <button className={selectedQuestionType === 'choices' ? style.btnQuesTypeActive : style.btnQuesType} onClick={() => {setselectedQuestionType('choices'), resetQuestionsVariables()}}>Choices Quiz</button>
-                                        <button className={selectedQuestionType === 'fill' ? style.btnQuesTypeActive : style.btnQuesType} onClick={() => {setselectedQuestionType('fill'), resetQuestionsVariables()}}>Fill in the Blank</button>
-                                        <button className={selectedQuestionType === 'TOR' ? style.btnQuesTypeActive : style.btnQuesType} onClick={() => {setselectedQuestionType('TOR'), resetQuestionsVariables()}}>True or False</button>
+                                        <button className={selectedQuestionType === 'enumeration' ? style.btnQuesTypeActive : style.btnQuesType} onClick={() => {setselectedQuestionType('enumeration')}}>Enumeration</button>
+                                        <button className={selectedQuestionType === 'choices' ? style.btnQuesTypeActive : style.btnQuesType} onClick={() => {setselectedQuestionType('choices')}}>Choices Quiz</button>
+                                        <button className={selectedQuestionType === 'fill' ? style.btnQuesTypeActive : style.btnQuesType} onClick={() => {setselectedQuestionType('fill')}}>Fill in the Blank</button>
+                                        <button className={selectedQuestionType === 'TOR' ? style.btnQuesTypeActive : style.btnQuesType} onClick={() => {setselectedQuestionType('TOR')}}>True or False</button>
                                     </div>
                                 </div>
                                 <div className={style.contentFillQuestion}>
                                     {selectedQuestionType === 'enumeration' &&  
                                         <QuestionEnumeration 
-                                            selectedImage={selectedImage}
-                                            handleSetSelectedImage={handleSetSelectedImage}
-                                            handleSetQuestionAnswerText={handleSetQuestionAnswerText}
-                                            handleSetQuestionContent={handleSetQuestionContent}
-                                            handleSetNumberOfAnswer={handleSetNumberOfAnswer}
+                                            finalQuestionSet={finalQuestionSet}
+                                            subjectName={subjectName}
+                                            handleSetImageSetQuestion={handleSetImageSetQuestion}
+                                            handleSetFinalQuestionSet={handleSetFinalQuestionSet}
+                                            handleNotificationFromChild={handleNotificationFromChild}
                                         />
                                     }
 
@@ -1165,6 +1190,7 @@ const resetQuestionsVariables = () => {
                                             finalQuestionSet={finalQuestionSet}
                                             subjectName={subjectName}
                                             handleSetChoices={handleSetChoices}
+                                            handleSetImageSetQuestion={handleSetImageSetQuestion}
                                             handleSetFinalQuestionSet={handleSetFinalQuestionSet}
                                             handleNotificationFromChild={handleNotificationFromChild}
                                         />
@@ -1172,49 +1198,28 @@ const resetQuestionsVariables = () => {
 
                                     {selectedQuestionType === 'fill' &&  
                                         <QuestionFillintheBlank 
-                                            selectedImage={selectedImage}
-                                            handleSetSelectedImage={handleSetSelectedImage}
-                                            handleNotificationFromChild={handleNotificationFromChild}
+                                            finalQuestionSet={finalQuestionSet}
+                                            subjectName={subjectName}
                                             handleSetFillLayout={handleSetFillLayout}
+                                            handleSetImageSetQuestion={handleSetImageSetQuestion}
+                                            handleSetFinalQuestionSet={handleSetFinalQuestionSet}
+                                            handleNotificationFromChild={handleNotificationFromChild}
+                                            
                                         />
                                     }
 
                                     {selectedQuestionType === 'TOR' && 
                                         <QuestionTrueOrFalse 
-                                            selectedImage={selectedImage}
-                                            questionAnswerText={questionAnswerText}
-                                            handleSetSelectedImage={handleSetSelectedImage}
-                                            handleNotificationFromChild={handleNotificationFromChild}
-                                            handleSetQuestionContent={handleSetQuestionContent}
-                                            handleSetQuestionAnswerText={handleSetQuestionAnswerText}
+                                        finalQuestionSet={finalQuestionSet}
+                                        subjectName={subjectName}
+                                        handleSetImageSetQuestion={handleSetImageSetQuestion}
+                                        handleSetFinalQuestionSet={handleSetFinalQuestionSet}
+                                        handleNotificationFromChild={handleNotificationFromChild}
                                         />
                                     }
                                 </div>
                             </div>
-                            <div className={style.bottomMenuQues}>
-                                
-                                <div className='d-flex gap-4 align-items-center'>
-                                <div className='d-flex gap-2 align-items-center'>
-                                    <p>Points</p>
-                                    <input type='number' min={1}/>
-                                </div>
-                                    {
-                                        selectedQuestionType !== 'TOR' && (
-                                            <div className="d-flex gap-2 align-items-center">
-                                                <input type='checkbox' id={style.checkBox}/>
-                                                <p>Key sensitive</p>
-                                            </div>
-                                        )
-                                    }
-                                    
-                                    <div className="d-flex gap-2 align-items-center">
-                                        <input type='checkbox' id={style.checkBox}/>
-                                        <p>Required</p>
-                                    </div>
-                                    
-                                </div>
-                                <button onClick={handleAddQuestions} disabled={checkIfTheQuestionIsValid()}>Add question</button>
-                            </div>
+
                             {/* <div className={style.horizontal}>
                                 {
                                     selectedQuestionType === '' && (

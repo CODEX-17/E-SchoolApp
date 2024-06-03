@@ -16,15 +16,13 @@ import { InfinitySpin } from  'react-loader-spinner';
 import { MdDeleteForever } from "react-icons/md";
 import { RiDeleteBin5Fill } from "react-icons/ri";
 
-
-
-const ListPreviewQuiz = ({ quizInstructions, quizTitle, deleteAllData, subjectNameList, handleUpdatedQuestion, choices, questionObj, imageSetQuestion, previewShow, fillLayoutSet }) => {
+const ListPreviewQuiz = ({ quizDescription, quizTitle, deleteAllData, subjectNameList, handleUpdatedQuestion, choices, finalQuestionSet, imageSetQuestion, previewShow, fillLayoutSet }) => {
 
 const notif = new Howl({ src: [notifSound]})
 const errSound = new Howl({ src: [erroSound]})
 const [imageSet, setImageSet] = useState(imageSetQuestion)
 const [choicesSet, setchoicesSet] = useState(choices)
-const [questionSet, setquestionSet] = useState(questionObj)
+const [questionSet, setquestionSet] = useState(finalQuestionSet)
 const [isShowEditor, setisShowEditor] = useState(false)
 const [showAddLayout, setShowAddLayout] = useState(false)
 const [selectedQuestion, setselectedQuestion] = useState()
@@ -40,7 +38,7 @@ const [updatedquestionAnswerText, setupdatedquestionAnswerText] = useState(null)
 const [updatedquestionContent, setupdatedquestionContent] = useState(null)
 const [updatedQuestionNumber, setupdatedQuestionNumber] = useState(null)
 const [quizTitleFinal, setquizTitleFinal] = useState(quizTitle)
-const [quizInstructionsFinal, setquizInstructionsFinal] = useState(quizInstructions)
+const [quizInstructionsFinal, setquizInstructionsFinal] = useState(quizDescription)
 const [updatedType, setupdatedType] = useState(null)
 const [updatedrequired, setupdatedrequired] = useState(null)
 const [subjectNameFinal, setsubjectNameFinal] = useState(questionSet[0].subjectName)
@@ -69,10 +67,6 @@ const [showModalAnnouncement, setshowModalAnnouncement] = useState(false)
 const [showLoading, setshowLoading] = useState(false)
 const [showDeleteAllmodal, setshowDeleteAllmodal] = useState(false)
 const [changes, setchanges] = useState(false)
-
-useEffect(() => {
-    console.log('questionObj:' ,questionObj)
-},[choicesSet])
 
 const notify = (message, state) => {
     console.log(message);
@@ -313,9 +307,9 @@ const handleFinalEdittedQuestions = () => {
 
 const handleUpdateHeaderTitle = () => { 
     setisShowTitleEditor(!isShowTitleEditor)
-    let updatedData = questionObj
+    let updatedData = finalQuestionSet
 
-    for (let i = 0; i < questionObj.length; i++) {
+    for (let i = 0; i < finalQuestionSet.length; i++) {
         updatedData[i].questionTitle = quizTitleFinal
         updatedData[i].questionDescription = quizInstructionsFinal
         updatedData[i].subjectName = subjectNameFinal
@@ -703,7 +697,7 @@ const handleAddChoicesEditor = () => {
                                         }
                                         
                                         {
-                                            currentChoices.map((choice, index) => (
+                                            currentChoices?.map((choice, index) => (
                                                     <div className={edittingLetter === choice.letter ? style.cardActiveChoice : style.cardChoice} key={index}>
                                                         <span id={style.boxLetter}>{choice.letter}</span>
                                                         <p>{choice.content.match(/[a-zA-Z0-9]/g).length > 4 ? choice.content.substring(0, 4)+'...' : choice.content}</p>
@@ -1078,7 +1072,7 @@ const handleAddChoicesEditor = () => {
                         <div className={style.rightDash}>
                             <div className='d-flex col-3 flex-column align-items-center'>
                                 <p>Enumeration</p>
-                                <h1 id={style.h1Dash}>{questionSet.filter((question) => question.questionType === 'text').length}</h1>
+                                <h1 id={style.h1Dash}>{questionSet.filter((question) => question.questionType === 'enumeration').length}</h1>
                             </div>
                             <div className='d-flex col-3 flex-column align-items-center'>
                                 <p>Choices Quiz</p>
