@@ -950,31 +950,7 @@ app.post('/deleteAccount', (req, res) => {
     })
 })
 
-app.post('/addQuiz', (req, res) => {
-    const data = req.body.obj
-    const quizID = data.quizID
-    const quizTitle = data.quizTitle
-    const quizInstructions = data.quizInstructions
-    const questionID = data.questionID
-    const subjectName = data.subjectName
-    const totalPoints = data.totalPoints
-    const totalQuestions = data.totalQuestions
-    const time = data.time
-    const date = data.date
-    const duration = data.duration
-    const random = data.random
-    const autoView = data.autoView
 
-    const query = "INSERT INTO quiz (quizID, quizTitle, quizInstructions, questionID, subjectName, totalPoints, totalQuestions, time, date, duration, random, autoView) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)"
-   
-    db.query(query,[quizID, quizTitle, quizInstructions, questionID, subjectName, totalPoints, totalQuestions, time, date, duration, random, autoView], (error, data, field) => {
-        if (error) {
-            res.status(404).json(error)
-        }else {
-            res.status(200).json(data)
-        }
-    })
-})
 
 app.post('/deleteChoices', (req, res) => {
     const id = req.body.id

@@ -31,6 +31,23 @@ router.get('/getQuizInnerJoinQuestion/:quizID', (req, res) => {
     })
 })
 
+//API ADD QUIZ IN DATABASE
+router.post('/addQuiz', (req, res) => {
+
+    const query = "INSERT INTO quiz (quizID, quizTitle, quizInstructions, questionID, subjectName, totalPoints, totalQuestions, time, date, duration, random, autoView) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)"
+    
+    const {quizID, quizTitle, quizInstructions, questionID, subjectName, totalPoints, totalQuestions, time, date, duration, random, autoView} = req.body
+   
+    db.query(query,[quizID, quizTitle, quizInstructions, questionID, subjectName, totalPoints, totalQuestions, time, date, duration, random, autoView], (error, data, field) => {
+        if (error) {
+            console.log(error)
+            res.status(404).send(error)
+        }else {
+            res.status(200).json({ message: "Successfully added quiz." })
+        }
+    })
+})
+
 
 
 module.exports = router

@@ -57,6 +57,7 @@ const ClassQuizSetup = ({ subjectName, navigateClass, classCode, postType, refre
   const [autoViewScore, setautoViewScore] = useState(false)
   const [selectState, setselectState] = useState(false)
   const [loadingMessage, setloadingMessage] = useState('Getting questions...')
+  const [savingMessage, setSavingMessage] = useState("Saving the quiz.")
   const [quizInstruction ,setquizInstruction] = useState()
   const [quizTitle, setquizTitle] = useState()
   const [finalQuiz, setfinalQuiz] = useState([])
@@ -242,7 +243,6 @@ const ClassQuizSetup = ({ subjectName, navigateClass, classCode, postType, refre
     let updated = [...selectedBank]
     let savedQuiz = [...finalQuiz]
 
-
     if (updated[index].checked === true) {
         updated[index].checked = false
         const filter = savedQuiz.filter((q) => q.id !== updated[index].id)
@@ -253,7 +253,6 @@ const ClassQuizSetup = ({ subjectName, navigateClass, classCode, postType, refre
         setfinalQuiz(savedQuiz)
     }
 
-    console.log('final quiz:', savedQuiz)
     setselectedBank(updated)
   }
 
@@ -362,7 +361,13 @@ const ClassQuizSetup = ({ subjectName, navigateClass, classCode, postType, refre
             }
 
             setObjQuiz(quiz)
-            addQuiz(quiz)
+
+            axios.post('http://localhost:5001/quiz/addQuiz', quiz)
+            .then( res => {
+                const result = res.data
+                console.log(result.message)
+            })
+            .catch(err => console.error(err))
 
             let final = [...finalQuiz]
 
@@ -375,15 +380,30 @@ const ClassQuizSetup = ({ subjectName, navigateClass, classCode, postType, refre
                 final.questionID = quiz.quizID
                 final.questionNumber = 1
             }
-            
-            console.log('final quest:',final)
 
-            for (let i = 0; i < final.length; i++) {
-                addQuestions(final[i])
+            //UpdateQuestions in database
+            if (final.length > 0) {
+                for (let i = 0; i < final.length; i++) {
+
+                    const data = {
+                        id: final[i].id,
+                        questionID: final[i].questionID, 
+                    }
+
+                    axios.post('http://localhost:5001/questions/updateQuestions', data)
+                    .then( res => {
+                        const result = res.data
+                        console.log(result.message)
+                    })
+                    .catch(err => console.error(err))
+                } 
             }
             
+
             setTimeout(() => {
                 setisShowSavingLoad(false)
+                const message = 'Success save quiz.'
+                notify(message, 'success')
             }, 2000);
             
         }else {
@@ -412,7 +432,7 @@ const ClassQuizSetup = ({ subjectName, navigateClass, classCode, postType, refre
     setisShowPreview(true)
   }
 
-  const handleDeleteQuestion= (id) => {
+  const handleDeleteQuestion = (id) => {
     const filter = finalQuiz.filter((q) => q.id !== id)
     let updated = [...selectedBank]
 
@@ -533,12 +553,25 @@ const ClassQuizSetup = ({ subjectName, navigateClass, classCode, postType, refre
                 random,
             }
 
-            uploadPost(data)
-            refreshData()
-            setisShowPostModal(false)
+           axios.post('http://localhost:5001/post/addPost', data)
+            .then( res => {
+                const result = res.data
+                console.log(result.message)
 
-            const message = 'Quiz posted successfully'
-            notify(message, 'success')
+                setSavingMessage("Uploading post.")
+                setisShowPostModal(false)
+                setshowLoading(true)
+
+                setTimeout(() => {
+                    const message = 'Quiz posted successfully'
+                    notify(message, 'success')
+                    setshowLoading(false)
+                }, 3000);
+                
+            })
+            .catch(err => console.error(err))
+
+            
         }else {
             const message = 'Makesure save your quiz first.'
             notify(message, 'err')
@@ -577,7 +610,7 @@ const ClassQuizSetup = ({ subjectName, navigateClass, classCode, postType, refre
                         color="#099AED"
                     />
                     <h2>Loading...</h2>
-                    <p>Saving the quiz.</p>
+                    <p>{savingMessage}</p>
                 </div>
             )
         }
@@ -783,23 +816,23 @@ const ClassQuizSetup = ({ subjectName, navigateClass, classCode, postType, refre
                                             <>
                                                 <div 
                                                     className={duration === 0 ? style.radioMinutesActive : style.radioMinutes}
-                                                    onClick={() => setduration(0)}
+                                                    onClick={() => {setduration(0), setisShowCustomizedBox('setting')}}
                                                     >No limit
                                                 </div>
                                                 <div 
                                                     className={duration === 15 ? style.radioMinutesActive : style.radioMinutes}
-                                                    onClick={() => setduration(15)}
+                                                    onClick={() => {setduration(15), setisShowCustomizedBox('setting')}}
                                                     >15 Minutes
                                                 </div>
                                                 <div 
                                                     className={duration === 30 ? style.radioMinutesActive : style.radioMinutes}
-                                                    onClick={() => setduration(30)}
+                                                    onClick={() => {setduration(30), setisShowCustomizedBox('setting')}}
                                                     >30 Minutes
                                                 </div>
                                                
                                                 <div 
                                                     className={duration !== 60 && duration !== 40 && duration !== 30 && duration !== 15 && duration !== 0 ? style.radioMinutesActive : style.radioMinutes}
-                                                    onClick={() => setisShowCustomizedBox('costumized')}
+                                                    onClick={() => {setisShowCustomizedBox('costumized')}}
                                                     >Costumized
                                                 </div>
                                             </>
@@ -808,7 +841,7 @@ const ClassQuizSetup = ({ subjectName, navigateClass, classCode, postType, refre
                                         isShowCustomizedBox === 'costumized' &&  (
                                             <div className={style.durationBox}>
                                                     <input type="number" value={duration} min={1} onChange={(e) => setduration(e.target.value)}/>
-                                                    <button id={style.btnSet} onClick={() => setisShowCustomizedBox('duration')}>Set</button>
+                                                    <button id={style.btnSet} onClick={() => {setisShowCustomizedBox('duration'), setisShowCustomizedBox('setting')}}>Set</button>
                                                     <button id={style.btnBack} onClick={() => setisShowCustomizedBox('duration')}>Back</button>
                                             </div>
                                         ) ||
@@ -821,7 +854,7 @@ const ClassQuizSetup = ({ subjectName, navigateClass, classCode, postType, refre
                                                 </div>
                                                 <div className='d-flex gap-2'>
                                                         <p>Auto view core</p>
-                                                        <input type="checkbox" checked={autoViewScore ? true : false} checonChange={(e) => setautoViewScore(e.target.checked)}/>
+                                                        <input type="checkbox" checked={autoViewScore ? true : false} onChange={(e) => setautoViewScore(e.target.checked)}/>
                                                 </div>
                                             
                                             </div>

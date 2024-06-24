@@ -16,7 +16,24 @@ router.get('/getQuestions', (req, res) => {
     })
 })
 
+//Update Questions
+router.post('/updateQuestions', (req, res) => {
+    const { id, questionID } = req.body
+    const query = 'UPDATE questions SET questionID=? WHERE id=?'
+    
+    db.query(query,[questionID, id], (error, data, field) => {
+        if (error) {
+            console.error(error)
+            res.status(404).send(error)
+        } else {
+            console.log("Successfully change questionID!")
+            res.status(200).json({ message: "Successfully change questionID!" })
+        }
+    })
+})
 
+
+//Add questions
 router.post('/addQuestions', async (req, res) => {
     const { choices, fillLayout, finalQuestionSet, imageSetQuestion } = req.body;
 
