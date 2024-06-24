@@ -16,13 +16,13 @@ import { InfinitySpin } from  'react-loader-spinner';
 import { MdDeleteForever } from "react-icons/md";
 import { RiDeleteBin5Fill } from "react-icons/ri";
 
-const ListPreviewQuiz = ({ quizDescription, quizTitle, deleteAllData, subjectNameList, handleUpdatedQuestion, choices, finalQuestionSet, imageSetQuestion, previewShow, fillLayoutSet }) => {
+const ListPreviewQuiz = ({ quizDescription, quizTitle, deleteAllData, subjectNameList, handleUpdatedQuestion, choices, finalQuestionSet, imageSetQuestion, previewShow, fillLayoutSet, handleNotificationFromChild }) => {
 
 const notif = new Howl({ src: [notifSound]})
 const errSound = new Howl({ src: [erroSound]})
 const [imageSet, setImageSet] = useState(imageSetQuestion)
 const [choicesSet, setchoicesSet] = useState(choices)
-const [questionSet, setquestionSet] = useState(finalQuestionSet)
+const [questionSet, setQuestionSet] = useState(finalQuestionSet)
 const [isShowEditor, setisShowEditor] = useState(false)
 const [showAddLayout, setShowAddLayout] = useState(false)
 const [selectedQuestion, setselectedQuestion] = useState()
@@ -128,7 +128,7 @@ const handleDeleteChoice = (target) => {
 
 const handleAddChoices = () => {
     if (addContenChoice) {
-        const size = parseInt(choicesSet?.length)
+        const size = parseInt(currentChoices.length)
         const letter = String.fromCharCode(size + 'A'.charCodeAt(0))
         const choicesID = choicesSet[0]?.choicesID
         const correct = !addCorrectChoice ? false : addCorrectChoice === 'true' ? true : false
@@ -140,7 +140,7 @@ const handleAddChoices = () => {
             letter,
         }
 
-        setchoicesSet((prevData) => [...prevData, updatedData])
+        setcurrentChoices((prevData) => [...prevData, updatedData])
     }else {
         console.log('empty')
     }
@@ -201,25 +201,22 @@ const handleDeleteQuestion = (data) => {
         notify(message, 'success')
 }
 
-const handleEdit = (data) => {
-    const filter = questionSet.filter((question, index) => index === data)
-    const imageFile = imageSet.filter((image) => image.imageID === filter[0].imageID).map((image) => image.file)
 
-    setselectedQuestion(filter)
-    setupdatedrequired(filter[0]?.required)
-    setupdatedKeySensitive(filter[0]?.keySensitive)
-    setupdatedPoints(parseInt(filter[0]?.points))
-    setupdatedquestionAnswerText(filter[0]?.questionAnswerText)
-    setupdatedquestionContent(filter[0]?.questionContent)
-    setupdatedchoicesID(filter[0]?.choicesID)
-    setupdatedimageID(filter[0]?.imageID)
-    setupdatedQuestionNumber(parseInt(filter[0]?.questionNumber))
+const handleEdit = (question) => {
+
+    setselectedQuestion(question)
     setisShowEditor(true)
-    setImageDisplay(imageFile)
 
-    if (filter[0]?.choicesID !== 'none') {
-        const data = choicesSet.filter((choices) => choices.choicesID === filter[0].choicesID)
+    //If the selected question is choices type it will store the choices
+    if (question.choicesID !== 'none') {
+        const data = choicesSet.filter((choices) => choices.choicesID === question.choicesID)
         setcurrentChoices(data)
+    }
+
+    //If the the selected question have image
+    if (question.imageID !== 'none') {
+        const data = imageSet.filter((img) => img.imageID === question.imageID)
+        setImageDisplay(data[0].file)
     }
 
 }
@@ -227,71 +224,123 @@ const handleEdit = (data) => {
 
 const handleSaveChange = (e) => {
     e.preventDefault()
-    
-    const choicesID = selectedQuestion[0].choicesID
-    const fillLayoutID = selectedQuestion[0].fillLayoutID
-    const imageID = updatedimageID ? updatedimageID : selectedQuestion[0].imageID
-    let keySensitive = updatedKeySensitive ? updatedKeySensitive : selectedQuestion[0].keySensitive
-    const points = updatedPoints ? updatedPoints : selectedQuestion[0].points
-    let questionAnswerText = updatedquestionAnswerText ? updatedquestionAnswerText : selectedQuestion[0].questionAnswerText
-    const questionContent = updatedquestionContent ? updatedquestionContent : selectedQuestion[0].questionContent
-    const questionDescription = quizInstructionsFinal ? quizInstructionsFinal : selectedQuestion[0].questionDescription
-    const questionNumber = updatedQuestionNumber ? parseInt(updatedQuestionNumber) : parseInt(selectedQuestion[0].questionNumber)
-    const questionTitle = quizTitleFinal ? quizTitleFinal : selectedQuestion[0].questionTitle
-    const questionType = selectedQuestion[0].questionType
-    const required = updatedrequired ? updatedrequired : selectedQuestion[0].required
-    const subjectName = subjectNameFinal ? subjectNameFinal : selectedQuestion[0].subjectName
 
-    if (questionType === 'True Or False') {
-        questionAnswerText = updatedquestionAnswerText
-    }
+    console.log(selectedQuestion)
+    console.log(currentChoices)
+    console.log(choicesSet)
 
-    if (selectedQuestion[0].questionType === 'choices') {
-        keySensitive = false
-    }
-        const selectedPosition = parseInt(selectedQuestion[0]?.questionNumber)-1
-        const targetPosition = parseInt(questionNumber)-1
-        const selectedData = questionSet.filter((question) => question.questionNumber === parseInt(selectedQuestion[0]?.questionNumber))
-        const restData = questionSet.filter((question) => question.questionNumber !== parseInt(selectedQuestion[0]?.questionNumber))
-        let updatedDATA = []
-        for (let i = 0, int = 0; i < questionSet.length; i++) {
-            if (i === targetPosition) {
-                updatedDATA.push({
-                    choicesID,
-                    fillLayoutID,
-                    imageID,
-                    keySensitive,
-                    points,
-                    questionAnswerText,
-                    questionContent,
-                    questionNumber,
-                    questionType,
-                    required,
-                    subjectName,
-                })
-            }else {
-                updatedDATA.push({
-                    choicesID: restData[int].choicesID,
-                    fillLayoutID: restData[int].fillLayoutID,
-                    imageID: restData[int].imageID,
-                    keySensitive: restData[int].keySensitive,
-                    points: restData[int].points,
-                    questionAnswerText: restData[int].questionAnswerText,
-                    questionContent: restData[int].questionContent,
-                    questionNumber: i+1,
-                    questionType: restData[int].questionType,
-                    required: restData[int].required,
-                    subjectName,
-                })
-                int++
-            }
-            
+
+
+    if (selectedQuestion.questionType === 'choices') {
+
+        if (selectedQuestion.questionContent === '' || !selectedQuestion.questionContent) {
+            const message = 'Please fill-up the question.'
+            handleNotificationFromChild(message, 'err')
         }
-        setquestionSet(updatedDATA)
-        setisShowEditor(false)
-        setchanges(true)
-        const message = 'Successfully saved changes.'
-        notify(message, 'success')
+
+        let noContent = 0
+        let correctAnswer = 0
+
+        //Check if the currentChoices have an empty content and atleast one correct answer
+        for (let i = 0; i < currentChoices.length; i++) {
+            if (currentChoices[i].content === '' || !currentChoices[i].content) {
+                noContent += 1
+            }
+
+            if (currentChoices[i].correct === true) {
+                correctAnswer += 1
+            }
+        }
+
+        if (noContent === 0) {
+            if (correctAnswer !== 0) {
+                let updateData = choicesSet.filter(data => data.choicesID !== currentChoices[0].choicesID)
+                
+                for (let i = 0; i < currentChoices.length; i++) {
+                    updateData.push(currentChoices[i])
+                }
+
+                setchoicesSet(updateData)
+                const message = 'Choices updated.'
+                handleNotificationFromChild(message, 'success')
+
+            }else {
+                const message = 'Choices set must have atleast one correct answer.'
+                handleNotificationFromChild(message, 'err')
+            }
+        }else {
+            const message = 'Please fill-up all choices content.'
+            handleNotificationFromChild(message, 'err')
+        }
+    }
+
+
+
+    
+    // const choicesID = questionSet[selectedQuestion].choicesID
+    // const fillLayoutID = questionSet[selectedQuestion].fillLayoutID
+    // const imageID = updatedimageID ? updatedimageID : questionSet[selectedQuestion].imageID
+    // let keySensitive = updatedKeySensitive ? updatedKeySensitive : questionSet[selectedQuestion].keySensitive
+    // const points = updatedPoints ? updatedPoints : questionSet[selectedQuestion].points
+    // let questionAnswerText = updatedquestionAnswerText ? updatedquestionAnswerText : questionSet[selectedQuestion].questionAnswerText
+    // const questionContent = updatedquestionContent ? updatedquestionContent : questionSet[selectedQuestion].questionContent
+    // const questionDescription = quizInstructionsFinal ? quizInstructionsFinal : questionSet[selectedQuestion].questionDescription
+    // const questionNumber = updatedQuestionNumber ? parseInt(updatedQuestionNumber) : parseInt(questionSet[selectedQuestion].questionNumber)
+    // const questionTitle = quizTitleFinal ? quizTitleFinal : questionSet[selectedQuestion].questionTitle
+    // const questionType = questionSet[selectedQuestion].questionType
+    // const required = updatedrequired ? updatedrequired : questionSet[selectedQuestion].required
+    // const subjectName = subjectNameFinal ? subjectNameFinal : questionSet[selectedQuestion].subjectName
+
+    // if (questionType === 'True Or False') {
+    //     questionAnswerText = updatedquestionAnswerText
+    // }
+
+    // if (questionSet[selectedQuestion].questionType === 'choices') {
+    //     keySensitive = false
+    // }
+    //     const selectedPosition = parseInt(questionSet[selectedQuestion]?.questionNumber)-1
+    //     const targetPosition = parseInt(questionNumber)-1
+    //     const selectedData = questionSet.filter((question) => question.questionNumber === parseInt(questionSet[selectedQuestion]?.questionNumber))
+    //     const restData = questionSet.filter((question) => question.questionNumber !== parseInt(questionSet[selectedQuestion]?.questionNumber))
+    //     let updatedDATA = []
+    //     for (let i = 0, int = 0; i < questionSet.length; i++) {
+    //         if (i === targetPosition) {
+    //             updatedDATA.push({
+    //                 choicesID,
+    //                 fillLayoutID,
+    //                 imageID,
+    //                 keySensitive,
+    //                 points,
+    //                 questionAnswerText,
+    //                 questionContent,
+    //                 questionNumber,
+    //                 questionType,
+    //                 required,
+    //                 subjectName,
+    //             })
+    //         }else {
+    //             updatedDATA.push({
+    //                 choicesID: restData[int].choicesID,
+    //                 fillLayoutID: restData[int].fillLayoutID,
+    //                 imageID: restData[int].imageID,
+    //                 keySensitive: restData[int].keySensitive,
+    //                 points: restData[int].points,
+    //                 questionAnswerText: restData[int].questionAnswerText,
+    //                 questionContent: restData[int].questionContent,
+    //                 questionNumber: i+1,
+    //                 questionType: restData[int].questionType,
+    //                 required: restData[int].required,
+    //                 subjectName,
+    //             })
+    //             int++
+    //         }
+            
+    //     }
+    //     setquestionSet(updatedDATA)
+    //     setisShowEditor(false)
+    //     setchanges(true)
+    //     const message = 'Successfully saved changes.'
+    //     notify(message, 'success')
 }
 
 
@@ -334,7 +383,7 @@ const handleChangeCatchImgUpload = (e) => {
 }
 
 const handleChangeImage = () => {
-    const id = selectedQuestion[0].imageID
+    const id = questionSet[selectedQuestion].imageID
     let updatedData = imageSet
 
     for (let i = 0; i < imageSet.length; i++) {
@@ -348,7 +397,7 @@ const handleChangeImage = () => {
 
 const handleOpenChangeImage = () => {
     setshowChangeImageModal(true)
-    const imageID = selectedQuestion[0].imageID
+    const imageID = questionSet[selectedQuestion].imageID
     const filter = imageSet.filter(image => image.imageID === imageID).map((image) => image.file)
     setImageDisplay(filter)
 }
@@ -383,7 +432,7 @@ const handleAddChoicesEditor = () => {
                         <div className={style.headerImagePic}>
                             <div className='d-flex gap-2 align-items-center'>
                                 <p>Change Image</p>
-                                <p id={style.quesImage}>{`(Question number : ${selectedQuestion[0].questionNumber})`}</p>
+                                <p id={style.quesImage}>{`(Question number : ${questionSet[selectedQuestion].questionNumber})`}</p>
                             </div>
                             
                             <BiExit size={20} title='closed' cursor={'pointer'} onClick={() => setshowChangeImageModal(false)}/>
@@ -461,7 +510,7 @@ const handleAddChoicesEditor = () => {
                                 }
                                 
                                 <div id={style.boxIcon}>
-                                    <FiEdit id={style.iconsEdit} onClick={() => handleEdit(index)}/>
+                                    <FiEdit id={style.iconsEdit} onClick={() => handleEdit(question)}/>
                                 </div>
                             </div>
                         </div>
@@ -520,7 +569,7 @@ const handleAddChoicesEditor = () => {
 
                 </div>
                 {
-                    isShowEditor === true && selectedQuestion[0].questionType === 'enumeration' && (
+                    isShowEditor === true && selectedQuestion.questionType === 'enumeration' && (
                         <div className={style.cardQuestionEdit}>
                             <div className={style.bgCard}>
                                 <div className='col-3'>
@@ -533,11 +582,10 @@ const handleAddChoicesEditor = () => {
                                     <div className={style.quesTypeCard}>
                                         <p id={style.quizTypeLabel}>Question number:</p>
                                         <div className={style.rectangle}>
-                                            <select className={style.select} onChange={(e) => setupdatedQuestionNumber(e.target.value)}>
+                                            <select className={style.select} value={selectedQuestion.questionNumber} onChange={(e) => setselectedQuestion({...selectedQuestion, questionNumber: e.target.value})}>
                                                 {
                                                     questionSet.map((question, index) => (
                                                         <option
-                                                            selected={question.questionNumber === selectedQuestion[0].questionNumber ? true : false}
                                                             value={question.questionNumber}
                                                             key={index}>Question no.{question.questionNumber}
                                                         </option> 
@@ -555,8 +603,8 @@ const handleAddChoicesEditor = () => {
                                     <input 
                                         id={style.inputQuestion}
                                         type="text"
-                                        value={updatedquestionContent}
-                                        onChange={(e) => setupdatedquestionContent(e.target.value)}
+                                        value={selectedQuestion.questionContent}
+                                        onChange={(e) => setselectedQuestion({...selectedQuestion, questionContent: e.target.value})}
                                     />
                                 </div>
                                 <div className={style.fromQuestion}>
@@ -564,8 +612,8 @@ const handleAddChoicesEditor = () => {
                                     <textarea
                                         id={style.inputAnswer}
                                         type="text"
-                                        value={updatedquestionAnswerText}
-                                        onChange={(e) => setupdatedquestionAnswerText(e.target.value)}
+                                        value={selectedQuestion.questionAnswerText}
+                                        onChange={(e) => setselectedQuestion({...selectedQuestion, questionAnswerText: e.target.value})}
                                     />
                                 </div>
                                 <div className='d-flex align-items-center p-1'>
@@ -575,28 +623,22 @@ const handleAddChoicesEditor = () => {
                                             type="number"
                                             min='0'
                                             id={style.inputPoints} 
-                                            value={updatedPoints}
-                                            onChange={(e) => setupdatedPoints(e.target.value)}
+                                            value={selectedQuestion.points}
+                                            onChange={(e) => setselectedQuestion({...selectedQuestion, points: e.target.value})}
                                         />
                                     </div>
                                     <div className='d-flex align-items-center gap-1' style={{ marginLeft: '20%'}}>
-                                        <p id={style.questionLabel2}>Required: </p>
-                                        <select id={style.select} value={updatedrequired} onChange={(e) => setupdatedrequired(e.target.value)}>
-                                            <option value={true}>Yes</option>
-                                            <option value={false}>No</option>
-                                        </select>
+                                        <p id={style.questionLabel2}>Required</p>
+                                        <input type="checkbox" checked={selectedQuestion.required} onChange={(e) => setselectedQuestion({...selectedQuestion, required: e.target.checked})}/>
                                     </div>
                                     <div className='d-flex align-items-center gap-1' style={{ marginLeft: '5%'}}>
                                         <p id={style.questionLabel2}>KeySensitive</p>
-                                        <select id={style.select} value={updatedKeySensitive} onChange={(e) => setupdatedKeySensitive(e.target.value)}>
-                                            <option value={true}>Yes</option>
-                                            <option value={false}>No</option>
-                                        </select>
+                                        <input type="checkbox" checked={selectedQuestion.keySensitive} onChange={(e) => setselectedQuestion({...selectedQuestion, keySensitive: e.target.checked})}/>
                                     </div>
                                 </div>
                                 <div className='mt-2 d-flex justify-content-end align-items-center position-relative'>
                                     {
-                                        selectedQuestion[0].imageID !== 'none' && (
+                                        selectedQuestion.imageID !== 'none' && (
                                             <div className={style.imgDiv}>
                                                 <img src={imageDisplay ? URL.createObjectURL(imageDisplay[0]) : sample } alt="" width={20} height={20} id={style.miniViewImg}/>
                                                 <button id={style.btnChangeImg} onClick={handleOpenChangeImage}>Change Image</button>
@@ -611,24 +653,23 @@ const handleAddChoicesEditor = () => {
                 }
 
                 {
-                    isShowEditor === true && selectedQuestion[0].questionType === 'choices' && (
+                    isShowEditor === true && selectedQuestion.questionType === 'choices' && (
                         <div className={style.cardQuestionEdit}>
                         <div className={style.bgCard}>
                             <div className='col-3'>
                                 <div className={style.quesTypeCard}>
                                     <p id={style.quizTypeLabel}>Question type:</p>
-                                    <div className={style.rectangle}>Choices Quiz</div>
+                                    <div className={style.rectangle}>Choices</div>
                                 </div>
                             </div>  
                             <div className='d-flex flex-column col-8 align-items-end justify-content-center'>
                                 <div className={style.quesTypeCard}>
                                     <p id={style.quizTypeLabel}>Question number:</p>
                                     <div className={style.rectangle}>
-                                    <select className={style.select} onChange={(e) => setupdatedQuestionNumber(e.target.value)}>
+                                    <select className={style.select} value={selectedQuestion.questionNumber} onChange={(e) => setselectedQuestion({...selectedQuestion, questionNumber: e.target.value})}>
                                         {
                                             questionSet.map((question, index) => (
                                                 <option
-                                                    selected={question.questionNumber === selectedQuestion[0].questionNumber ? true : false}
                                                     value={question.questionNumber}
                                                     key={index}>Question no.{question.questionNumber}
                                                 </option> 
@@ -646,8 +687,8 @@ const handleAddChoicesEditor = () => {
                                 <input 
                                     id={style.inputQuestion}
                                     type="text"
-                                    value={updatedquestionContent}
-                                    onChange={(e) => setupdatedquestionContent(e.target.value)}
+                                    value={selectedQuestion.questionContent}
+                                    onChange={(e) => setselectedQuestion({...selectedQuestion, questionContent: e.target.value})}
                                 />
                             </div>
                             <div className={style.horizontalContainer}>
@@ -682,7 +723,7 @@ const handleAddChoicesEditor = () => {
                                                                 addContenChoice && (
                                                                     <FaCirclePlus
                                                                         size={30}
-                                                                        color='#186F65'
+                                                                        color='white'
                                                                         cursor={'pointer'}
                                                                         title='add choice'
                                                                         onClick={handleAddChoices}
@@ -714,7 +755,7 @@ const handleAddChoicesEditor = () => {
                                                                     <FiEdit
                                                                     id={style.editLayout}
                                                                     onClick={() => {
-                                                                        setEdittingLetter(choice.letter)
+                                                                        setEdittingLetter(index)
                                                                         setEnable(false)
                                                                     }}
                                                                     />
@@ -755,22 +796,19 @@ const handleAddChoicesEditor = () => {
                                         type="number"
                                         min='0'
                                         id={style.inputPoints} 
-                                        value={updatedPoints}
-                                        onChange={(e) => setupdatedPoints(e.target.value)}
+                                        value={selectedQuestion.points}
+                                        onChange={(e) => setselectedQuestion({...selectedQuestion, points: e.target.value})}
                                     />
                                 </div>
                                 <div className='d-flex align-items-center gap-1' style={{ marginLeft: '20%'}}>
                                     <p id={style.questionLabel2}>Required: </p>
-                                    <select id={style.select} value={updatedrequired} onChange={(e) => setupdatedrequired(e.target.value)}>
-                                        <option value={true}>Yes</option>
-                                        <option value={false}>No</option>
-                                    </select>
+                                    <input type="checkbox" checked={selectedQuestion.required} onChange={(e) => setselectedQuestion({...selectedQuestion, required: e.target.checked})}/>
                                 </div>
                             
                             </div>
                             <div className='mt-2 d-flex justify-content-end align-items-center position-relative'>
                                 {
-                                    selectedQuestion[0].imageID !== 'none' && (
+                                    selectedQuestion.imageID !== 'none' && (
                                         <div className={style.imgDiv}>
                                             <img src={imageDisplay ? URL.createObjectURL(imageDisplay[0]) : sample } alt="" width={20} height={20} id={style.miniViewImg}/>
                                             <button id={style.btnChangeImg} onClick={handleOpenChangeImage}>Change Image</button>
@@ -785,7 +823,7 @@ const handleAddChoicesEditor = () => {
                 }
 
                 {
-                    isShowEditor === true && selectedQuestion[0].questionType === 'fill' && (
+                    isShowEditor === true && selectedQuestion.questionType === 'fill' && (
                         <div className={style.cardQuestionEdit}>
                         <div className={style.bgCard}>
                             <div className='col-3'>
@@ -802,7 +840,7 @@ const handleAddChoicesEditor = () => {
                                             {
                                                 questionSet.map((question, index) => (
                                                     <option
-                                                        selected={question.questionNumber === selectedQuestion[0].questionNumber ? true : false}
+                                                        selected={question.questionNumber === questionSet[selectedQuestion].questionNumber ? true : false}
                                                         value={question.questionNumber}
                                                         key={index}>Question no.{question.questionNumber}
                                                     </option> 
@@ -820,7 +858,7 @@ const handleAddChoicesEditor = () => {
                                 <div className={style.layoutDisplay}>
                                     {
                                         fillLayout
-                                            .filter((fill) => fill.fillLayoutID === selectedQuestion[0].fillLayoutID)
+                                            .filter((fill) => fill.fillLayoutID === questionSet[selectedQuestion].fillLayoutID)
                                             .map((fill, index) => (
                                                 fill.fillType === 'text' && (<p key={index}>{fill.fillContent}</p>) || 
                                                 fill.fillType === 'blank' && (<input  key={index} type="text" value={fill.fillContent}/>)
@@ -864,7 +902,7 @@ const handleAddChoicesEditor = () => {
                                                         
                                                         {
                                                             fillLayout
-                                                            .filter((fill) => fill.fillLayoutID === selectedQuestion[0].fillLayoutID)
+                                                            .filter((fill) => fill.fillLayoutID === questionSet[selectedQuestion].fillLayoutID)
                                                             .map((fill, index) => (
                                                                 fill.fillType === 'text' && (
                                                                     <div className={fill.fillPosition === edittingPosition ? style.cardConsActive : style.cardCons} key={index}>
@@ -927,7 +965,7 @@ const handleAddChoicesEditor = () => {
                                                 <ContentLayoutEdit
                                                     edittingPosition={edittingPosition}
                                                     fillLayout={fillLayout}
-                                                    selectedQuestion={selectedQuestion[0]}
+                                                    selectedQuestion={questionSet[selectedQuestion]}
                                                     setfillLayout={setfillLayout}
                                                     disableButtonFill={disableButtonFill}
                                                 />
@@ -966,7 +1004,7 @@ const handleAddChoicesEditor = () => {
                             </div>
                             <div className='mt-2 d-flex justify-content-end align-items-center position-relative'>
                                 {
-                                    selectedQuestion[0].imageID !== 'none' && (
+                                    questionSet[selectedQuestion].imageID !== 'none' && (
                                         <div className={style.imgDiv}>
                                             <img src={imageDisplay ? URL.createObjectURL(imageDisplay[0]) : sample } alt="" width={20} height={20} id={style.miniViewImg}/>
                                             <button id={style.btnChangeImg} onClick={handleOpenChangeImage}>Change Image</button>
@@ -981,13 +1019,13 @@ const handleAddChoicesEditor = () => {
                 }
 
                 {
-                    isShowEditor === true && selectedQuestion[0].questionType === 'True Or False' && (
+                    isShowEditor === true && selectedQuestion.questionType === 'True Or False' && (
                         <div className={style.cardQuestionEdit}>
                             <div className={style.bgCard}>
                                 <div className='col-3'>
                                     <div className={style.quesTypeCard}>
                                         <p id={style.quizTypeLabel}>Question type:</p>
-                                        <div className={style.rectangle}>{selectedQuestion[0].questionType}</div>
+                                        <div className={style.rectangle}>{questionSet[selectedQuestion].questionType}</div>
                                     </div>
                                 </div>  
                                 <div className='d-flex flex-column col-8 align-items-end justify-content-center'>
@@ -998,7 +1036,7 @@ const handleAddChoicesEditor = () => {
                                                 {
                                                     questionSet.map((question, index) => (
                                                         <option
-                                                            selected={question.questionNumber === selectedQuestion[0].questionNumber ? true : false}
+                                                            selected={question.questionNumber === questionSet[selectedQuestion].questionNumber ? true : false}
                                                             value={question.questionNumber}
                                                             key={index}>Question no.{question.questionNumber}
                                                         </option> 
@@ -1048,7 +1086,7 @@ const handleAddChoicesEditor = () => {
                                 </div>
                                 <div className='mt-2 d-flex justify-content-end align-items-center position-relative'>
                                     {
-                                        selectedQuestion[0].imageID !== 'none' && (
+                                        questionSet[selectedQuestion].imageID !== 'none' && (
                                             <div className={style.imgDiv}>
                                                 <img src={imageDisplay ? URL.createObjectURL(imageDisplay[0]) : sample } alt="" width={20} height={20} id={style.miniViewImg}/>
                                                 <button id={style.btnChangeImg} onClick={handleOpenChangeImage}>Change Image</button>
@@ -1084,7 +1122,7 @@ const handleAddChoicesEditor = () => {
                             </div>
                             <div className='d-flex col-3 flex-column align-items-center'>
                                 <p>True Or False</p>
-                                <h1 id={style.h1Dash}>{questionSet.filter((question) => question.questionType === 'True Or False').length}</h1>
+                                <h1 id={style.h1Dash}>{questionSet.filter((question) => question.questionType === 'TOR').length}</h1>
                             </div>
                             
                         </div>

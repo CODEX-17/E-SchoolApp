@@ -14,6 +14,7 @@ import StopwatchTimer from 'react-stopwatch-timer';
 import LeaderBoard from './LeaderBoard'
 import io from 'socket.io-client'
 import { useScoreStore } from '../stores/useScoreStore'
+import axios from 'axios'
 const socket = io.connect('http://localhost:5001')
 
 
@@ -24,14 +25,14 @@ const QuizTake = () => {
     const quizTakeID = JSON.parse(localStorage.getItem('quizTakeID'))
     const { quizID, postID } = quizTakeID
     const currentUser = JSON.parse(localStorage.getItem('user'))
-    const quiz = JSON.parse(localStorage.getItem('quiz'))
-    const images = JSON.parse(localStorage.getItem('images'))
-    const choices = JSON.parse(localStorage.getItem('choices'))
-    const fill = JSON.parse(localStorage.getItem('fillLayout'))
-    const post = JSON.parse(localStorage.getItem('post'))
-    const schedules = JSON.parse(localStorage.getItem('schedules'))
+    const [quiz, setquiz] = useState()
+    const [images, setImage] = useState()
+    const [choices, setChoices] = useState()
+    const [fillLayout, setFillLayout] = useState()
+    const [post, setPost] = useState()
+    const [schedules, setSchedule] = useState()
     const [currentPost, setCurrentPost] = useState()
-    const questions = JSON.parse(localStorage.getItem('questions'))
+    const [questions, setQuestions] = useState( )
     const [questionSet, setquestionSet] = useState(null)
     const [quizTitle, setquizTitle] = useState(null)
     const [quizInstructions, setquizInstructions] = useState(null)
@@ -47,8 +48,9 @@ const QuizTake = () => {
     const [isShowTimer, setisShowTimer] = useState(false)
     const [enableSubmit, setenableSubmit] = useState(false)
 
-    const { addScore } = useScoreStore()
+    const [currentQuiz, setCurrentQuiz] = useState()
 
+    const { addScore } = useScoreStore()
 
     const shuffleArray = (obj) => {
         let questions = obj
@@ -65,30 +67,113 @@ const QuizTake = () => {
         return questions
     }
 
-    useEffect(() => {
-        const filter = quiz.filter((quiz) => quiz.quizID === quizID)
-        const filteredQuestions = questions.filter((q) => q.questionID === filter[0].questionID)
-        console.log('filteredQuestions',filteredQuestions)
+    const expiryTimestamp = new Date()
+    const [filterPost, setFilterPost] = useState()
+    const [time, setTime] = useState()
 
-        const filterPost = post.filter((post) => post.postID === postID)
-        if (filterPost[0].schedID !== 'none') {
-            const filterSchedule = schedules.filter((sched) => sched.postID === postID)
-            setclosedTime(filterSchedule[0].closeTime)
-            setclosedDate(filterSchedule[0].closeDate)
-        }
-        setCurrentPost(filterPost[0])
-        setduration(filterPost[0].duration)
-        setquizTitle(filter[0].quizTitle)
-        setquizInstructions(filter[0].quizInstructions)
-        setquestionSet(filteredQuestions)
-        setoverAll(filteredQuestions.length)
-       
-        if (filter[0].random) {
-            const ran = shuffleArray(filteredQuestions)
-        }
+    expiryTimestamp.setMinutes(expiryTimestamp.getMinutes() + time);
+    const {
+        seconds,
+        minutes,
+        start,
+        stop,
+    } = useTimer({
+        expiryTimestamp,
+        onExpire: () => {
+            setenableSubmit(true);
+        },
+    })
+    
+    useEffect(() => {
+
+
+        //GET QUESTION WITH QUIZID
+        axios.get('http://localhost:5001/quiz/getQuizInnerJoinQuestion/', + quizID)
+        .then((res) => {
+            const result = res.data
+            console.log('quizID', result)
+            setquestionSet(result)
+        })
+        .catch((err) => console.log(err))
+
+
+        //GET ALL POST
+        axios.get('http://localhost:5001/post/getPost')
+        .then((res) => {
+            const result = res.data
+            console.log('filter post', result)
+            console.log('postID', postID)
+            setPost(result)
+
+            const filter = result.filter((post) => post.postID === postID)
+
+            console.log('filter post', filter)
+            const time = filter[0]?.duration
+            setTime(time)
+            setCurrentPost(filter[0])
+            setclosedTime(filter[0].closeTime)
+            setclosedDate(filter[0].closeDate)
+            
+
+            if (filter[0].random) {
+                const ran = shuffleArray(filteredQuestions)
+            }
+        })
+        .catch((err) => console.log(err))
+
+        //GET ALL SCHEDULE
+        axios.get('http://localhost:5001/schedule/getSchedule')
+        .then((res) => setSchedule(res.data))
+        .catch((err) => console.log(err))
+
+        //GET ALL QUIZ
+        axios.get('http://localhost:5001/quiz/getQuiz')
+        .then((res) => {
+            const result = res.data
+            setquiz(result)
+
+            const filter = result.filter((data) => data.quizID === quizID)
+            const questionID = filter[0].questionID
+            setCurrentQuiz(filter[0])
+            setduration(filter[0].duration)
+            setquizTitle(filter[0].quizTitle)
+            setquizInstructions(filter[0].quizInstructions)
+
+
+            //GET ALL QUESTIONS
+            axios.get('http://localhost:5001/questions/getQuestions')
+                .then((res) => {
+                    const questionsResults = res.data
+                    setQuestions(questionsResults)
+
+                    const filter = questionsResults.filter((data) => data.questionID === questionID)
+                    console.log('question Result', filter)
+                    setquestionSet(filter)
+                    setoverAll(filter.length)
+                    
+                })
+                .catch((err) => console.log(err))
+            })
+
+        .catch((err) => console.log(err))
+
+
+        //GET ALL CHOICES
+        axios.get('http://localhost:5001/choices/getChoices')
+        .then((res) => setChoices(res.data))
+        .catch((err) => console.log(err))
+
+        //GET ALL FILLLAYOUT
+        axios.get('http://localhost:5001/fillLayout/getFillLayout')
+        .then((res) => setFillLayout(res.data))
+        .catch((err) => console.log(err))
+
+        //GET ALL IMAGE
+        axios.get('http://localhost:5001/images/getImages')
+        .then((res) => setImage(res.data))
+        .catch((err) => console.log(err))
     },[])
 
-    
 
     const notify = (message, state) => {
         console.log(message);
@@ -305,7 +390,7 @@ const QuizTake = () => {
                     
                     const currentAns = dataAnswer[i]
                     //const currentAns = dataAnswer.filter((ans) => ans.number === questionSet[i].questionNumber).map((ans) => ans.answer)
-                    const blankFill = fill.filter((fill) => fill.fillLayoutID === questionSet[i].fillLayoutID && fill.fillType === 'blank').map((fill) => fill.fillContent)
+                    const blankFill = fillLayout.filter((fill) => fill.fillLayoutID === questionSet[i].fillLayoutID && fill.fillType === 'blank').map((fill) => fill.fillContent)
                     //
 
                     console.log("currentAns:", currentAns)
@@ -569,7 +654,6 @@ const QuizTake = () => {
     }
 
     const generateCloseTime = () => {
-        console.log(closedDate, closedTime)
         const result = convertDateFormat(closedDate)+' ('+convertTo12HourFormat(closedTime)+')'
         if (currentPost) {
             if (currentPost.schedID === 'none') {
@@ -579,24 +663,6 @@ const QuizTake = () => {
         return result
     }
 
-
-    const expiryTimestamp = new Date()
-    const filterPost = post.filter((post) => post.postID === postID)
-    let time = filterPost[0].duration
-        expiryTimestamp.setMinutes(expiryTimestamp.getMinutes() + time);
-        const {
-            seconds,
-            minutes,
-            start,
-            stop,
-        } = useTimer({
-            expiryTimestamp,
-            onExpire: () => {
-                setenableSubmit(true);
-            },
-        })
-    
-    
 
     const handleStart = () => {
         const filterPost = post.filter((post) => post.postID === postID)
@@ -608,7 +674,7 @@ const QuizTake = () => {
             start()
         }else {
             setenableSubmit(false)
-            stop()
+            //stop()
         }
 
         const { quizID } = quizTakeID
@@ -815,7 +881,7 @@ const QuizTake = () => {
                                                         <p>Question:</p>
                                                         <div className={style.fillContentList}>
                                                             {
-                                                                fill
+                                                                fillLayout
                                                                     .filter((fill) => fill.fillLayoutID === questions.fillLayoutID)
                                                                     .map((fill, index) => (
                                                                         fill.fillType === 'text' && (<h2 className={style.fillText} title='text' key={index}>{fill.fillContent}</h2>) ||
@@ -833,7 +899,7 @@ const QuizTake = () => {
                                                             }
                                                         </div>
                                                         <p style={{ fontSize: '8pt'}}>
-                                                            <i>Fill {fill.filter((fill) => fill.fillType === 'blank' && fill.fillLayoutID === questions.fillLayoutID).length} answers.{questions.keySensitive ? ' Key senstive answer.' : ' Not key senstive answer.' }{questions.required ? '(REQUIRED).' :''}</i>
+                                                            <i>Fill {fillLayout.filter((fill) => fill.fillType === 'blank' && fill.fillLayoutID === questions.fillLayoutID).length} answers.{questions.keySensitive ? ' Key senstive answer.' : ' Not key senstive answer.' }{questions.required ? '(REQUIRED).' :''}</i>
                                                         </p>
                                                     </div>
                                                 </div>

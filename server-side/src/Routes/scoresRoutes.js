@@ -2,9 +2,9 @@ const express = require('express')
 const router = express.Router()
 const db = require('../db')
 
-//API GET SUBJECT
-router.get('/getSubject', (req, res) => {
-    const query = 'SELECT * FROM subject   '
+//API get score
+router.get('/getScores', (req, res) => {
+    const query = 'SELECT * FROM scores'
 
     db.query(query, (error, data, field) => {
         if (error) {
@@ -15,6 +15,7 @@ router.get('/getSubject', (req, res) => {
         }
     })
 })
+
 
 
 module.exports = router

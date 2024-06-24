@@ -46,14 +46,17 @@
 }
 
 #quizTitle {
-    font-size: 15pt;
+    font-size: 10pt;
     margin: 0;
-    font-family: sanBold;
+    color: #3E3F40;
+    font-family: normal;
 }
 
 .header h2 {
     color: #099AED;
     margin: 0;
+    font-size: 15pt;
+    font-family: bold;
 }
 
 #menuBtn {

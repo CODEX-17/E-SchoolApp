@@ -8,6 +8,7 @@ import io from 'socket.io-client'
 import { BsAwardFill } from "react-icons/bs";
 import { useScoreStore } from '../stores/useScoreStore'
 import { useQuizStore } from '../stores/useQuizStore'
+import axios from 'axios'
 const socket = io.connect('http://localhost:5001')
 
 const LeaderBoard = () => {
@@ -23,15 +24,29 @@ const LeaderBoard = () => {
 
   const accounts = JSON.parse(localStorage.getItem('accounts'))
   const currentUser = JSON.parse(localStorage.getItem('user'))
-  const subjects = JSON.parse(localStorage.getItem('subjects'))
+  const [subjects, setSubject] = useState()
 
   const { getScore } = useScoreStore()
   const { getQuiz } = useQuizStore()
  
 
   useEffect(() => {
-    getScore()
-    getQuiz()
+
+    //GET ALL QUIZ
+    axios.get('http://localhost:5001/quiz/getQuiz')
+    .then((res) => setquiz(res.data))
+    .catch((err) => console.log(err))
+
+    //GET ALL SCORE
+    axios.get('http://localhost:5001/scores/getScores')
+    .then((res) => setscores(res.data))
+    .catch((err) => console.log(err))
+
+    //GET ALL SCORE
+    axios.get('http://localhost:5001/subject/getSubject')
+    .then((res) => setSubject(res.data))
+    .catch((err) => console.log(err))
+    
     setTimeout(() => {
         refreshData()
     }, 3000);
@@ -74,7 +89,7 @@ const LeaderBoard = () => {
             
             <select value={currentSubject} className={style.select} onChange={handleSelectSubject}>
                 {
-                    subjects.map((sub) => (
+                    subjects?.map((sub) => (
                         <option value={sub.subjectName}>{sub.subjectName}</option>
                     ))
                 }

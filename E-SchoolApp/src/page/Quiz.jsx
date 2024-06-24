@@ -290,9 +290,7 @@ const getAnalytics = () => {
     setTotalTORF(torf)
 }
 
-const handleImageModal = () => {
-    setisShowImageModal(true)
-}
+
 
 const handleFileInputChange = (e) => {
     e.preventDefault()
@@ -889,6 +887,49 @@ const handleSubmitFinalQuestions = () => {
     console.log('choices:',choices)
     console.log('fillLayout:',fillLayout)
     console.log('final:',finalQuestionSet)
+    console.log('images:', imageSetQuestion)
+
+    if (finalQuestionSet.length > 0) {
+
+        const data = {
+            choices,
+            fillLayout,
+            finalQuestionSet,
+        }
+
+        
+        axios.post('http://localhost:5001/questions/addQuestions', data)
+        .then((res) => {
+            const data = res.data
+            console.log(data.message)
+        })
+        .catch((error) => console.log(error))
+
+        if (imageSetQuestion.length > 0) {
+            for (let i = 0; i < imageSetQuestion.length; i++) {
+                
+                const formData = new FormData
+                formData.append('image', imageSetQuestion[i].file)
+                formData.append('imageID', imageSetQuestion[i].imageID)
+                formData.append('dateUploaded', imageSetQuestion[i].datePosted)
+                formData.append('timeUploaded', imageSetQuestion[i].timePosted)
+                formData.append('acctID', imageSetQuestion[i].acctID)
+                formData.append('classCode', imageSetQuestion[i].classCode)
+
+                axios.post('http://localhost:5001/images/addImage', formData)
+                .then((res) => {
+                    const data = res.data
+                    console.log(data.message)
+                })
+                .catch((error) => console.log(error))
+            }  
+        }
+
+
+
+
+    }
+
 }
 
 const handleSetQuestionTitle = (data) => {
@@ -984,8 +1025,8 @@ const resetQuestionsVariables = () => {
                     className={style.ListPreviewQuiz}
                     previewShow={previewShow}
                     quizTitle={quizTitle}
-                    quizInstructions={quizInstructions}
-                    questionObj={questionObj}
+                    quizDescription={quizDescription}
+                    finalQuestionSet={finalQuestionSet}
                     choices={choices}
                     imageSetQuestion={imageSetQuestion}
                     fillLayoutSet={fillLayoutSet}
@@ -1011,6 +1052,7 @@ const resetQuestionsVariables = () => {
                     subjectNameList={subjectNameList}
                     handleUpdatedQuestion={handleUpdatedQuestion}
                     deleteAllData={deleteAllData}
+                    handleNotificationFromChild={handleNotificationFromChild}
                 />
             )
         }
@@ -1021,7 +1063,7 @@ const resetQuestionsVariables = () => {
                     id={style.previewQuiz}
                     onData={previewShow}
                     quizTitle={quizTitle}
-                    quizInstructions={quizInstructions}
+                    quizDescription={quizDescription}
                     questionObj={questionObj}
                     choices={choices}
                     fillLayoutSet={fillLayout}
@@ -1080,58 +1122,16 @@ const resetQuestionsVariables = () => {
                         <div className={style.left}>
                             <MiniQuizDashboard 
                                 finalQuestionSet={finalQuestionSet}
+                                quizTitle={quizTitle}
+                                quizDescription={quizDescription}
                                 subjectNameList={subjectNameList}
                                 handleSetSubjectName={handleSetSubjectName}
                                 handleSetQuestionTitle={handleSetQuestionTitle}
+                                subjectName={subjectName}
+                                quiz
                                 handleSetQuestionDescription={handleSetQuestionDescription}
                             />
-                            {/* <h1>Question Title</h1>
-                            <input id={style.inputOne} value={quizTitle} type="text" required onChange={(e) => setQuizTitle(e.target.value)}/>
-                            <select className="form-select" id={style.select} value={subjectName} onChange={(e) => handleSelectSubjectNamee(e.target.value)}>
-                                <option id={style.option} selected={subjectName ? false : true}>Select subject</option>
-                                {
-                                    subjectNameList.map((subject, index) => (
-                                        <option id={style.option} key={index} selected={subjectName === subject.subjectName ? true : false} value={subject.subjectName}>{subject.subjectName}</option>
-                                    ))
-                                }
-                            </select>
-                            <div className={style.miniDash}>
-                                <div id={style.divTitle}>
-                                    <h1 id={style.quizTitle}>{quizTitle ? quizTitle : 'Title'}</h1>
-                                </div>
-                                <div className={style.topDash}>
-                                    <div className={style.leftDash}>
-                                        <h2 id={style.dashTitle}>Total questions:</h2>
-                                        <h2 id={style.dashContent}>{questionObj.length}</h2>
-                                    </div>
-                                    <div className={style.leftDash}>
-                                        <h2 id={style.dashTitle}>Total points:</h2>
-                                        <h2 id={style.dashContent}>{generateTotalPoints()}</h2>
-                                    </div>
-                                    <div className={style.rightDash}>
-                                        <h2 id={style.dashTitle}>Current question:</h2>
-                                        <h2 id={style.dashContent}>{questionObj.length+1}</h2>
-                                    </div>
-                                </div>
-                                <div className={style.botDash}>
-                                    <div className={style.dashDetails}>
-                                        <h2 id={style.detailTitle}>Enumeration</h2>
-                                        <h2 id={style.detailContent}>{questionObj.filter((q)=> q.questionType === 'text').length}</h2>
-                                    </div>
-                                    <div className={style.dashDetails}>
-                                        <h2 id={style.detailTitle}>Choices quiz</h2>
-                                        <h2 id={style.detailContent}>{questionObj.filter((q)=> q.questionType === 'choices').length}</h2>
-                                    </div>
-                                    <div className={style.dashDetails}>
-                                        <h2 id={style.detailTitle}>Fill in the blank</h2>
-                                        <h2 id={style.detailContent}>{questionObj.filter((q)=> q.questionType === 'fill').length}</h2>
-                                    </div>
-                                    <div className={style.dashDetails}>
-                                        <h2 id={style.detailTitle}>True Or False</h2>
-                                        <h2 id={style.detailContent}>{questionObj.filter((q)=> q.questionType === 'True Or False').length}</h2>
-                                    </div>
-                                </div>
-                            </div> */}
+    
                         </div>
         
                         <div className={style.right}>
@@ -1220,372 +1220,6 @@ const resetQuestionsVariables = () => {
                                 </div>
                             </div>
 
-                            {/* <div className={style.horizontal}>
-                                {
-                                    selectedQuestionType === '' && (
-                                        <button className={style.btnAddQuiz} onClick={() => setisShowChoices(true)}>Add quiz +</button>
-                                    )
-                                }
-                                {
-                                    questionObj.length > 0 && (
-                                        <h1 onClick={() => previewShow('preview')}><i><u>preview</u></i><BiSolidRightArrowAlt/></h1>
-                                    )
-                                }
-                                
-                            </div> */}
-            
-                            {/* {
-                                isShowChoices && (
-                                    <div className={style.menu}>
-                                        <button className={selectedQuestionType === 'text' ? style.btnMenuActived : style.btnMenu } onClick={() => handleMenus('Enumeration')}>Enumeration</button>
-                                        <button className={selectedQuestionType === 'choices' ? style.btnMenuActived : style.btnMenu } onClick={() =>  handleMenus('choices')}>Choices quiz</button>
-                                        <button className={selectedQuestionType === 'fill' ? style.btnMenuActived : style.btnMenu }  onClick={() => handleMenus('fill')}>Fill in the blank</button>
-                                        <button className={selectedQuestionType === 'TOrF' ? style.btnMenuActived : style.btnMenu }  onClick={() => handleMenus('TOrF')}>True Or False</button>
-                                    </div>
-                                )
-                            }
-            
-                            {
-                                selectedQuestionType === 'Enumeration' && (
-                        
-                                    <div className={style.quizContainer}>
-                                        <form id={style.formControl} action="" onSubmit={handleEnumerationAdd}>
-                                        <div className={style.quizForm}>
-                                            <div className='d-flex align-items-center justify-content-between'>
-                                                <h1>Enumeration</h1>
-                                                {
-                                                    isShowThumbnail && (<img src={URL.createObjectURL(selectedImage)} alt="thumbnail" id={style.thumbnail}/>)
-                                                }
-                                                
-                                            </div>
-                                            <div className={style.horLabel}>
-                                                <h2>Question:</h2>
-                                                <h2>Question number: {questionObj.length+1}</h2>
-                                            </div>
-                                            <div className={style.textareaDiv}>
-                                                <textarea className={style.quesField} type="text" required value={questionContent} onChange={(e) => setQuestionContent(e.target.value)}></textarea>
-                                                <RiImageAddFill id={style.iconImageChoices} title='Upload Image' onClick={handleImageModal}/>
-                                            </div>
-                                            
-                                            <h2 id={style.ansLabel}>Answer:</h2>
-                                            <textarea className={style.quesField} type="text" required value={questionAnswerText} onChange={(e) => setQuestionAnswerText(e.target.value)}></textarea>
-                                            <div className={style.horizontalMenus}>
-                                                <h2>Points:</h2>
-                                                <input value={points} id={style.pointsField} type="number" min='1' required onChange={(e) => setpoints(e.target.value)}/>
-                                                <input type="Checkbox" style={{marginLeft: 20}} onChange={(e) => setrequired(e.target.checked)} checked={required} />
-                                                <h2>Required</h2>
-                                                <input type="Checkbox" onChange={(e) => setKeySensitive(e.target.checked)} checked={keySensitive}/>
-                                                <h2>Key sensitive</h2>
-                                            </div>
-                                            <button className={style.btnAdd} type='submit'>Add</button>
-                                        </div>
-                                        </form>
-                                    </div>
-                                )
-                            }
-
-                            {
-                                selectedQuestionType === 'TOrF' && (
-                        
-                                    <div className={style.quizContainer}>
-                                       
-                                            <div className={style.quizForm}>
-                                                <div className='d-flex align-items-center justify-content-between'>
-                                                    <h1 id={style.trueFalseLabel}>True Or False</h1>
-                                                    {
-                                                        isShowThumbnail && (<img src={URL.createObjectURL(selectedImage)} alt="thumbnail" id={style.thumbnail}/>)
-                                                    }
-                                                </div>
-                                                <div className={style.horLabel}>
-                                                    <h2>Question:</h2>
-                                                    <h2>Question number: {questionObj.length+1}</h2>
-                                                </div>
-                                                <div className={style.textareaDiv}>
-                                                    <textarea className={style.quesField} type="text" required value={questionContent} onChange={(e) => setQuestionContent(e.target.value)}></textarea>
-                                                    <RiImageAddFill id={style.iconImageChoices} title='Upload Image' onClick={handleImageModal}/>
-                                                </div>
-                                                
-                                                <h2 id={style.ansLabel}>Answer:</h2>
-                                                <div className='d-flex gap-5 align-items-center justify-content-center mt-5'>
-                                                    <button className={ trueORFalseAnswer === true ? style.btnTORFActive : style.btnTORF } onClick={() => handleAnswerTORF(true)}>True</button>
-                                                    <button className={ trueORFalseAnswer === false ? style.btnTORFActive : style.btnTORF} onClick={() => handleAnswerTORF(false)}>False</button>
-                                                </div>
-                                                <div className={style.footer}>
-                                                    <div className={style.footerMenu}>
-                                                        <h2>Points:</h2>
-                                                        <input onChange={(e) => setpoints(e.target.value)} value={points} className={style.pointsField} type="number" min='1' required/>
-                                                        <input onChange={(e) => setrequired(e.target.checked)} checked={required} type="Checkbox" style={{marginLeft: 20, outline: 'none', border: 'none'}} />
-                                                        <h2>Required</h2>
-                                                        <button id={style.btnAdd} type='submit' onClick={handleTORFquestionAdd}>Add</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                
-                                    </div>
-                                )
-                            }
-            
-                            {
-                                selectedQuestionType === 'choices' && (
-                                    <div className={style.quizContainer}>
-                                        <div className={style.quizForm}>
-                                            <div className='d-flex align-items-center justify-content-between'>
-                                                <h1 id={style.choicesTitle}>Choices Quiz</h1>
-                                                {
-                                                    isShowThumbnail && (<img src={URL.createObjectURL(selectedImage)} alt="thumbnail" id={style.thumbnail}/>)
-                                                }
-                                            </div>
-                                            
-                                            <form id={style.form} action="" onSubmit={handleChoicesQuestionAdd}>
-                                            <div className={style.horizontalLabel}>
-                                                <h2>Question:</h2>
-                                                <h2>Question number: {questionObj.length+1}</h2>
-                                            </div>
-                                            <div className={style.textareaDiv}>
-                                                <textarea className={style.quesField} type="text" value={questionContent} onChange={(e) => setQuestionContent(e.target.value)} required></textarea>
-                                                <RiImageAddFill id={style.iconImageChoices} title='Upload Image' onClick={handleImageModal}/>
-                                            </div>
-                                            
-                                            <h2 id={style.answerLabel}>Answer:</h2>
-            
-                                            <div className={style.listFinalChoices}>
-
-                                                    <div style={{ display: 'flex', gap: '3px', alignItems: 'center' }}>
-                                                        <h1 id={style.letter}>A</h1>
-                                                        <input 
-                                                            className={style.finalChoicesItem}
-                                                            placeholder='insert answer'
-                                                            value={choicesA.content}
-                                                            required
-                                                            onChange={(e) => setChoicesA((prevData) => ({...prevData, content: e.target.value}))}
-                                                        />
-                                                            {
-                                                                choicesA.correct ? (
-                                                                    <AiFillCheckCircle
-                                                                        className={style.check}
-                                                                        title='make it correct answer'
-                                                                        onClick={() => setChoicesA((prevData) => ({...prevData, correct: false}))}
-                                                                    />
-                                                                ) : (
-                                                                    <AiOutlineCloseCircle 
-                                                                        color='red'
-                                                                        title='make it correct answer'
-                                                                        className={style.check}
-                                                                        onClick={() => setChoicesA((prevData) => ({...prevData, correct: true}))}
-                                                                    />
-                                                                )
-                                                            }
-
-                                                    </div>
-                                                    <div style={{ display: 'flex', gap: '3px', alignItems: 'center' }}>
-                                                        <h1 id={style.letter}>B</h1>
-                                                        <input 
-                                                            className={style.finalChoicesItem}
-                                                            placeholder='insert answer'
-                                                            required
-                                                            value={choicesB.content}
-                                                            onChange={(e) => setChoicesB((prevData) => ({...prevData, content: e.target.value}))}
-                                                        />
-                                                            {
-                                                                choicesB.correct ? (
-                                                                    <AiFillCheckCircle
-                                                                        className={style.check}
-                                                                        title='make it correct answer'
-                                                                        onClick={() => setChoicesB((prevData) => ({...prevData, correct: false}))}
-                                                                    />
-                                                                ) : (
-                                                                    <AiOutlineCloseCircle 
-                                                                        color='red'
-                                                                        title='make it correct answer'
-                                                                        className={style.check}
-                                                                        onClick={() => setChoicesB((prevData) => ({...prevData, correct: true}))}
-                                                                    />
-                                                                )
-                                                            }
-                    
-                                                    </div>
-                                                    <div style={{ display: 'flex', gap: '3px', alignItems: 'center' }}>
-                                                        <h1 id={style.letter}>C</h1>
-                                                        <input 
-                                                            className={style.finalChoicesItem}
-                                                            placeholder='insert answer'
-                                                            required
-                                                            value={choicesC.content}
-                                                            onChange={(e) => setChoicesC((prevData) => ({...prevData, content: e.target.value}))}
-                                                        />
-                                                            {
-                                                                choicesC.correct ? (
-                                                                    <AiFillCheckCircle
-                                                                        className={style.check}
-                                                                        title='make it correct answer'
-                                                                        onClick={() => setChoicesC((prevData) => ({...prevData, correct: false}))}
-                                                                    />
-                                                                ) : (
-                                                                    <AiOutlineCloseCircle 
-                                                                        color='red'
-                                                                        title='make it correct answer'
-                                                                        className={style.check}
-                                                                        onClick={() => setChoicesC((prevData) => ({...prevData, correct: true}))}
-                                                                    />
-                                                                )
-                                                            }
-                                                    </div>
-                                                    <div style={{ display: 'flex', gap: '3px', alignItems: 'center' }}>
-                                                        <h1 id={style.letter}>D</h1>
-                                                        <input 
-                                                            className={style.finalChoicesItem}
-                                                            placeholder='insert answer'
-                                                            required
-                                                            value={choicesD.content}
-                                                            onChange={(e) => setChoicesD((prevData) => ({...prevData, content: e.target.value}))}
-                                                        />
-                                                            {
-                                                                choicesD.correct ? (
-                                                                    <AiFillCheckCircle
-                                                                        className={style.check}
-                                                                        title='make it correct answer'
-                                                                        onClick={() => setChoicesD((prevData) => ({...prevData, correct: false}))}
-                                                                    />
-                                                                ) : (
-                                                                    <AiOutlineCloseCircle 
-                                                                        color='red'
-                                                                        title='make it correct answer'
-                                                                        className={style.check}
-                                                                        onClick={() => setChoicesD((prevData) => ({...prevData, correct: true}))}
-                                                                    />
-                                                                )
-                                                            }
-                                                    </div>
-
-                                                    {
-                                                        tempChoices.map((choice, index) => (
-                                                        <div key={index} style={{ display: 'flex', gap: '3px', alignItems: 'center' }}>
-                                                            <h1 id={style.letter}>{choice.letter}</h1>
-                                                            <div className={style.finalChoicesItem}>{choice.content}</div>
-                                                            {
-                                                                choice.correct ? (
-                                                                    <AiFillCheckCircle className={style.check} title='make it correct answer' onClick={() => handleCorrect(false, choice.letter, choice.uniqueId)}/>
-                                                                ) : (
-                                                                    <AiOutlineCloseCircle color='red' title='make it correct answer' className={style.check} onClick={() => handleCorrect(true, choice.letter, choice.uniqueId)}/>
-                                                                )
-                                                                
-                                                            }
-                                                            <MdDelete className={style.btnDeleteChoices} title='delete choices' onClick={() => handleDeleteChoices(choice.letter)}/>
-                                                        </div>
-                                                        ))
-                                                    }
-
-        
-                                                {
-                                                    isNoChoices && (
-                                                        <p>Please Add Choices!</p>
-                                                    )
-                                                }
-            
-                                            </div>
- 
-                                                <div className={style.choicesItems}>
-                                                    <BsPlusCircleFill className={style.btnAddChoices} onClick={addChoices}/>
-                                                    <input type="text" className={style.answerField} placeholder='insert new choices' value={content} onChange={(e) => setContent(e.target.value)}/>
-                                                </div>
-            
-                                            <div className={style.footer}>
-                                                <div className={style.footerMenu}>
-                                                    <h2>Points:</h2>
-                                                    <input onChange={(e) => setpoints(e.target.value)} value={points} className={style.pointsField} type="number" min='1' required/>
-                                                    <input onChange={(e) => setrequired(e.target.checked)} checked={required} type="Checkbox" style={{marginLeft: 20, outline: 'none', border: 'none'}} />
-                                                    <h2>Required</h2>
-                                                    <button id={style.btnAdd} type='submit'>Add</button>
-                                                </div>
-                                            </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                )
-                            }
-
-                            {
-                                selectedQuestionType === 'fill' && (
-                                    <div className={style.fillContainer}>
-                                        <div className={style.fillContent}>
-                                            <div className='d-flex align-items-center justify-content-between mb-4'>
-                                                <h1 id={style.choicesTitle}>fill in the blank</h1>
-                                                {
-                                                    isShowThumbnail && (<img src={URL.createObjectURL(selectedImage)} alt="thumbnail" id={style.thumbnail}/>)
-                                                }
-                                            </div>
-                                            <form id={style.form} action="" onSubmit={handleFillLayoutQuestionAdd}>
-                                            <div className={style.horizontalLabel}>
-                                                <h2>Question:</h2>
-                                                <h2>Question number: {questionObj.length+1}</h2>
-                                            </div>
-                                                {
-                                                    fillLayout.length > 0 ? (
-                                                        <div className={style.questionFillContainer}>
-                                                            <div className={style.fillContentQues}>
-                                                                {
-                                                                    fillLayout.map((fill, index) => (
-                                                                        fill.fillType === 'text' ? (
-                                                                            <h2 key={index}>{fill.fillContent}</h2> 
-                                                                        ) : (
-                                                                            <h2 key={index} id={style.fillBlank}><u>{fill.fillContent}</u></h2> 
-                                                                        )
-                                                                    ))
-                                                                }
-                                                            </div>
-                                                            <RiImageAddFill id={style.iconfillQuiz} title='Upload Image' onClick={handleImageModal}/>
-                                                        </div>
-                                                    ): (
-                                                        <br/>
-                                                    )
-                                                }
-                                            
-                                            <div className={style.generatorFillLayout}>
-                                                <h2>Generate fill in the blank layout:</h2>
-
-                                                <div className={style.fillDiv}>
-                                                    <button id={style.btnFront} disabled>{currentFillType ? 'Text' : 'Blank'}</button>
-                                                    <input 
-                                                        id={style.inputContentF} 
-                                                        type="text" 
-                                                        placeholder={currentFillType ? 'insert text' : 'insert answer'}
-                                                        value={fillContent}
-                                                        onChange={(e) => setFillContent(e.target.value)}
-                                                    />
-                                                    <button id={style.btnBack} onClick={(event) => addFillLayout(event)}>Add</button>
-                                                </div>
-                                                <button
-                                                    className={style.btnBlankInsert}
-                                                    onClick={(e) => handleChangetype(e)}>{currentFillType ? 'Change to blank' : 'Change to text'}
-                                                </button>
-                                            </div>
-            
-                                            <div className={style.footer}>
-                                                    <div className={style.footerMenu}>
-                                                        <h2>Points:</h2>
-                                                        <input onChange={(e) => setpoints(e.target.value)} value={points} className={style.pointsField} type="number" min='1' required/>
-                                                        <input onChange={(e) => setrequired(e.target.checked)} checked={required} type="Checkbox" style={{marginLeft: 20, outline: 'none', border: 'none'}} />
-                                                        <h2>Required</h2>
-                                                        <input type="Checkbox" onChange={(e) => setKeySensitive(e.target.checked)} checked={keySensitive}/>
-                                                        <h2>Key sensitive</h2>
-                                                        <button id={style.btnAdd} type='submit'>Add</button>
-                                                    </div>
-                                                </div>
-                                                </form>
-                                            </div>
-                                    </div>
-                                )
-                            }
-
-                            {
-                                selectedQuestionType !== '' && (
-                                    <div className={style.menuButtons}>
-                                        <button className={style.btnSave} disabled={questionObj.length <= 0 ? true : false} onClick={() => previewShow('previewList')}>Edit</button>
-                                        <button className={style.btnSave} disabled={questionObj.length <= 0 ? true : false} onClick={handleFinalQuestion}>Save</button>    
-                                    </div>
-                                )
-                            } */}
-                            
 
                         </div>
                         

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import NavbarComponent from '../components/NavbarComponent'
 import style from './HomePage.module.css'
 import SidebarComponent from '../components/SidebarComponent'
-import QuizGenerator from './QuizGenerator'
 import { useNavigateStore } from '../stores/useNavigateStore'
 import { useNavigate } from 'react-router-dom';
 import { Quiz } from './Quiz'
@@ -42,7 +41,6 @@ const HomePage = () => {
               <SidebarComponent/>
           </div>
           <div className={style.right}>
-            {routeChoose === 'quiz' && <QuizGenerator/>}
             {routeChoose === 'activity' && <ActivityPage/>}
             {routeChoose === 'chat' && <ChatPage/>}
             {routeChoose === 'quizDev' && <Quiz/>}

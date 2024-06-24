@@ -9,19 +9,19 @@ import cics from '../assets/cics.png'
 import { TiExport } from "react-icons/ti"
 import { IoSettingsOutline } from "react-icons/io5";
 
-const PrintLayout = ({ previewShow, questionObj, quizTitle, quizInstructions, choices, fillLayoutSet }) => {
+const PrintLayout = ({ previewShow, finalQuestionSet, quizTitle, quizInstructions, choices, fillLayoutSet }) => {
 
-    console.log(questionObj)
+    console.log(finalQuestionSet)
     console.log('fillLayoutSet:',fillLayoutSet)
     
     const pdfContainerRef = useRef(null)
-    const questionSet = questionObj
+    const questionSet = finalQuestionSet
     const choicesSet = choices
     const fillLayout = fillLayoutSet
     const questionChoices = questionSet.filter((ques) => ques.questionType === 'choices')
     const questionText = questionSet.filter((ques) => ques.questionType === 'enumeration')
     const questionFill = questionSet.filter((ques) => ques.questionType === 'fill')
-    const questionTORF = questionSet.filter((ques) => ques.questionType === 'True Or False')
+    const questionTORF = questionSet.filter((ques) => ques.questionType === 'TOR')
     const [isShowSetting, setisShowSetting] = useState(false)
     const [enumerationInstruction, setenumerationInstruction] = useState('Read the following questions and write your answers on the blank spaces below.')
     const [fillInstruction, setfillInstruction] = useState('Answer the following questions or complete the statements by writing the appropriate words or amounts in the answer blank.')

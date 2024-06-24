@@ -27,6 +27,14 @@ const QuestionChoicesQuiz = ({finalQuestionSet, subjectName, handleSetChoices, h
   const [questionContent, setQuestionContent] = useState('')
   const [image, setImage] = useState(null)
   const questionNumber = finalQuestionSet.length + 1
+  const user = JSON.parse(localStorage.getItem('user'))
+  let currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit'})
+  let currentDate = new Date().toDateString('en-US', { 
+          year: 'numeric', 
+          month: 'short', 
+          day: 'numeric',
+          weekday: 'short' 
+  })
 
 
   //by default theirs a default choices [A,B,C,D]
@@ -107,7 +115,11 @@ const QuestionChoicesQuiz = ({finalQuestionSet, subjectName, handleSetChoices, h
     const file = e.target.files[0]
     setImage({
       imageID: generateUniqueID(),
-      file: file
+      file: file,
+      acctID: user.acctID,
+      dateUploaded: currentDate,
+      timeUploaded: currentTime,
+      classCode: "none",
     })
   }
 
@@ -365,10 +377,6 @@ const QuestionChoicesQuiz = ({finalQuestionSet, subjectName, handleSetChoices, h
             <div className='d-flex gap-2 align-items-center'>
                 <p>Points</p>
                 <input type='number' min={1} value={points} id={style.inputPoints} onChange={(e) => setPoints(e.target.value)}/>
-            </div>
-            <div className="d-flex gap-2 align-items-center">
-                <input type='checkbox' style={{ cursor: 'pointer' }} id={style.checkBox} checked={keySensitive} onChange={(e) => setKeySensitive(e.target.checked)}/>
-                <p>Key sensitive</p>
             </div>
                    
             <div className="d-flex gap-2 align-items-center">

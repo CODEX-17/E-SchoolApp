@@ -25,6 +25,14 @@ const QuestionTrueOrFalse = ({ finalQuestionSet, subjectName, handleSetImageSetQ
   const [image, setImage] = useState(null)
   const questionNumber = finalQuestionSet.length + 1
   const questionID = generateUniqueID()
+  const user = JSON.parse(localStorage.getItem('user'))
+  let currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit'})
+  let currentDate = new Date().toDateString('en-US', { 
+          year: 'numeric', 
+          month: 'short', 
+          day: 'numeric',
+          weekday: 'short' 
+  })
 
   const handleClickDragImage = () => {
     inputImageRef.current.click()
@@ -34,7 +42,11 @@ const QuestionTrueOrFalse = ({ finalQuestionSet, subjectName, handleSetImageSetQ
     const file = e.target.files[0]
     setImage({
       imageID: generateUniqueID(),
-      file: file
+      file: file,        
+      acctID: user.acctID,
+      dateUploaded: currentDate,
+      timeUploaded: currentTime,
+      classCode: "none",
     })
   }
 
@@ -130,17 +142,13 @@ const QuestionTrueOrFalse = ({ finalQuestionSet, subjectName, handleSetImageSetQ
                 <p>Points</p>
                 <input type='number' min={1} value={points} id={style.inputPoints} onChange={(e) => setPoints(e.target.value)}/>
             </div>
-            <div className="d-flex gap-2 align-items-center">
-                <input type='checkbox' style={{ cursor: 'pointer' }} id={style.checkBox} checked={keySensitive} onChange={(e) => setKeySensitive(e.target.checked)}/>
-                <p>Key sensitive</p>
-            </div>
                    
             <div className="d-flex gap-2 align-items-center">
                 <input type='checkbox' style={{ cursor: 'pointer' }} id={style.checkBox} checked={required} onChange={(e) => setRequired(e.target.checked)}/>
                 <p>Required</p>
             </div>
           </div>
-
+          
           <button onClick={submitTOR} disabled={checkIfAllChoiceAreValid()}>Add question</button>
       </div>
 

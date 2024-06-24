@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 24, 2024 at 11:23 AM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- Generation Time: Jun 24, 2024 at 07:09 AM
+-- Server version: 10.4.24-MariaDB
+-- PHP Version: 8.1.6
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -37,7 +37,7 @@ CREATE TABLE `accounts` (
   `lastname` varchar(20) NOT NULL,
   `status` varchar(6) NOT NULL,
   `imageID` varchar(10) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `accounts`
@@ -60,162 +60,25 @@ CREATE TABLE `choices` (
   `letter` varchar(2) NOT NULL,
   `content` varchar(100) NOT NULL,
   `correct` tinyint(1) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `choices`
 --
 
 INSERT INTO `choices` (`id`, `choicesID`, `letter`, `content`, `correct`) VALUES
-(1, '8Id0U1YF', 'A', 'aaaa', 0),
-(2, '8Id0U1YF', 'B', 'bbbbb', 1),
-(3, '8Id0U1YF', 'C', 'cccc', 1),
-(5, 'OIalRUCA', 'A', 'eeee', 0),
-(6, 'OIalRUCA', 'B', 'fffff', 0),
-(7, 'OIalRUCA', 'C', 'gggg', 1),
-(8, 'OIalRUCA', 'D', 'hhhh', 0),
-(9, 'mX7fm8Rd', 'A', 'DSDSD', 0),
-(10, 'mX7fm8Rd', 'B', 'SDSDS', 0),
-(11, 'mX7fm8Rd', 'C', 'D', 1),
-(12, 'mX7fm8Rd', 'D', 'DSDS', 0),
-(13, 'vCB6U73X', 'A', 'DSDS', 0),
-(14, 'vCB6U73X', 'B', 'DSDS', 0),
-(15, 'vCB6U73X', 'C', 'DSDS', 1),
-(16, 'vCB6U73X', 'D', 'DDDD', 0),
-(17, 'EfrFO1iP', 'A', 'green', 1),
-(18, 'EfrFO1iP', 'B', 'yellow', 0),
-(19, 'EfrFO1iP', 'C', 'blue', 0),
-(20, 'EfrFO1iP', 'D', 'pink', 0),
-(21, 'uMW04JPh', 'A', 'Leo', 1),
-(22, 'uMW04JPh', 'B', 'Lea', 1),
-(23, 'uMW04JPh', 'C', 'ayy', 0),
-(24, 'uMW04JPh', 'D', 'wehh', 0),
-(25, 'uMW04JPh', 'E', 'dsds', 0),
-(26, 'oWGbvF3w', 'A', 'gjjfg', 0),
-(27, 'oWGbvF3w', 'B', 'jgfgj', 1),
-(28, 'oWGbvF3w', 'C', 'jfgj', 0),
-(29, 'oWGbvF3w', 'D', 'thjffg', 0),
-(30, 'oWGbvF3w', 'E', 'kyuky', 0),
-(31, 'YrtLqXc7', 'A', 'an animal', 1),
-(32, 'YrtLqXc7', 'B', 'a plant', 0),
-(33, 'YrtLqXc7', 'C', 'a thing', 0),
-(34, 'YrtLqXc7', 'D', 'a nothing', 0),
-(35, '6HsoVA6w', 'A', 'Rumar pamparo', 1),
-(36, '6HsoVA6w', 'B', 'get this', 0),
-(37, '6HsoVA6w', 'C', 'omar', 0),
-(38, '6HsoVA6w', 'D', 'Rumar pamparo', 1),
-(39, 'HwEA6i17', 'B', 'dsdsd', 1),
-(40, 'HwEA6i17', 'A', 'dsds', 1),
-(41, 'HwEA6i17', 'C', 'sds', 0),
-(42, 'HwEA6i17', 'D', 'dsdsd', 0),
-(43, 'EOh0GdrX', 'A', 'ddd', 1),
-(44, '5znT5aI4', 'D', 'dsd', 0),
-(45, 'mVTxL3mM', 'A', 'dsds', 1),
-(46, 'EOh0GdrX', 'B', 'ddd', 1),
-(47, 'mVTxL3mM', 'B', 'dsdsd', 1),
-(48, 'EOh0GdrX', 'C', 'ddd', 0),
-(49, 'mVTxL3mM', 'C', 'sdsd', 0),
-(50, 'mVTxL3mM', 'D', 'dsds', 0),
-(51, 'EOh0GdrX', 'D', 'ddd', 0),
-(52, 'D0UpHZfI', 'A', 'dsds', 1),
-(53, 'zyQPWPsh', 'A', 'dsdsd', 1),
-(54, 'D0UpHZfI', 'B', 'dsdsd', 1),
-(55, 'D0UpHZfI', 'C', 'sds', 0),
-(56, 'zyQPWPsh', 'B', 'sds', 1),
-(57, 'D0UpHZfI', 'D', 'dsdds', 0),
-(58, 'zyQPWPsh', 'C', 'dsds', 0),
-(59, 'WNjEOJEW', 'A', 'dsd', 1),
-(60, 'zyQPWPsh', 'D', 'dsdsd', 0),
-(61, 'WNjEOJEW', 'B', 'sdsdsd', 1),
-(62, 'WNjEOJEW', 'C', 'sdsd', 0),
-(63, '3NlXsJTs', 'A', 'dsds', 0),
-(64, 'WNjEOJEW', 'D', 'dsds', 0),
-(65, '3NlXsJTs', 'B', 'dsdsd', 0),
-(66, 'sVFR0jcv', 'A', 'dsd', 0),
-(67, '3NlXsJTs', 'C', 'sdsd', 1),
-(68, 'sVFR0jcv', 'B', 'sdsds', 1),
-(69, '3NlXsJTs', 'D', 'dsdsd', 1),
-(70, 'sVFR0jcv', 'C', 'dsdsd', 1),
-(71, 'sVFR0jcv', 'D', 'dsds', 0),
-(72, 'V90ODOhH', 'A', 'dsd', 1),
-(73, 'V90ODOhH', 'B', 'sdsdsd', 0),
-(74, 'lnXTnyJd', 'A', 'dsds', 1),
-(75, 'lnXTnyJd', 'B', 'sd', 1),
-(76, 'V90ODOhH', 'C', 'sdsd', 1),
-(77, 'lnXTnyJd', 'C', 'sdsd', 0),
-(78, 'V90ODOhH', 'D', 'dsdsd', 0),
-(79, 'lnXTnyJd', 'D', 'sds', 0),
-(80, '5znT5aI4', 'A', 'dsds', 1),
-(81, 'h0ASJwL1', 'A', 'dsd', 0),
-(82, 'h0ASJwL1', 'B', 'sdsd', 0),
-(83, '5znT5aI4', 'B', 'dsdsd', 1),
-(84, 'h0ASJwL1', 'C', 'dsds', 1),
-(85, '5znT5aI4', 'C', 'sdsd', 0),
-(86, 'h0ASJwL1', 'D', 'dsds', 1),
-(87, 'YAvXGiCn', 'A', 'dsd', 1),
-(88, 'YDkFrBgv', 'D', 'dsd', 0),
-(89, 'YAvXGiCn', 'B', 'dddd', 1),
-(90, 'YAvXGiCn', 'C', 'dd', 0),
-(91, 'YAvXGiCn', 'D', 'ffff', 0),
-(92, 'YDkFrBgv', 'A', 'dsdsd', 1),
-(93, 'YDkFrBgv', 'B', 'dd', 0),
-(94, 'YDkFrBgv', 'C', 'dsd', 0),
-(95, 'RT1ToWbM', 'C', 'c', 0),
-(96, 'RT1ToWbM', 'A', 'a', 1),
-(97, 'RT1ToWbM', 'B', 'b', 0),
-(98, 'RT1ToWbM', 'D', 'd', 0),
-(99, 'ase12312', 'A', 'Aasd', 1),
-(100, 'ase12312', 'A', 'Aasd', 1),
-(101, 'ase12312', 'A', 'Aasd', 1),
-(102, 'ase12312', 'A', 'Aasd', 1),
-(103, 'ase12312', 'A', 'Aasd', 1),
-(104, '8Id0U1YF', 'A', 'asdad', 0),
-(105, '8Id0U1YF', 'A', 'asdad', 0),
-(106, '8Id0U1YF', 'A', 'asdad', 0),
-(107, '8Id0U1YF', 'A', 'asdad', 0),
-(108, '8Id0U1YF', 'A', 'asdad', 0),
-(109, '8Id0U1YF', 'A', 'asdad', 0),
-(110, '8Id0U1YF', 'A', 'asdad', 0),
-(111, '8Id0U1YF', 'A', 'asdad', 0),
-(112, '8Id0U1YF', 'A', 'asdasd', 0),
-(113, '8Id0U1YF', 'A', 'asdasd', 0),
-(114, '8Id0U1YF', 'A', 'asdasd', 0),
-(115, '8Id0U1YF', 'A', 'asdasd', 0),
-(116, '8Id0U1YF', 'A', 'asdasd', 0),
-(117, '8Id0U1YF', 'A', 'asdasd', 0),
-(118, '8Id0U1YF', 'A', 'asdasd', 0),
-(119, '8Id0U1YF', 'A', 'asdasd', 0),
-(120, '8Id0U1YF', 'A', 'asdasd', 0),
-(121, '8Id0U1YF', 'A', 'asdasd', 0),
-(122, '8Id0U1YF', 'A', 'asdasd', 0),
-(123, '8Id0U1YF', 'A', 'asdasd', 0),
-(124, '8Id0U1YF', 'A', 'asdasd', 0),
-(125, '8Id0U1YF', 'A', 'asdasd', 0),
-(126, '8Id0U1YF', 'A', 'asdasd', 0),
-(127, '8Id0U1YF', 'A', 'asdasd', 0),
-(128, '8Id0U1YF', 'A', 'asdasd', 0),
-(129, '8Id0U1YF', 'A', 'asdasd', 0),
-(130, '8Id0U1YF', 'A', 'asdasd', 0),
-(131, 'C2pvxjPd', 'A', 'Blue', 0),
-(132, 'C2pvxjPd', 'B', 'Brown', 1),
-(133, 'C2pvxjPd', 'C', 'Red', 0),
-(134, 'C2pvxjPd', 'D', 'Green', 0),
-(135, 'MJAgSbEC', 'A', '23', 1),
-(136, 'MJAgSbEC', 'B', '22', 0),
-(137, 'MJAgSbEC', 'C', '21', 0),
-(138, 'MJAgSbEC', 'D', '20', 0),
-(139, 'DVKMM8l5', 'A', 'green', 0),
-(140, 'DVKMM8l5', 'B', 'brown', 0),
-(141, 'DVKMM8l5', 'C', 'violet', 1),
-(142, 'DVKMM8l5', 'D', 'blue', 0),
-(143, 'pQWOSluq', 'A', 'color', 1),
-(144, 'pQWOSluq', 'B', 'thing', 0),
-(145, 'pQWOSluq', 'C', 'test', 0),
-(146, 'pQWOSluq', 'D', 'tesing', 0),
-(147, 'ge7FseO5', 'A', 'asdas', 1),
-(148, 'ge7FseO5', 'B', 'dsadsa', 0),
-(149, 'ge7FseO5', 'C', 'dasd', 0),
-(150, 'ge7FseO5', 'D', 'dasds', 0);
+(1, 'C2pvxjPd', 'A', 'push()', 0),
+(2, 'C2pvxjPd', 'B', 'pop()', 1),
+(3, 'C2pvxjPd', 'C', 'shift()', 1),
+(5, 'C2pvxjPd', 'D', 'unshift()', 0),
+(6, 'Pa2qqJFY', 'B', 'implements', 0),
+(7, 'Pa2qqJFY', 'C', 'inherits', 1),
+(8, 'Pa2qqJFY', 'D', 'extends', 0),
+(9, 'Pa2qqJFY', 'A', 'uses', 0),
+(151, 'h6iu0Ivc', 'A', 'dasds', 0),
+(152, 'h6iu0Ivc', 'B', 'ddd', 0),
+(153, 'h6iu0Ivc', 'C', 'aa', 1),
+(154, 'h6iu0Ivc', 'D', 'cvvc', 1);
 
 -- --------------------------------------------------------
 
@@ -230,14 +93,14 @@ CREATE TABLE `class` (
   `classCode` varchar(10) NOT NULL,
   `membersID` varchar(10) NOT NULL,
   `imageID` varchar(10) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `class`
 --
 
 INSERT INTO `class` (`classID`, `className`, `classDesc`, `classCode`, `membersID`, `imageID`) VALUES
-(1, 'CAPSTONE 2', 'IT 4C', 'IT-CAP2', 'BiJ456Aj', 'xVKKzdPD'),
+(1, 'CAPSTONE 1', 'IT 4C', 'IT-CAP2', 'BiJ456Aj', 'xVKKzdPD'),
 (2, 'ENTREPRENEURSHIP 2', 'ENTREPRENEURSHIP EDDITED', 'IT-ELECT2', '42d8800e', 'YHXQ6s61');
 
 -- --------------------------------------------------------
@@ -251,7 +114,7 @@ CREATE TABLE `class_list` (
   `acctID` varchar(8) NOT NULL,
   `classCode` varchar(10) NOT NULL,
   `hidden` varchar(5) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `class_list`
@@ -282,25 +145,25 @@ CREATE TABLE `comments` (
   `date` varchar(20) NOT NULL,
   `fileID` varchar(10) NOT NULL,
   `imageID` varchar(10) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `comments`
 --
 
 INSERT INTO `comments` (`id`, `replyID`, `postID`, `classCode`, `acctID`, `fullname`, `content`, `time`, `date`, `fileID`, `imageID`) VALUES
-(1, '5B7Rww8K', '5B7Rww8K', 'IT-CAP2', 'un2kt7px', 'Rumar C. Pamparo', 'My name is', '03:13 PM', 'Fri Dec 15 2023', 'none', 'none'),
-(2, '5B7Rww8K', '5B7Rww8K', 'IT-CAP2', 'un2kt7px', 'Rumar C. Pamparo', 'New2', '03:23 PM', 'Fri Dec 15 2023', 'none', 'none'),
-(20, '5B7Rww8K', '5B7Rww8K', 'IT-CAP2', 'un2kt7px', 'Rumar C. Pamparo', 'newComment', '04:35 PM', 'Wed Apr 17 2024', 'none', 'none'),
-(21, '5B7Rww8K', '5B7Rww8K', 'IT-CAP2', 'un2kt7px', 'Rumar C. Pamparo', 'newComment', '04:40 PM', 'Wed Apr 17 2024', 'none', 'none'),
-(22, '5B7Rww8K', '5B7Rww8K', 'IT-CAP2', 'un2kt7px', 'Rumar C. Pamparo', 'TRY LANG', '05:09 PM', 'Wed Apr 17 2024', 'none', 'none'),
-(23, '5B7Rww8K', '5B7Rww8K', 'IT-CAP2', 'un2kt7px', 'Rumar C. Pamparo', 'cge nga', '05:10 PM', 'Wed Apr 17 2024', 'none', 'none'),
-(24, '5B7Rww8K', '5B7Rww8K', 'IT-CAP2', 'un2kt7px', 'Rumar C. Pamparo', 'sample comment with image', '05:10 PM', 'Wed Apr 17 2024', 'none', 'mRqjkzL5'),
-(25, 'DOann9lo', 'DOann9lo', 'IT-ELECT2', 'un2kt7px', 'Rumar C. Pamparo', 'try', '05:13 PM', 'Wed Apr 17 2024', 'none', 'none'),
-(26, 'DOann9lo', 'DOann9lo', 'IT-ELECT2', 'un2kt7px', 'Rumar C. Pamparo', '', '05:16 PM', 'Wed Apr 17 2024', 'kQueNYI2', 'none'),
+(1, '5B7Rww8K', '5B7Rww8K', 'IT-CAP2', 'un2kt7px', 'Rumar C. Pamparo', 'how about me?', '03:13 PM', 'Fri Dec 15 2023', 'none', 'none'),
+(2, '5B7Rww8K', '5B7Rww8K', 'IT-CAP2', 'un2kt7px', 'Rumar C. Pamparo', 'finalized it.', '03:23 PM', 'Fri Dec 15 2023', 'none', 'none'),
+(20, '5B7Rww8K', '5B7Rww8K', 'IT-CAP2', 'un2kt7px', 'Rumar C. Pamparo', 'wow', '04:35 PM', 'Wed Apr 17 2024', 'none', 'none'),
+(21, '5B7Rww8K', '5B7Rww8K', 'IT-CAP2', 'un2kt7px', 'Rumar C. Pamparo', 'nice', '04:40 PM', 'Wed Apr 17 2024', 'none', 'none'),
+(22, '5B7Rww8K', '5B7Rww8K', 'IT-CAP2', 'un2kt7px', 'Rumar C. Pamparo', 'very good', '05:09 PM', 'Wed Apr 17 2024', 'none', 'none'),
+(23, '5B7Rww8K', '5B7Rww8K', 'IT-CAP2', 'un2kt7px', 'Rumar C. Pamparo', 'its good', '05:10 PM', 'Wed Apr 17 2024', 'none', 'none'),
+(24, '5B7Rww8K', '5B7Rww8K', 'IT-CAP2', 'un2kt7px', 'Rumar C. Pamparo', 'great', '05:10 PM', 'Wed Apr 17 2024', 'none', 'mRqjkzL5'),
+(25, 'DOann9lo', 'DOann9lo', 'IT-ELECT2', 'un2kt7px', 'Rumar C. Pamparo', 'can i try this?', '05:13 PM', 'Wed Apr 17 2024', 'none', 'none'),
+(26, 'DOann9lo', 'DOann9lo', 'IT-ELECT2', 'un2kt7px', 'Rumar C. Pamparo', 'ok', '05:16 PM', 'Wed Apr 17 2024', 'kQueNYI2', 'none'),
 (27, 'SnScSSNM', 'SnScSSNM', 'IT-ELECT2', 'un2kt7px', 'Rumar C. Pamparo', 'ito files', '05:23 PM', 'Wed Apr 17 2024', '3GcnDxAn', 'none'),
-(28, 'SnScSSNM', 'SnScSSNM', 'IT-ELECT2', 'un2kt7px', 'Rumar C. Pamparo', '', '05:23 PM', 'Wed Apr 17 2024', '8Wh9S1LK', 'none'),
-(29, 'SnScSSNM', 'SnScSSNM', 'IT-ELECT2', 'un2kt7px', 'Rumar C. Pamparo', '', '05:25 PM', 'Wed Apr 17 2024', 'none', 'xTuZ12uV'),
+(28, 'SnScSSNM', 'SnScSSNM', 'IT-ELECT2', 'un2kt7px', 'Rumar C. Pamparo', 'ok', '05:23 PM', 'Wed Apr 17 2024', '8Wh9S1LK', 'none'),
+(29, 'SnScSSNM', 'SnScSSNM', 'IT-ELECT2', 'un2kt7px', 'Rumar C. Pamparo', 'ok', '05:25 PM', 'Wed Apr 17 2024', 'none', 'xTuZ12uV'),
 (30, 'gb3YpAQC', 'gb3YpAQC', 'IT-ELECT2', 'un2kt7px', 'Rumar C. Pamparo', 'astig perd', '04:34 PM', 'Thu Apr 18 2024', 'none', 'none'),
 (31, 'gb3YpAQC', 'gb3YpAQC', 'IT-ELECT2', 'VHXQ6s6O', 'Allan C. Caluigiran', 'petmalu', '04:38 PM', 'Thu Apr 18 2024', 'none', 'none'),
 (32, 'Bd4lkWFD', 'Bd4lkWFD', 'IT-CAP2', 'un2kt7px', 'Rumar C. Pamparo', 'nice', '02:50 PM', 'Fri May 03 2024', 'none', 'none'),
@@ -322,7 +185,7 @@ CREATE TABLE `files` (
   `acctID` varchar(10) NOT NULL,
   `classCode` varchar(10) NOT NULL,
   `fileID` varchar(10) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `files`
@@ -356,57 +219,21 @@ CREATE TABLE `filllayout` (
   `fillType` varchar(5) NOT NULL,
   `fillPosition` int(11) NOT NULL,
   `fillLayoutID` varchar(10) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `filllayout`
 --
 
 INSERT INTO `filllayout` (`id`, `fillContent`, `fillType`, `fillPosition`, `fillLayoutID`) VALUES
-(1, 'q5', 'text', 1, '2ojgplEC'),
-(2, 'q5', 'blank', 2, '2ojgplEC'),
-(3, 'q5', 'text', 3, '2ojgplEC'),
-(4, 'q6', 'text', 1, 'D9ZApYOD'),
-(7, 'q6', 'text', 4, 'D9ZApYOD'),
-(8, 'DSDSDS', 'text', 1, 'xZaxdwxK'),
-(9, 'DSDS', 'blank', 2, 'xZaxdwxK'),
-(10, 'What is my', 'text', 1, 'EJcb5AZC'),
-(11, 'fave', 'blank', 2, 'EJcb5AZC'),
-(12, 'color?', 'text', 3, 'EJcb5AZC'),
-(13, 'bayang magiliw', 'text', 1, 'TRhAgqcV'),
-(14, 'perlas ng silang alang', 'blank', 2, 'TRhAgqcV'),
-(15, 'bayang magiliw', 'text', 3, 'TRhAgqcV'),
-(16, 'ghvhgv', 'text', 1, 'OJSLJTvY'),
-(17, 'jkbnhhjbj', 'blank', 2, 'OJSLJTvY'),
-(18, 'i am', 'text', 1, 'aHcysuQC'),
-(19, 'jehiah', 'blank', 2, 'aHcysuQC'),
-(20, 'color?', 'blank', 2, 'XLYeJXnZ'),
-(21, 'my name is', 'text', 1, 'pOlWtzB4'),
-(22, 'what is ', 'text', 1, 'XLYeJXnZ'),
-(23, 'Rumar Pamparo', 'blank', 2, 'pOlWtzB4'),
-(24, 'im', 'text', 3, 'pOlWtzB4'),
-(25, '23', 'blank', 4, 'pOlWtzB4'),
-(26, 'yrs old', 'text', 5, 'pOlWtzB4'),
-(27, 'dsdsds', 'blank', 1, 'RUOiLcPE'),
-(28, 'dsdsds', 'blank', 2, 'RUOiLcPE'),
-(29, 'dsdsds', 'text', 4, 'RUOiLcPE'),
-(30, 'dsdsds', 'blank', 5, 'RUOiLcPE'),
-(31, 'dsdsds', 'blank', 2, 'YXWApu2U'),
-(32, 'dsdsds', 'blank', 3, 'YXWApu2U'),
-(33, 'dsds', 'text', 1, 'YXWApu2U'),
-(34, 'dsdsds', 'blank', 4, 'YXWApu2U'),
-(35, 'dsds', 'text', 1, 'lskUhV0E'),
-(36, 'rumar', 'blank', 2, 'lskUhV0E'),
-(37, 'pamparo', 'blank', 3, 'lskUhV0E'),
-(38, 'who is me? cat', 'blank', 1, 'eAzK97X0'),
-(39, 'My name is', 'text', 1, 'wPgjtqxZ'),
-(40, 'Mark', 'blank', 2, 'wPgjtqxZ'),
-(41, 'Im ', 'text', 3, 'wPgjtqxZ'),
-(42, '23', 'blank', 4, 'wPgjtqxZ'),
-(43, 'years old', 'text', 5, 'wPgjtqxZ'),
-(44, 'dsadsd', 'text', 1, 'TFpXUsSo'),
-(45, 'dsadsd', 'blank', 2, 'TFpXUsSo'),
-(46, 'dasdsa', 'text', 4, 'TFpXUsSo');
+(1, 'In Python, you can create a function using the', 'text', 1, 'YXWApu2U'),
+(2, 'def', 'blank', 2, 'YXWApu2U'),
+(3, 'keyword', 'text', 3, 'YXWApu2U'),
+(8, 'algorithm', 'blank', 1, 'wPgjtqxZ'),
+(9, 'is a step-by-step procedure for solving a problem or accomplishing a task.', 'text', 2, 'wPgjtqxZ'),
+(47, 'dasdasddasds', 'blank', 2, 'Z22IU74j'),
+(48, 'asdasd', 'text', 1, 'Z22IU74j'),
+(49, 'dasds', 'text', 3, 'Z22IU74j');
 
 -- --------------------------------------------------------
 
@@ -420,7 +247,7 @@ CREATE TABLE `friends` (
   `friendAcctID` varchar(10) NOT NULL,
   `fullname` varchar(50) NOT NULL,
   `imageID` varchar(10) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `friends`
@@ -445,7 +272,7 @@ CREATE TABLE `image` (
   `acctID` varchar(10) NOT NULL,
   `classCode` varchar(10) NOT NULL,
   `imageID` varchar(10) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `image`
@@ -480,7 +307,13 @@ INSERT INTO `image` (`id`, `name`, `type`, `data`, `dateUploaded`, `timeUploaded
 (1960, 'Your paragraph text (3).jpg', 'image/jpeg', 'image_1713342614235.jpg', 'undefined', 'undefined', 'un2kt7px', 'IT-CAP2', 'eW9BbVNK'),
 (1962, 'Your paragraph text (2).jpg', 'image/jpeg', 'image_1713345058500.jpg', 'undefined', 'undefined', 'un2kt7px', 'IT-CAP2', 'mRqjkzL5'),
 (1963, 'wonder drops.png', 'image/png', 'image_1713345902985.png', 'undefined', 'undefined', 'un2kt7px', 'IT-ELECT2', 'xTuZ12uV'),
-(1964, '284493335_3064569063853706_2708312132206988290_n.jpg', 'image/jpeg', 'image_1713429216112.jpg', 'Thu Apr 18 2024', '04:33 PM', 'Tk6Bxe8U', 'IT-ELECT2', 'gb3YpAQC');
+(1964, '284493335_3064569063853706_2708312132206988290_n.jpg', 'image/jpeg', 'image_1713429216112.jpg', 'Thu Apr 18 2024', '04:33 PM', 'Tk6Bxe8U', 'IT-ELECT2', 'gb3YpAQC'),
+(1965, '441270367_1152689112818157_6081257374215719744_n.jpg', 'image/jpeg', 'image_1717141496156.jpg', 'Fri May 31 2024', '03:44 PM', 'un2kt7px', 'IT-CAP2', '46bMycve'),
+(1966, '441277305_448048864277698_5511921002941859110_n.jpg', 'image/jpeg', 'image_1717141496159.jpg', 'Fri May 31 2024', '03:44 PM', 'un2kt7px', 'IT-CAP2', '46bMycve'),
+(1967, '440794579_406283208963146_325435484913997915_n.jpg', 'image/jpeg', 'image_1717141496159.jpg', 'Fri May 31 2024', '03:44 PM', 'un2kt7px', 'IT-CAP2', '46bMycve'),
+(1968, 'pexels-stywo-1261728.jpg', 'image/jpeg', 'image_1719161300026.jpg', 'undefined', 'undefined', 'un2kt7px', 'none', 'yxIKY57R'),
+(1969, 'pexels-stywo-1261728.jpg', 'image/jpeg', 'image_1719161300035.jpg', 'undefined', 'undefined', 'un2kt7px', 'none', 'yjI8wqhE'),
+(1970, 'pexels-stywo-1261728.jpg', 'image/jpeg', 'image_1719161300030.jpg', 'undefined', 'undefined', 'un2kt7px', 'none', 'UY47Y6EM');
 
 -- --------------------------------------------------------
 
@@ -497,7 +330,7 @@ CREATE TABLE `members` (
   `lastname` varchar(50) NOT NULL,
   `memberType` varchar(10) NOT NULL,
   `imageID` varchar(10) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `members`
@@ -525,7 +358,7 @@ CREATE TABLE `messages` (
   `messageReceiver` varchar(50) NOT NULL,
   `date` varchar(20) NOT NULL,
   `time` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `messages`
@@ -662,7 +495,7 @@ CREATE TABLE `post` (
   `schedID` varchar(10) NOT NULL,
   `duration` int(10) NOT NULL,
   `random` varchar(10) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `post`
@@ -682,7 +515,9 @@ INSERT INTO `post` (`id`, `postID`, `acctID`, `name`, `timePosted`, `datePosted`
 (272, 'DOann9lo', 'un2kt7px', 'Rumar C. Pamparo', '09:14 AM', 'Tue Apr 16 2024', 'sample multiple post', 'DOann9lo', 'DOann9lo', 'DOann9lo', 0, 0, 'IT-ELECT2', 'ENTREPRENEURSHIP 2', 'normal', 'none', 'none', 0, 'none'),
 (273, '1SXMpTpy', 'un2kt7px', 'Rumar C. Pamparo', '09:15 AM', 'Tue Apr 16 2024', 'sample', '1SXMpTpy', '1SXMpTpy', 'none', 0, 0, 'IT-ELECT2', 'ENTREPRENEURSHIP 2', 'normal', 'none', 'none', 0, 'none'),
 (277, 'gb3YpAQC', 'Tk6Bxe8U', 'Mark L. Adduru', '04:33 PM', 'Thu Apr 18 2024', 'sample lang perds', 'gb3YpAQC', 'gb3YpAQC', 'gb3YpAQC', 0, 0, 'IT-ELECT2', 'ENTREPRENEURSHIP 2', 'normal', 'none', 'none', 0, 'none'),
-(278, 'Ciaq97Dj', 'un2kt7px', 'Rumar C. Pamparo', '05:03 PM', 'Wed May 08 2024', 'sads', 'Ciaq97Dj', 'Ciaq97Dj', 'Ciaq97Dj', 0, 0, 'IT-CAP2', 'CAPSTONE 2', 'normal', 'none', 'none', 0, 'none');
+(278, 'Ciaq97Dj', 'un2kt7px', 'Rumar C. Pamparo', '05:03 PM', 'Wed May 08 2024', 'sads', 'Ciaq97Dj', 'Ciaq97Dj', 'Ciaq97Dj', 0, 0, 'IT-CAP2', 'CAPSTONE 2', 'normal', 'none', 'none', 0, 'none'),
+(279, 'Tu2qqJFY', 'un2kt7px', 'Rumar C. Pamparo', '04:33 PM', 'Thu Apr 18 2024', 'Exercise 1', 'Tu2qqJFY', 'none', 'none', 0, 0, 'IT-CAP2', 'CAPSTONE 1', 'normal', '1Oc0uJXk', '1Oc0uJXk', 0, '1'),
+(280, 'Yu2qqJFY', 'un2kt7px', 'Rumar C. Pamparo', '04:33 PM', 'Thu Apr 18 2024', 'Exercise 2', 'Yu2qqJFY', 'none', 'none', 0, 0, 'IT-CAP2', 'CAPSTONE 1', 'normal', '2eb7oSeH', '2eb7oSeH', 0, '1');
 
 -- --------------------------------------------------------
 
@@ -700,24 +535,16 @@ CREATE TABLE `questionbank` (
   `totalQuestions` int(10) NOT NULL,
   `time` varchar(20) NOT NULL,
   `date` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `questionbank`
 --
 
 INSERT INTO `questionbank` (`id`, `bankID`, `bankTitle`, `subjectName`, `questionID`, `totalPoints`, `totalQuestions`, `time`, `date`) VALUES
-(2, 'MBNeJZQ0', 'try', 'PRINCIPLES AND STRATEGIES IN TEACHING', 'MBNeJZQ0', 2, 2, '08:13 PM', 'Tue Jan 16 2024'),
-(3, 'ztB1D6Ox', 'try', 'ENTREPRENEURSHIP', 'ztB1D6Ox', 1, 1, '07:40 PM', 'Wed Jan 17 2024'),
-(4, 'HEpszhsE', 'next', 'ENTREPRENEURSHIP', 'HEpszhsE', 2, 2, '09:10 PM', 'Wed Jan 17 2024'),
-(5, 'KRkYfT1v', 'new', 'ENTREPRENEURSHIP', 'KRkYfT1v', 2, 2, '06:24 PM', 'Thu Jan 18 2024'),
-(6, '3m68dtjI', 'new one', 'ENTREPRENEURSHIP', '3m68dtjI', 2, 2, '06:27 PM', 'Thu Jan 18 2024'),
-(7, 'KVx1AwGn', 'uu', 'ENTREPRENEURSHIP', 'KVx1AwGn', 1, 1, '03:12 AM', 'Tue Jan 23 2024'),
-(8, 'UICd4r8F', 'New Quiz', 'CAPSTONE 1', 'UICd4r8F', 3, 3, '04:46 AM', 'Wed Jan 24 2024'),
-(9, 'ZSBaTJCW', 'Quiz 2', 'CAPSTONE 1', 'ZSBaTJCW', 2, 2, '04:54 AM', 'Wed Jan 24 2024'),
-(10, 'wOeytUiP', 'new 1 ', 'CAPSTONE 2', 'wOeytUiP', 3, 3, '09:43 PM', 'Sun Jan 28 2024'),
-(11, 'X6QZ7T5V', 'cp1 quiz', 'NATIONAL SERVICE TRAINING PROGRAM 2', 'X6QZ7T5V', 2, 2, '09:48 PM', 'Sun Jan 28 2024'),
-(12, 'vHg1ETZs', 'myQuiz', 'CAPSTONE 2', 'vHg1ETZs', 4, 4, '04:35 PM', 'Thu Feb 15 2024');
+(1, 'Fi2qqJFY', 'try', 'CAPSTONE 1', 'Fi2qqJFY', 3, 3, '08:13 PM', 'Tue Jan 16 2024'),
+(2, 'bbLmxfIX', 'Javascript Questions', 'ENTREPRENEURSHIP', 'bbLmxfIX', 2, 2, '07:40 PM', 'Wed Jan 17 2024'),
+(3, 'UICd4r8F', 'Its all about Java', 'CAPSTONE 1', 'UICd4r8F', 3, 3, '09:10 PM', 'Wed Jan 17 2024');
 
 -- --------------------------------------------------------
 
@@ -740,171 +567,54 @@ CREATE TABLE `questions` (
   `imageID` varchar(10) NOT NULL,
   `fillLayoutID` varchar(10) NOT NULL,
   `subjectName` varchar(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `questions`
 --
 
 INSERT INTO `questions` (`id`, `questionID`, `questionNumber`, `questionContent`, `questionType`, `points`, `required`, `keySensitive`, `questionAnswerText`, `numberOfAns`, `choicesID`, `imageID`, `fillLayoutID`, `subjectName`) VALUES
-(1, 'n5TKgI1A', 1, 'q1', 'text', 2, 0, 0, 'q1', 0, 'none', 'none', 'none', 'CAPSTONE 1'),
-(2, 'n5TKgI1A', 2, 'q2', 'text', 2, 0, 0, 'q2', 0, 'none', 'none', 'none', 'CAPSTONE 1'),
-(3, 'kciccHhl', 1, 'sdas', 'text', 1, 0, 0, 'aads', 0, 'none', 'none', 'none', 'CAPSTONE 1'),
-(4, 'kciccHhl', 2, 'dasd', 'text', 1, 0, 0, 'asdasdas', 0, 'none', 'none', 'none', 'CAPSTONE 1'),
-(5, 'eFRypAzH', 1, 'qq1', 'text', 1, 0, 0, 'qaq', 0, 'none', 'none', 'none', 'PRINCIPLES AND STRATEGIES IN TEACHING'),
-(7, 'Ksk6Mzis', 1, 'aaa', 'text', 1, 0, 0, 'aaa', 0, 'none', 'none', 'none', 'CAPSTONE 1'),
-(8, 'Ksk6Mzis', 2, 'sasa', 'text', 1, 0, 0, 'sas', 0, 'none', 'none', 'none', 'CAPSTONE 1'),
-(9, 'Ksk6Mzis', 3, 'asas', 'text', 1, 0, 0, 'asa', 0, 'none', 'none', 'none', 'CAPSTONE 1'),
-(10, 'Ksk6Mzis', 4, 'sasa', 'text', 1, 0, 0, 'saas', 0, 'none', 'none', 'none', 'CAPSTONE 1'),
-(11, 'PoDIxrM7', 1, 'sas', 'text', 1, 0, 0, 'asasa', 0, 'none', 'none', 'none', 'CAPSTONE 1'),
-(12, 'PoDIxrM7', 2, 'asaas', 'text', 1, 0, 0, 'sasas', 0, 'none', 'none', 'none', 'CAPSTONE 1'),
-(13, 'PoDIxrM7', 3, 'sasas', 'text', 1, 0, 0, 'sasa', 0, 'none', 'none', 'none', 'CAPSTONE 1'),
-(14, 'PoDIxrM7', 4, 'asaas', 'text', 1, 0, 0, 'sas', 0, 'none', 'none', 'none', 'CAPSTONE 1'),
-(15, 'kRNZ6Pq6', 1, 'ss', 'text', 1, 0, 0, 'ssasas', 0, 'none', 'none', 'none', 'CAPSTONE 1'),
-(16, 'kRNZ6Pq6', 2, 'saasa', 'text', 1, 0, 0, 'sasa', 0, 'none', 'none', 'none', 'CAPSTONE 1'),
-(17, 'kRNZ6Pq6', 3, 'sasasa', 'text', 1, 0, 0, 'sasa', 0, 'none', 'none', 'none', 'CAPSTONE 1'),
-(18, 'kRNZ6Pq6', 4, 'sasa', 'True Or False', 1, 0, 0, '1', 0, 'none', 'none', 'none', 'CAPSTONE 1'),
-(19, 'kRNZ6Pq6', 5, 'sasasa', 'True Or False', 1, 0, 0, '0', 0, 'none', 'none', 'none', 'CAPSTONE 1'),
-(20, 'bFONa9iv', 1, 'aaa', 'text', 1, 0, 0, 'bbb', 0, 'none', 'none', 'none', 'SYSTEM ADMINISTRATION AND MAINTENANCE'),
-(21, 'xzJr9GpL', 1, 'what is my name?', 'text', 2, 1, 1, 'Rumar Pamparo', 0, 'none', 'none', 'none', 'CAPSTONE 1'),
-(22, 'xzJr9GpL', 2, 'What is my Last name?', 'text', 2, 1, 0, 'Pamparo', 0, 'none', '3vMf5DH8', 'none', 'CAPSTONE 1'),
-(23, 'xzJr9GpL', 3, 'my fave color?', 'choices', 2, 1, 0, 'none', 0, 'EfrFO1iP', 'none', 'none', 'CAPSTONE 1'),
-(24, 'xzJr9GpL', 4, 'my cat name?', 'choices', 2, 0, 0, 'none', 0, 'uMW04JPh', 'uMW04JPh', 'none', 'CAPSTONE 1'),
-(25, 'xzJr9GpL', 5, 'none', 'fill', 2, 1, 1, 'none', 0, 'none', 'none', 'EJcb5AZC', 'CAPSTONE 1'),
-(26, 'xzJr9GpL', 6, 'none', 'fill', 1, 1, 1, 'none', 0, 'none', 'TRhAgqcV', 'TRhAgqcV', 'CAPSTONE 1'),
-(27, 'xzJr9GpL', 7, 'POgi aako diba?', 'True Or False', 1, 1, 0, '0', 0, 'none', 'none', 'none', 'CAPSTONE 1'),
-(28, 'xzJr9GpL', 8, 'panget bako?', 'True Or False', 2, 1, 0, '1', 0, 'none', 'none', 'none', 'CAPSTONE 1'),
-(29, 'bbLmxfIX', 1, 'jrtyujtujt', 'choices', 2, 1, 0, 'none', 0, 'oWGbvF3w', 'none', 'none', 'ENTREPRENEURSHIP'),
-(30, 'bbLmxfIX', 3, 'yut6uijtyi', 'True Or False', 1, 1, 0, '1', 0, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(31, 'bbLmxfIX', 2, 'none', 'fill', 1, 1, 1, 'none', 0, 'none', 'none', 'aHcysuQC', 'ENTREPRENEURSHIP'),
-(32, 'zgqARuqP', 1, 'yurtyuyu', 'text', 1, 1, 1, 'yuirui', 0, 'none', 'none', 'none', 'CAPSTONE 1'),
-(33, 'zgqARuqP', 2, 'yityi', 'text', 1, 1, 1, 'ityiit', 0, 'none', 'none', 'none', 'CAPSTONE 1'),
-(34, 'lHkep6VL', 1, 'rumar', 'text', 1, 0, 0, 'rumar', 0, 'none', 'none', 'none', 'CAPSTONE 1'),
-(35, 'lHkep6VL', 2, 'pamparo', 'text', 4, 0, 0, 'pamparo', 0, 'none', 'none', 'none', 'CAPSTONE 1'),
-(36, 'mPNp1Gpi', 1, 'what is dog?', 'choices', 1, 0, 0, 'none', 1, 'YrtLqXc7', 'none', 'none', 'CAPSTONE 1'),
-(37, 'mPNp1Gpi', 2, 'what is my name?', 'choices', 1, 0, 0, 'none', 2, '6HsoVA6w', 'none', 'none', 'CAPSTONE 1'),
-(38, 'zIw4SgVX', 1, 'try lang', 'choices', 1, 1, 0, 'none', 0, 'HwEA6i17', 'none', 'none', 'CAPSTONE 1'),
-(39, 'doHqHU0T', 1, 'dsdsds', 'choices', 1, 0, 0, 'none', 0, 'EOh0GdrX', 'none', 'none', 'CAPSTONE 1'),
-(40, 'doHqHU0T', 5, 'dsds', 'choices', 1, 0, 0, 'none', 0, '5znT5aI4', 'none', 'none', 'CAPSTONE 1'),
-(41, 'doHqHU0T', 6, 'dsds', 'choices', 1, 0, 0, 'none', 0, 'mVTxL3mM', 'none', 'none', 'CAPSTONE 1'),
-(42, 'doHqHU0T', 7, 'dsdsds', 'choices', 1, 0, 0, 'none', 0, 'D0UpHZfI', 'none', 'none', 'CAPSTONE 1'),
-(43, 'doHqHU0T', 2, 'dsds', 'choices', 1, 0, 0, 'none', 2, 'zyQPWPsh', 'none', 'none', 'CAPSTONE 1'),
-(44, 'doHqHU0T', 8, 'dsdsd', 'choices', 1, 0, 0, 'none', 0, 'WNjEOJEW', 'none', 'none', 'CAPSTONE 1'),
-(45, 'doHqHU0T', 9, 'dsdsds', 'choices', 1, 0, 0, 'none', 32, 'sVFR0jcv', 'none', 'none', 'CAPSTONE 1'),
-(46, 'doHqHU0T', 3, 'dsdsds', 'choices', 1, 0, 0, 'none', 4, '3NlXsJTs', 'none', 'none', 'CAPSTONE 1'),
-(47, 'doHqHU0T', 4, 'dsdsd', 'choices', 1, 0, 0, 'none', 0, 'V90ODOhH', 'none', 'none', 'CAPSTONE 1'),
-(48, 'GcdMblht', 1, 'dsds', 'text', 1, 0, 0, 'dsds', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
-(49, 'GcdMblht', 2, 'dsds', 'text', 1, 0, 0, 'dsdsds', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
-(50, '80yMURt9', 1, 'none', 'fill', 1, 1, 0, 'none', 1, 'none', 'none', 'XLYeJXnZ', 'CAPSTONE 1'),
-(51, '80yMURt9', 2, 'none', 'fill', 1, 1, 0, 'none', 2, 'none', 'none', 'pOlWtzB4', 'CAPSTONE 1'),
-(52, 'QF8TQwkL', 1, 'none', 'fill', 1, 0, 0, 'none', 3, 'none', 'none', 'RUOiLcPE', 'CAPSTONE 1'),
-(53, '5wN0FIPg', 1, 'none', 'fill', 1, 0, 0, 'none', 3, 'none', 'none', 'YXWApu2U', 'CAPSTONE 1'),
-(54, 'hXqPgnW9', 1, 'rumar', 'text', 3, 1, 0, 'rumar', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
-(55, 'hXqPgnW9', 6, 'cge', 'True Or False', 1, 0, 0, '1', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
-(56, 'hXqPgnW9', 3, 'what is?', 'choices', 1, 0, 0, 'none', 2, 'YAvXGiCn', 'none', 'none', 'CAPSTONE 1'),
-(57, 'hXqPgnW9', 2, 'pamparo', 'text', 1, 0, 0, 'pamparo', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
-(58, 'hXqPgnW9', 4, 'gdgdgsds', 'choices', 1, 0, 0, 'none', 1, 'YDkFrBgv', 'none', 'none', 'CAPSTONE 1'),
-(59, 'hXqPgnW9', 5, 'none', 'fill', 1, 0, 0, 'none', 2, 'none', 'none', 'lskUhV0E', 'CAPSTONE 1'),
-(60, 'bo8vvHHC', 1, 'TORF Q', 'True Or False', 6, 1, 0, '1', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
-(61, 'bo8vvHHC', 2, 'TOEFK', 'True Or False', 3, 1, 0, '0', 1, 'none', 'kpNeEbOA', 'none', 'CAPSTONE 1'),
-(62, 'V6RgKaoR', 1, 'dsds', 'text', 1, 1, 1, 'dsdsd', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
-(63, 'V6RgKaoR', 2, 'dddd', 'text', 1, 0, 0, 'dddsds', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
-(64, 'V6RgKaoR', 3, 'fdfdfd', 'text', 1, 0, 0, 'dsdsds', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
-(65, 'V6RgKaoR', 4, 'dsd', 'text', 1, 0, 0, 'dsd', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
-(66, 'eAzK97X0', 1, 'idk', 'text', 1, 1, 1, 'idk', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
-(67, 'eAzK97X0', 2, 'what is a', 'choices', 1, 1, 0, 'none', 1, 'RT1ToWbM', 'none', 'none', 'CAPSTONE 1'),
-(68, 'Zr26cq0S', 1, 'q1', 'text', 1, 1, 1, 'ans1', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
-(69, 'Zr26cq0S', 2, 'q2', 'text', 1, 0, 0, 'ans 2', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
-(70, '5xaMUrnb', 1, 'q1', 'text', 1, 0, 0, 'ans1', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
-(71, '5xaMUrnb', 2, 'q2', 'text', 1, 0, 0, 'ans 2', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
-(72, '0DlpGmQZ', 1, 'q1', 'text', 1, 0, 0, 'a1', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
-(73, '0DlpGmQZ', 2, 'q2', 'text', 1, 0, 0, 'a2', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
-(74, 'MBNeJZQ0', 1, 'q1', 'text', 1, 0, 0, 'a1', 1, 'none', 'none', 'none', 'PRINCIPLES AND STRATEGIES IN TEACHING'),
-(75, 'MBNeJZQ0', 2, 'q2', 'text', 1, 0, 0, 'a2', 1, 'none', 'none', 'none', 'PRINCIPLES AND STRATEGIES IN TEACHING'),
-(76, 'ztB1D6Ox', 1, 'q1', 'enumeration', 1, 0, 0, 'a1', 1, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(77, 'dtYyYLar', 1, 'q2', 'enumeration', 1, 0, 0, 'a2', 1, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(78, 'dtYyYLar', 2, 'q3', 'enumeration', 1, 0, 0, 'q4', 1, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(79, 'KRkYfT1v', 1, 'qq11', 'enumeration', 1, 0, 0, 'zaaa1', 1, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(80, 'KRkYfT1v', 2, 'qq22', 'enumeration', 1, 0, 0, 'aa222', 1, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(81, '3m68dtjI', 1, 'qqqwqwq', 'enumeration', 1, 0, 0, 'wqwqwq', 1, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(82, '3m68dtjI', 2, 'dsds', 'enumeration', 1, 0, 0, 'dsdss', 1, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(83, 'EhdZsd0a', 1, 'q1', 'enumeration', 1, 0, 0, 'a1', 1, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(84, 'EhdZsd0a', 2, 'qqqwqwq', 'enumeration', 1, 0, 0, 'wqwqwq', 1, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(85, 'EhdZsd0a', 3, 'dsds', 'enumeration', 1, 0, 0, 'dsdss', 1, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(86, 'FlzwiDL6', 1, 'q1', 'enumeration', 1, 0, 0, 'a1', 1, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(87, 'FlzwiDL6', 2, 'qqqwqwq', 'enumeration', 1, 0, 0, 'wqwqwq', 1, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(88, 'FlzwiDL6', 3, 'dsds', 'enumeration', 1, 0, 0, 'dsdss', 1, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(89, 'KVx1AwGn', 1, 'yuguyh', 'enumeration', 1, 1, 0, 'yy1', 1, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(90, 'BwZIUHhX', 1, 'yuguyh', 'enumeration', 1, 1, 0, 'yy1', 1, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(91, 'BwZIUHhX', 2, 'q1', 'enumeration', 1, 0, 0, 'a1', 1, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(92, 'BwZIUHhX', 4, 'qq22', 'enumeration', 1, 0, 0, 'aa222', 1, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(93, 'BwZIUHhX', 3, 'qq11', 'enumeration', 1, 0, 0, 'zaaa1', 1, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(94, '2hegz6x0', 1, 'q1', 'enumeration', 1, 0, 0, 'a1', 1, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(95, '2hegz6x0', 2, 'qq11', 'enumeration', 1, 0, 0, 'zaaa1', 1, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(96, '2hegz6x0', 3, 'qq22', 'enumeration', 1, 0, 0, 'aa222', 1, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(97, 'UICd4r8F', 1, 'Give example of Color', 'enumeration', 1, 0, 0, 'Blue', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
-(98, 'UICd4r8F', 2, 'What is the color of chair?', 'choices', 1, 0, 0, 'none', 1, 'C2pvxjPd', 'none', 'none', 'CAPSTONE 1'),
+(30, 'bbLmxfIX', 3, 'In JavaScript, objects are immutable.', 'True Or False', 1, 1, 0, 'False', 0, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
+(53, 'bbLmxfIX', 1, 'none', 'fill', 1, 0, 0, 'none', 1, 'none', 'none', 'YXWApu2U', 'ENTREPRENEURSHIP'),
+(55, 'Fi2qqJFY', 6, 'In Python, the print statement is used to display output to the console.', 'True Or False', 1, 0, 0, 'True', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
+(97, 'UICd4r8F', 1, 'What keyword is used to create a function in Python?', 'enumeration', 1, 0, 0, 'def', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
+(98, 'UICd4r8F', 2, 'Which of the following is used to inherit a class in Java?', 'choices', 1, 0, 0, 'none', 1, 'Pa2qqJFY', 'none', 'none', 'CAPSTONE 1'),
 (99, 'UICd4r8F', 3, 'none', 'fill', 1, 0, 0, 'none', 2, 'none', 'none', 'wPgjtqxZ', 'CAPSTONE 1'),
-(100, 'Fi2qqJFY', 1, 'Give example of Color', 'enumeration', 1, 0, 0, 'Blue', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
-(101, 'Fi2qqJFY', 2, 'What is the color of chair?', 'choices', 1, 0, 0, 'none', 1, 'C2pvxjPd', 'none', 'none', 'CAPSTONE 1'),
-(102, 'Fi2qqJFY', 3, 'none', 'fill', 1, 0, 0, 'none', 2, 'none', 'none', 'wPgjtqxZ', 'CAPSTONE 1'),
-(103, 'ZSBaTJCW', 2, 'what is the age of mark?', 'choices', 1, 0, 0, 'none', 1, 'MJAgSbEC', 'none', 'none', 'CAPSTONE 1'),
-(104, 'ZSBaTJCW', 1, 'What is my name?', 'enumeration', 1, 0, 0, 'mark', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
-(105, 'u0j8FfTB', 1, 'what is the age of mark?', 'choices', 1, 0, 0, 'none', 1, 'MJAgSbEC', 'none', 'none', 'CAPSTONE 1'),
-(106, 'u0j8FfTB', 2, 'What is my name?', 'enumeration', 1, 0, 0, 'mark', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
-(107, 'XnLKODbE', 1, 'what is the age of mark?', 'choices', 1, 0, 0, 'none', 1, 'MJAgSbEC', 'none', 'none', 'CAPSTONE 1'),
-(108, 'XnLKODbE', 2, 'What is my name?', 'enumeration', 1, 0, 0, 'mark', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
-(109, '8C1dpAwa', 1, 'qqqwqwq', 'enumeration', 1, 0, 0, 'wqwqwq', 1, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(110, '8C1dpAwa', 2, 'dsds', 'enumeration', 1, 0, 0, 'dsdss', 1, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(111, 'mBd9IdW2', 1, 'qqqwqwq', 'enumeration', 1, 0, 0, 'wqwqwq', 1, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(112, 'mBd9IdW2', 2, 'dsds', 'enumeration', 1, 0, 0, 'dsdss', 1, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(113, 'QHsMKZZo', 1, 'yuguyh', 'enumeration', 1, 1, 0, 'yy1', 1, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(114, '3udNFGOv', 1, 'qqqwqwq', 'enumeration', 1, 0, 0, 'wqwqwq', 1, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(115, '3udNFGOv', 2, 'dsds', 'enumeration', 1, 0, 0, 'dsdss', 1, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(116, 'I93t9Haj', 1, 'qqqwqwq', 'enumeration', 1, 0, 0, 'wqwqwq', 1, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(117, 'I93t9Haj', 2, 'dsds', 'enumeration', 1, 0, 0, 'dsdss', 1, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(118, '2eb7oSeH', 1, 'qqqwqwq', 'enumeration', 1, 0, 0, 'wqwqwq', 1, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(119, '2eb7oSeH', 2, 'dsds', 'enumeration', 1, 0, 0, 'dsdss', 1, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(120, 'GC25rAug', 1, 'qqqwqwq', 'enumeration', 1, 0, 0, 'wqwqwq', 1, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(121, 'GC25rAug', 2, 'dsds', 'enumeration', 1, 0, 0, 'dsdss', 1, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(122, 'rVq9z5hc', 1, 'qqqwqwq', 'enumeration', 1, 0, 0, 'wqwqwq', 1, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(123, 'rVq9z5hc', 2, 'dsds', 'enumeration', 1, 0, 0, 'dsdss', 1, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(124, '5rVKnLLR', 1, 'q1', 'enumeration', 1, 0, 0, 'a1', 1, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(125, 'BAucYBYD', 1, 'qqqwqwq', 'enumeration', 1, 0, 0, 'wqwqwq', 1, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(126, 'BAucYBYD', 2, 'dsds', 'enumeration', 1, 0, 0, 'dsdss', 1, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(127, 'wOeytUiP', 1, '1+1 = ?', 'enumeration', 1, 0, 0, '2', 1, 'none', 'none', 'none', 'CAPSTONE 2'),
-(128, 'wOeytUiP', 2, '2+2 =?', 'enumeration', 1, 0, 0, '4', 1, 'none', 'none', 'none', 'CAPSTONE 2'),
-(129, 'wOeytUiP', 3, 'what is the color of grapes?', 'choices', 1, 0, 0, 'none', 1, 'DVKMM8l5', 'none', 'none', 'CAPSTONE 2'),
-(130, 'I2MQyc9T', 1, '1+1 = ?', 'enumeration', 1, 0, 0, '2', 1, 'none', 'none', 'none', 'CAPSTONE 2'),
-(131, 'I2MQyc9T', 2, '2+2 =?', 'enumeration', 1, 0, 0, '4', 1, 'none', 'none', 'none', 'CAPSTONE 2'),
-(132, 'I2MQyc9T', 3, 'what is the color of grapes?', 'choices', 1, 0, 0, 'none', 1, 'DVKMM8l5', 'none', 'none', 'CAPSTONE 2'),
-(133, 'X6QZ7T5V', 1, 'what is?', 'enumeration', 1, 0, 0, 'apple', 1, 'none', 'none', 'none', 'NATIONAL SERVICE TRAINING PROGRAM 2'),
-(134, 'X6QZ7T5V', 2, 'blue is?', 'choices', 1, 0, 0, 'none', 1, 'pQWOSluq', 'none', 'none', 'NATIONAL SERVICE TRAINING PROGRAM 2'),
-(135, 'TLKUVR7R', 1, 'q1', 'enumeration', 1, 0, 0, 'a1', 1, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(136, 'lclnS76e', 1, 'q1', 'enumeration', 1, 0, 0, 'a1', 1, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(137, 'Ea5VXbZW', 1, 'q1', 'enumeration', 1, 0, 0, 'a1', 1, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(138, 'Ea5VXbZW', 2, '1+1 = ?', 'enumeration', 1, 0, 0, '2', 1, 'none', 'none', 'none', 'CAPSTONE 2'),
-(139, 'Ea5VXbZW', 3, '2+2 =?', 'enumeration', 1, 0, 0, '4', 1, 'none', 'none', 'none', 'CAPSTONE 2'),
-(140, 'Ea5VXbZW', 4, 'what is the color of grapes?', 'choices', 1, 0, 0, 'none', 1, 'DVKMM8l5', 'none', 'none', 'CAPSTONE 2'),
-(141, '95Q4bSLS', 1, 'q1', 'enumeration', 1, 0, 0, 'a1', 1, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(142, '95Q4bSLS', 2, 'what is the color of grapes?', 'choices', 1, 0, 0, 'none', 1, 'DVKMM8l5', 'none', 'none', 'CAPSTONE 2'),
-(143, 'qin8rID8', 1, 'q1', 'enumeration', 1, 0, 0, 'a1', 1, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(144, 'qin8rID8', 2, 'what is the color of grapes?', 'choices', 1, 0, 0, 'none', 1, 'DVKMM8l5', 'none', 'none', 'CAPSTONE 2'),
-(145, 'qin8rID8', 3, '1+1 = ?', 'enumeration', 1, 0, 0, '2', 1, 'none', 'none', 'none', 'CAPSTONE 2'),
-(146, 'qin8rID8', 4, '2+2 =?', 'enumeration', 1, 0, 0, '4', 1, 'none', 'none', 'none', 'CAPSTONE 2'),
-(147, 'aa96zKC3', 1, '1+1 = ?', 'enumeration', 1, 0, 0, '2', 1, 'none', 'none', 'none', 'CAPSTONE 2'),
-(148, 'aa96zKC3', 2, '2+2 =?', 'enumeration', 1, 0, 0, '4', 1, 'none', 'none', 'none', 'CAPSTONE 2'),
-(149, 'aa96zKC3', 3, 'what is the color of grapes?', 'choices', 1, 0, 0, 'none', 1, 'DVKMM8l5', 'none', 'none', 'CAPSTONE 2'),
-(150, '61oE4vgu', 1, '1+1 = ?', 'enumeration', 1, 0, 0, '2', 1, 'none', 'none', 'none', 'CAPSTONE 2'),
-(151, '61oE4vgu', 2, 'what is the color of grapes?', 'choices', 1, 0, 0, 'none', 1, 'DVKMM8l5', 'none', 'none', 'CAPSTONE 2'),
-(152, 'vHg1ETZs', 1, 'what is green?', 'enumeration', 1, 1, 1, 'dsadsa', 1, 'none', 'Y39N7rdw', 'none', 'CAPSTONE 2'),
-(153, 'vHg1ETZs', 2, 'dsadsa', 'choices', 1, 0, 0, 'none', 1, 'ge7FseO5', 'none', 'none', 'CAPSTONE 2'),
-(154, 'vHg1ETZs', 3, 'none', 'fill', 1, 0, 0, 'none', 1, 'none', 'none', 'TFpXUsSo', 'CAPSTONE 2'),
-(155, 'vHg1ETZs', 4, 'sadasds', 'True Or False', 1, 0, 0, '1', 1, 'none', 'none', 'none', 'CAPSTONE 2'),
-(156, '8ePQ5du4', 1, 'what is green?', 'enumeration', 1, 1, 1, 'dsadsa', 1, 'none', 'Y39N7rdw', 'none', 'CAPSTONE 2'),
-(157, '8ePQ5du4', 2, 'dsadsa', 'choices', 1, 0, 0, 'none', 1, 'ge7FseO5', 'none', 'none', 'CAPSTONE 2'),
-(158, '8ePQ5du4', 3, 'none', 'fill', 1, 0, 0, 'none', 1, 'none', 'none', 'TFpXUsSo', 'CAPSTONE 2'),
-(159, '8ePQ5du4', 4, 'sadasds', 'True Or False', 1, 0, 0, '1', 1, 'none', 'none', 'none', 'CAPSTONE 2');
+(100, 'Fi2qqJFY', 1, 'Which of the following is a mutable data type in Python?', 'enumeration', 1, 0, 0, 'list', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
+(101, 'Fi2qqJFY', 2, 'Which of the following methods is used to add an element to the end of an array in JavaScript?', 'choices', 1, 0, 0, 'none', 1, 'C2pvxjPd', 'none', 'none', 'CAPSTONE 1'),
+(160, 'Qdr6JsPc', 1, 'Which of the following is used to inherit a class in Java?', 'choices', 1, 0, 0, 'none', 1, 'Pa2qqJFY', 'none', 'none', 'CAPSTONE 1'),
+(161, 'Qdr6JsPc', 2, 'What keyword is used to create a function in Python?', 'enumeration', 1, 0, 0, 'def', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
+(162, 'UUAVMWI5', 1, 'In Python, the print statement is used to display output to the console.', 'True Or False', 1, 0, 0, 'True', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
+(163, 'UUAVMWI5', 2, 'Which of the following is a mutable data type in Python?', 'enumeration', 1, 0, 0, 'list', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
+(164, 'UUAVMWI5', 3, 'Which of the following methods is used to add an element to the end of an array in JavaScript?', 'choices', 1, 0, 0, 'none', 1, 'C2pvxjPd', 'none', 'none', 'CAPSTONE 1'),
+(165, 'e61DROKC', 1, 'In JavaScript, objects are immutable.', 'True Or False', 1, 1, 0, 'False', 0, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
+(166, 'e61DROKC', 2, 'none', 'fill', 1, 0, 0, 'none', 1, 'none', 'none', 'YXWApu2U', 'ENTREPRENEURSHIP'),
+(167, 'd0GVbn3I', 1, 'das', 'enumeration', 1, 0, 1, 'dasd', 1, 'none', 'none', 'none', 'SYSTEM ADMINISTRATION AND MAINTENANCE'),
+(168, 'd0GVbn3I', 1, 'das', 'enumeration', 1, 0, 1, 'dasd', 1, 'none', 'none', 'none', 'SYSTEM ADMINISTRATION AND MAINTENANCE'),
+(169, 'h6iu0Ivc', 2, 'what is', 'choices', 1, 0, 0, 'none', 2, 'h6iu0Ivc', 'none', 'none', 'SYSTEM ADMINISTRATION AND MAINTENANCE'),
+(170, 'Z22IU74j', 3, '', 'fill', 1, 0, 0, 'none', 1, 'none', 'none', 'Z22IU74j', 'SYSTEM ADMINISTRATION AND MAINTENANCE'),
+(171, 'Hh2bpYss', 1, 'das', 'enumeration', 1, 0, 0, 'dasdasd', 1, 'none', 'kp5xhjkF', 'none', 'ENTREPRENEURSHIP'),
+(172, 'Ohay9sCh', 1, 'asd', 'enumeration', 1, 0, 0, 'asds', 1, 'none', 'IgrdrKTm', 'none', 'ENTREPRENEURSHIP'),
+(173, 'Ohay9sCh', 1, 'asd', 'enumeration', 1, 0, 0, 'asds', 1, 'none', 'IgrdrKTm', 'none', 'ENTREPRENEURSHIP'),
+(174, 'tgMnhxXa', 2, 'dasd', 'enumeration', 1, 0, 0, 'asdasd', 1, 'none', '8ZS3fzlt', 'none', 'ENTREPRENEURSHIP'),
+(175, 'kf12ami0', 1, 'dasd', 'enumeration', 1, 0, 0, 'asd', 1, 'none', 'yxIKY57R', 'none', 'SYSTEM ADMINISTRATION AND MAINTENANCE'),
+(176, 'kf12ami0', 1, 'dasd', 'enumeration', 1, 0, 0, 'asd', 1, 'none', 'yxIKY57R', 'none', 'SYSTEM ADMINISTRATION AND MAINTENANCE'),
+(177, 'kf12ami0', 1, 'dasd', 'enumeration', 1, 0, 0, 'asd', 1, 'none', 'yxIKY57R', 'none', 'SYSTEM ADMINISTRATION AND MAINTENANCE'),
+(178, 'KYZE9iQv', 2, 'das', 'enumeration', 1, 0, 0, 'asdas', 1, 'none', 'UY47Y6EM', 'none', 'SYSTEM ADMINISTRATION AND MAINTENANCE'),
+(179, 'kf12ami0', 1, 'dasd', 'enumeration', 1, 0, 0, 'asd', 1, 'none', 'yxIKY57R', 'none', 'SYSTEM ADMINISTRATION AND MAINTENANCE'),
+(180, 'KYZE9iQv', 2, 'das', 'enumeration', 1, 0, 0, 'asdas', 1, 'none', 'UY47Y6EM', 'none', 'SYSTEM ADMINISTRATION AND MAINTENANCE'),
+(181, 'kf12ami0', 1, 'dasd', 'enumeration', 1, 0, 0, 'asd', 1, 'none', 'yxIKY57R', 'none', 'SYSTEM ADMINISTRATION AND MAINTENANCE'),
+(182, 'KYZE9iQv', 2, 'das', 'enumeration', 1, 0, 0, 'asdas', 1, 'none', 'UY47Y6EM', 'none', 'SYSTEM ADMINISTRATION AND MAINTENANCE'),
+(183, 'kf12ami0', 1, 'dasd', 'enumeration', 1, 0, 0, 'asd', 1, 'none', 'yxIKY57R', 'none', 'SYSTEM ADMINISTRATION AND MAINTENANCE'),
+(184, 'KYZE9iQv', 2, 'das', 'enumeration', 1, 0, 0, 'asdas', 1, 'none', 'UY47Y6EM', 'none', 'SYSTEM ADMINISTRATION AND MAINTENANCE'),
+(185, 'kf12ami0', 1, 'dasd', 'enumeration', 1, 0, 0, 'asd', 1, 'none', 'yxIKY57R', 'none', 'SYSTEM ADMINISTRATION AND MAINTENANCE'),
+(186, 'KYZE9iQv', 2, 'das', 'enumeration', 1, 0, 0, 'asdas', 1, 'none', 'UY47Y6EM', 'none', 'SYSTEM ADMINISTRATION AND MAINTENANCE'),
+(187, '4Y4R4edX', 3, 'das', 'enumeration', 1, 0, 0, 'asds', 1, 'none', 'yjI8wqhE', 'none', 'SYSTEM ADMINISTRATION AND MAINTENANCE'),
+(188, '4Y4R4edX', 3, 'das', 'enumeration', 1, 0, 0, 'asds', 1, 'none', 'yjI8wqhE', 'none', 'SYSTEM ADMINISTRATION AND MAINTENANCE'),
+(189, 'kf12ami0', 1, 'dasd', 'enumeration', 1, 0, 0, 'asd', 1, 'none', 'yxIKY57R', 'none', 'SYSTEM ADMINISTRATION AND MAINTENANCE'),
+(190, 'KYZE9iQv', 2, 'das', 'enumeration', 1, 0, 0, 'asdas', 1, 'none', 'UY47Y6EM', 'none', 'SYSTEM ADMINISTRATION AND MAINTENANCE'),
+(191, 'aCPXaMGI', 1, 'In JavaScript, objects are immutable.', 'True Or False', 1, 1, 0, 'False', 0, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
+(192, 'aCPXaMGI', 2, 'none', 'fill', 1, 0, 0, 'none', 1, 'none', 'none', 'YXWApu2U', 'ENTREPRENEURSHIP');
 
 -- --------------------------------------------------------
 
@@ -925,83 +635,20 @@ CREATE TABLE `quiz` (
   `duration` int(10) NOT NULL,
   `random` varchar(10) NOT NULL,
   `autoView` varchar(10) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `quiz`
 --
 
 INSERT INTO `quiz` (`quizID`, `quizTitle`, `quizInstructions`, `questionID`, `subjectName`, `totalPoints`, `totalQuestions`, `time`, `date`, `duration`, `random`, `autoView`) VALUES
-('1bRWITVE', 'new', 'dsa', '1bRWITVE', 'ENTREPRENEURSHIP', 2, 2, '03:35 AM', 'Mon Jan 22 2024', 0, '1', '0'),
-('1Oc0uJXk', 'dsds', 'dsds', '1Oc0uJXk', 'ENTREPRENEURSHIP', 2, 2, '05:30 PM', 'Thu Jan 18 2024', 0, '1', '0'),
-('2eb7oSeH', 'dsds', 'sds', '2eb7oSeH', 'ENTREPRENEURSHIP', 2, 2, '11:09 PM', 'Wed Jan 24 2024', 0, '1', '0'),
-('2hegz6x0', 'ii', 'yy', '2hegz6x0', 'ENTREPRENEURSHIP', 3, 3, '03:17 AM', 'Tue Jan 23 2024', 0, '1', '0'),
-('3udNFGOv', 'dsds', 'xcds', '3udNFGOv', 'ENTREPRENEURSHIP', 2, 2, '10:43 PM', 'Wed Jan 24 2024', 0, '1', '0'),
-('5rVKnLLR', 'new1', 'new1', '5rVKnLLR', 'ENTREPRENEURSHIP', 1, 1, '06:51 PM', 'Sat Jan 27 2024', 0, '1', '0'),
-('5wN0FIPg', 'fill3', 'fill3', '5wN0FIPg', 'CAPSTONE 1', 1, 1, '08:54 PM', 'Wed Jan 10 2024', 0, '', ''),
-('61oE4vgu', '333', '22211', '61oE4vgu', 'CAPSTONE 2', 2, 2, '10:09 PM', 'Sun Jan 28 2024', 0, '1', '0'),
-('7RT1GEjq', 'dsds', 'dsd', '7RT1GEjq', 'ENTREPRENEURSHIP', 2, 2, '05:20 PM', 'Thu Jan 18 2024', 0, '1', '0'),
-('80yMURt9', 'fill test', 'fill test', '80yMURt9', 'CAPSTONE 1', 2, 2, '07:08 PM', 'Wed Jan 10 2024', 0, '', ''),
-('8C1dpAwa', 'sched', 'sched', '8C1dpAwa', 'ENTREPRENEURSHIP', 2, 2, '09:20 PM', 'Wed Jan 24 2024', 0, '1', '0'),
-('8ePQ5du4', 'ds', 'sds', '8ePQ5du4', 'CAPSTONE 2', 4, 4, '04:36 PM', 'Thu Feb 15 2024', 0, '1', '0'),
-('8vnF2aqw', 'TEST QUIZZZ', 'TEST QUIZZZ', '8vnF2aqw', 'ENTREPRENEURSHIP', 3, 3, '01:32 AM', 'Tue Jan 23 2024', 2, '1', '0'),
-('95Q4bSLS', '11', '22', '95Q4bSLS', 'CAPSTONE 2', 2, 2, '09:52 PM', 'Sun Jan 28 2024', 0, '1', '0'),
-('A2w58lKx', 'adasd', 'dasd', 'A2w58lKx', 'ENTREPRENEURSHIP', 2, 2, '03:39 AM', 'Mon Jan 22 2024', 0, '1', '0'),
-('a8q0tl12', 'sdsd', 'dfsdf', 'a8q0tl12', 'ENTREPRENEURSHIP', 2, 2, '05:21 PM', 'Thu Jan 18 2024', 0, '1', '0'),
-('aa96zKC3', '22', '11', 'aa96zKC3', 'CAPSTONE 2', 3, 3, '10:08 PM', 'Sun Jan 28 2024', 0, '1', '0'),
-('BAucYBYD', 'new quiz 1', 'Answer this', 'BAucYBYD', 'ENTREPRENEURSHIP', 2, 2, '09:40 PM', 'Sun Jan 28 2024', 0, '1', '0'),
-('bbLmxfIX', 'ryetuerttyurt', 'tujrtujrttu', 'bbLmxfIX', 'ENTREPRENEURSHIP', 4, 3, '07:32 PM', 'Mon Jan 08 2024', 0, '', ''),
-('Be2FdS94', 'dsds', 'dsds', 'Be2FdS94', 'ENTREPRENEURSHIP', 2, 2, '05:33 PM', 'Thu Jan 18 2024', 0, '1', '0'),
-('bFONa9iv', 'asd', 'asd', 'bFONa9iv', 'SYSTEM ADMINISTRATION AND MAINTENANCE', 1, 1, '01:21 PM', 'Wed Dec 20 2023', 0, '', ''),
-('bo8vvHHC', 'TORF TEST', 'TORF TEST', 'bo8vvHHC', 'CAPSTONE 1', 9, 2, '02:36 AM', 'Thu Jan 11 2024', 0, '', ''),
-('BwZIUHhX', 'yq', 'iu', 'BwZIUHhX', 'ENTREPRENEURSHIP', 4, 4, '03:14 AM', 'Tue Jan 23 2024', 0, '1', '0'),
-('ccoTQ4cw', 'dsds', 'dsds', 'ccoTQ4cw', 'ENTREPRENEURSHIP', 2, 2, '05:32 PM', 'Thu Jan 18 2024', 0, '1', '0'),
-('ceHJ2Fo4', 'new', 'dsa', 'ceHJ2Fo4', 'ENTREPRENEURSHIP', 2, 2, '03:33 AM', 'Mon Jan 22 2024', 0, '1', '0'),
-('doHqHU0T', 'tessss', 'sdsds', 'doHqHU0T', 'CAPSTONE 1', 11, 11, '10:59 AM', 'Tue Jan 09 2024', 0, '', ''),
-('dtYyYLar', 'new new', 'new new', 'dtYyYLar', 'ENTREPRENEURSHIP', 2, 2, '05:36 PM', 'Thu Jan 18 2024', 0, '1', '0'),
-('Ea5VXbZW', '11', '22', 'Ea5VXbZW', 'CAPSTONE 2', 4, 4, '09:51 PM', 'Sun Jan 28 2024', 0, '1', '0'),
-('eAzK97X0', 'math', 'solve this', 'eAzK97X0', 'CAPSTONE 1', 2, 2, '02:06 PM', 'Fri Jan 12 2024', 0, '', ''),
-('eFRypAzH', 'sa', 'sasa', 'eFRypAzH', 'PRINCIPLES AND STRATEGIES IN TEACHING', 2, 2, '03:13 PM', 'Fri Dec 15 2023', 0, '', ''),
-('EhdZsd0a', 'dsdsds', 'esds', 'EhdZsd0a', 'ENTREPRENEURSHIP', 3, 3, '01:39 AM', 'Tue Jan 23 2024', 0, '1', '0'),
-('ERZRWNY8', 'sdsds', 'dsd', 'ERZRWNY8', 'ENTREPRENEURSHIP', 2, 2, '05:10 PM', 'Thu Jan 18 2024', 0, '1', '0'),
-('fh2Yto15', 'dsds', 'dsd', 'fh2Yto15', 'ENTREPRENEURSHIP', 4, 4, '06:49 PM', 'Thu Jan 18 2024', 0, '1', '0'),
-('Fi2qqJFY', 'Exam', 'Please answer this', 'Fi2qqJFY', 'CAPSTONE 1', 3, 3, '04:47 AM', 'Wed Jan 24 2024', 0, '1', '0'),
-('FlzwiDL6', 'new222', 'new222', 'FlzwiDL6', 'ENTREPRENEURSHIP', 3, 3, '01:52 AM', 'Tue Jan 23 2024', 0, '1', '0'),
-('fP4FfsZc', 'TEST QUIZZZ', 'TEST QUIZZZ', 'fP4FfsZc', 'ENTREPRENEURSHIP', 3, 3, '01:27 AM', 'Tue Jan 23 2024', 2, '1', '0'),
-('g4huIKeU', 'jijijij', 'jnjkbn', 'g4huIKeU', 'ENTREPRENEURSHIP', 2, 2, '02:52 AM', 'Mon Jan 22 2024', 0, '1', '0'),
-('GC25rAug', 'asdsd', 'ds', 'GC25rAug', 'ENTREPRENEURSHIP', 2, 2, '11:13 PM', 'Wed Jan 24 2024', 0, '1', '0'),
-('GcdMblht', 'TEST QUESTION', 'QUESTION INSTRUCTIONS', 'GcdMblht', 'CAPSTONE 1', 2, 2, '01:13 PM', 'Wed Jan 10 2024', 0, '', ''),
-('GnFpkAec', 'dsdsds', 'dsds', 'GnFpkAec', 'ENTREPRENEURSHIP', 6, 6, '06:29 PM', 'Thu Jan 18 2024', 0, '1', '0'),
-('hs4Rvbuu', 'dsds', 'dsds', 'hs4Rvbuu', 'ENTREPRENEURSHIP', 2, 2, '05:34 PM', 'Thu Jan 18 2024', 0, '1', '0'),
-('hXqPgnW9', 'sample quiz', 'SAMPLE INSTRUCTION', 'hXqPgnW9', 'CAPSTONE 1', 8, 6, '09:11 PM', 'Wed Jan 10 2024', 0, '', ''),
-('I2MQyc9T', 'math', 'answer this', 'I2MQyc9T', 'CAPSTONE 2', 3, 3, '09:44 PM', 'Sun Jan 28 2024', 0, '1', '0'),
-('I93t9Haj', 'ddd', 'ddd', 'I93t9Haj', 'ENTREPRENEURSHIP', 2, 2, '11:04 PM', 'Wed Jan 24 2024', 0, '1', '0'),
-('Iih6Mask', 'new one', 'new one', 'Iih6Mask', 'ENTREPRENEURSHIP', 2, 2, '03:58 AM', 'Mon Jan 22 2024', 0, '1', '0'),
-('jOLgJf9O', 'dsds', 'dsds', 'jOLgJf9O', 'ENTREPRENEURSHIP', 2, 2, '05:33 PM', 'Thu Jan 18 2024', 0, '1', '0'),
-('KLjbm47f', 'sample new', 'sample new', 'KLjbm47f', 'ENTREPRENEURSHIP', 2, 2, '03:50 AM', 'Mon Jan 22 2024', 0, '1', '0'),
-('kRNZ6Pq6', 'asasssss', 'sas', 'kRNZ6Pq6', 'CAPSTONE 1', 5, 5, '10:54 AM', 'Mon Dec 18 2023', 0, '', ''),
-('ku1WTrO2', 'TEST QUIZZZ', 'TEST QUIZZZ', 'ku1WTrO2', 'ENTREPRENEURSHIP', 3, 3, '01:27 AM', 'Tue Jan 23 2024', 2, '1', '0'),
-('lBhM4tYt', 'dsdsds', 'esds', 'lBhM4tYt', 'ENTREPRENEURSHIP', 3, 3, '01:36 AM', 'Tue Jan 23 2024', 0, '1', '0'),
-('lclnS76e', '11', '22', 'lclnS76e', 'ENTREPRENEURSHIP', 1, 1, '09:49 PM', 'Sun Jan 28 2024', 0, '1', '0'),
-('lHkep6VL', 'testQuiz', 'instructions', 'lHkep6VL', 'CAPSTONE 1', 2, 2, '01:36 AM', 'Tue Jan 09 2024', 0, '', ''),
-('mBd9IdW2', 'dsds', 'dasd', 'mBd9IdW2', 'ENTREPRENEURSHIP', 2, 2, '09:31 PM', 'Wed Jan 24 2024', 0, '1', '0'),
-('mPNp1Gpi', 'choices quiz', 'test inst', 'mPNp1Gpi', 'CAPSTONE 1', 2, 2, '09:52 AM', 'Tue Jan 09 2024', 0, '', ''),
-('OAIyKS7x', 'dsdsds', 'esds', 'OAIyKS7x', 'ENTREPRENEURSHIP', 3, 3, '01:36 AM', 'Tue Jan 23 2024', 0, '1', '0'),
-('PoDIxrM7', 'asasasassss', 'sas', 'PoDIxrM7', 'CAPSTONE 1', 4, 4, '10:54 AM', 'Mon Dec 18 2023', 0, '', ''),
-('QF8TQwkL', 'fill 3', 'fill 3', 'QF8TQwkL', 'CAPSTONE 1', 1, 1, '08:53 PM', 'Wed Jan 10 2024', 0, '', ''),
-('QHsMKZZo', 'asdasd', 'sdas', 'QHsMKZZo', 'ENTREPRENEURSHIP', 1, 1, '10:01 PM', 'Wed Jan 24 2024', 0, '1', '0'),
-('qin8rID8', '11', '22', 'qin8rID8', 'CAPSTONE 2', 4, 4, '09:53 PM', 'Sun Jan 28 2024', 0, '1', '0'),
-('rVq9z5hc', 'new1', 'new1', 'rVq9z5hc', 'ENTREPRENEURSHIP', 2, 2, '11:16 PM', 'Wed Jan 24 2024', 0, '1', '0'),
-('s0CCFZ56', 'dsds', 'dsds', 's0CCFZ56', 'ENTREPRENEURSHIP', 2, 2, '05:24 PM', 'Thu Jan 18 2024', 0, '1', '0'),
-('S1rDDw8S', 'TESTING QUIZ', 'TESTING QUIZ', 'S1rDDw8S', 'ENTREPRENEURSHIP', 4, 4, '01:23 AM', 'Tue Jan 23 2024', 15, '1', '0'),
-('TLKUVR7R', '11', '22', 'TLKUVR7R', 'ENTREPRENEURSHIP', 1, 1, '09:49 PM', 'Sun Jan 28 2024', 0, '1', '0'),
-('u0j8FfTB', 'Take this', 'new quiz', 'u0j8FfTB', 'CAPSTONE 1', 2, 2, '04:55 AM', 'Wed Jan 24 2024', 0, '1', '0'),
-('V6RgKaoR', 'random quiz', 'random quiz', 'V6RgKaoR', 'CAPSTONE 1', 4, 4, '07:47 PM', 'Thu Jan 11 2024', 0, '', ''),
-('vu3lsDbm', 'dsdsd', 'dsad', 'vu3lsDbm', 'ENTREPRENEURSHIP', 1, 1, '03:56 AM', 'Mon Jan 22 2024', 0, '1', '0'),
-('XnLKODbE', 'quiz 2', 'quiz2 ', 'XnLKODbE', 'CAPSTONE 1', 2, 2, '04:56 AM', 'Wed Jan 24 2024', 0, '1', '0'),
-('xzJr9GpL', 'My personal', 'my instructions', 'xzJr9GpL', 'CAPSTONE 1', 14, 8, '03:32 PM', 'Sun Jan 07 2024', 0, '', ''),
-('zgqARuqP', 'rtyhrtyh', 'yiut67yi', 'zgqARuqP', 'CAPSTONE 1', 2, 2, '07:35 PM', 'Mon Jan 08 2024', 0, '', ''),
-('zIw4SgVX', 'tes tse', 'dsds', 'zIw4SgVX', 'CAPSTONE 1', 1, 1, '10:17 AM', 'Tue Jan 09 2024', 0, '', '');
+('1bRWITVE', 'Java Script Quiz', 'Answer properly.', 'bbLmxfIX', 'ENTREPRENEURSHIP', 2, 2, '03:35 AM', 'Mon Jan 22 2024', 0, '1', '0'),
+('1Oc0uJXk', 'Python Quiz', 'Answer properly.', 'Fi2qqJFY', 'CAPSTONE 1', 3, 3, '05:30 PM', 'Thu Jan 18 2024', 0, '1', '0'),
+('2eb7oSeH', 'Java Quiz', 'Answer properly.', 'UICd4r8F', 'CAPSTONE 1', 3, 3, '11:09 PM', 'Wed Jan 24 2024', 0, '1', '0'),
+('aCPXaMGI', 'java quiz', 'nice', 'aCPXaMGI', 'ENTREPRENEURSHIP', 2, 2, '12:57 PM', 'Mon Jun 24 2024', 30, '1', '0'),
+('e61DROKC', 'ASDAS', 'DASD', 'e61DROKC', 'ENTREPRENEURSHIP', 2, 2, '09:51 AM', 'Fri Jun 21 2024', 0, '1', '0'),
+('Qdr6JsPc', 'dasdas', 'dasdasd', 'Qdr6JsPc', 'CAPSTONE 1', 2, 2, '06:25 PM', 'Thu Jun 06 2024', 0, '1', '0'),
+('UUAVMWI5', 'exercise 101', 'exercise 101', 'UUAVMWI5', 'CAPSTONE 1', 3, 3, '01:52 PM', 'Wed Jun 12 2024', 0, '1', '0');
 
 -- --------------------------------------------------------
 
@@ -1016,7 +663,7 @@ CREATE TABLE `reactions` (
   `acctID` varchar(10) NOT NULL,
   `classCode` varchar(10) NOT NULL,
   `reactType` varchar(10) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `reactions`
@@ -1048,60 +695,15 @@ CREATE TABLE `schedule` (
   `dueTime` varchar(20) NOT NULL,
   `closeDate` varchar(20) NOT NULL,
   `closeTime` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `schedule`
 --
 
 INSERT INTO `schedule` (`id`, `schedID`, `postID`, `schedDate`, `schedTime`, `dueDate`, `dueTime`, `closeDate`, `closeTime`) VALUES
-(1, '0', '0', '2024-01-05', '21:40', '2024-01-05', '09:40', '2024-02-02', '09:42'),
-(2, '3avPzgqh', '3avPzgqh', '2024-01-05', '21:40', '2024-01-05', '09:40', '2024-02-02', '09:42'),
-(3, 'tI3g2tQ9', 'tI3g2tQ9', '2024-01-06', '23:24', '2024-01-11', '11:26', '2024-01-26', '23:30'),
-(4, 'VSVhtT8V', 'VSVhtT8V', '2024-01-06', '23:33', '2024-01-11', '11:26', '2024-01-26', '23:30'),
-(5, 'UasK8TY9', 'UasK8TY9', '2024-01-06', '23:35', '2024-01-11', '11:26', '2024-01-26', '23:30'),
-(6, 'K2JCPYL1', 'K2JCPYL1', '2024-01-06', '23:38', '2024-01-11', '11:26', '2024-01-26', '23:30'),
-(7, 'YkqaXCPa', 'YkqaXCPa', '2024-01-05', '15:36', '2024-01-04', '15:36', '2024-01-09', '15:36'),
-(9, 'gR8lvZne', 'gR8lvZne', '2024-01-09', '10:36', '2024-01-09', '22:59', '2024-01-09', '12:37'),
-(10, 'ahJUCxcA', 'ahJUCxcA', '2024-01-12', '00:52', '2024-01-12', '00:55', '2024-01-12', '02:49'),
-(11, 'yfekruX4', 'yfekruX4', '2024-01-12', '00:55', '2024-01-12', '00:57', '2024-01-12', '00:59'),
-(12, 'IlcRXYTQ', 'IlcRXYTQ', '2024-01-12', '01:18', '2024-01-12', '01:19', '2024-01-12', '01:20'),
-(13, 'ypKGgGTl', 'ypKGgGTl', '2024-01-12', '01:25', '2024-01-12', '01:27', '2024-01-12', '01:28'),
-(14, 'JINGVvZg', 'JINGVvZg', '2024-01-12', '01:25', '2024-01-12', '01:27', '2024-01-12', '01:28'),
-(15, 'dfC0D6wE', 'dfC0D6wE', '2024-01-12', '01:26', '2024-01-12', '01:27', '2024-01-12', '01:28'),
-(16, 'jhSV8vyg', 'jhSV8vyg', '2024-01-12', '01:31', '2024-01-12', '01:32', '2024-01-12', '01:33'),
-(17, 'rhQQBMxm', 'rhQQBMxm', '2024-01-12', '01:34', '2024-01-12', '01:35', '2024-01-12', '01:37'),
-(18, '5twE97vH', '5twE97vH', '2024-01-12', '01:36', '2024-01-12', '01:38', '2024-01-12', '01:39'),
-(19, 'pl0JeYHG', 'pl0JeYHG', '2024-01-12', '01:40', '2024-01-12', '01:41', '2024-01-12', '01:43'),
-(20, 'I8f2QtXY', 'I8f2QtXY', '2024-01-12', '01:42', '2024-01-12', '01:43', '2024-01-12', '01:44'),
-(21, 'PLRihInp', 'PLRihInp', '2024-01-12', '01:44', '2024-01-12', '01:46', '2024-01-12', '01:47'),
-(22, 'tKgzDEX9', 'tKgzDEX9', '2024-01-12', '01:47', '2024-01-12', '01:48', '2024-01-12', '01:50'),
-(23, 'FpzVHB7H', 'FpzVHB7H', '2024-01-12', '01:55', '2024-01-12', '01:56', '2024-01-12', '01:57'),
-(24, 'mhTBbzED', 'mhTBbzED', '2024-01-12', '01:56', '2024-01-12', '01:57', '2024-01-12', '01:58'),
-(25, 'L2SzZkd8', 'L2SzZkd8', '2024-01-12', '01:59', '2024-01-12', '02:02', '2024-01-12', '04:57'),
-(26, '5VVcmQoz', '5VVcmQoz', '2024-01-12', '02:01', '2024-01-12', '02:02', '2024-01-12', '02:04'),
-(27, '7awqNn2j', '7awqNn2j', '2024-01-12', '02:04', '2024-01-12', '02:05', '2024-01-12', '02:06'),
-(28, '1rRwFbrY', '1rRwFbrY', '2024-01-12', '02:07', '2024-01-12', '02:08', '2024-01-12', '02:08'),
-(29, '0hXMRDTJ', '0hXMRDTJ', '2024-01-12', '02:09', '2024-01-12', '02:10', '2024-01-12', '02:12'),
-(30, '81iCDN8M', '81iCDN8M', '2024-01-12', '02:12', '2024-01-12', '02:14', '2024-01-12', '02:16'),
-(31, 'MvMx9bDP', 'MvMx9bDP', '2024-01-24', '21:32', '2024-01-24', '21:34', '2024-01-24', '21:36'),
-(32, 'wjjVTthU', 'wjjVTthU', '2024-01-24', '21:47', '2024-01-24', '21:49', '2024-01-24', '21:50'),
-(33, '7bKAL9bp', '7bKAL9bp', '2024-01-24', '21:51', '2024-01-24', '21:53', '2024-01-24', '21:54'),
-(34, 'BhKgGzjg', 'BhKgGzjg', '2024-01-24', '10:03', '2024-01-24', '13:06', '2024-01-24', '22:09'),
-(35, '5U1Pxqo3', '5U1Pxqo3', '2024-01-24', '22:18', '2024-01-24', '22:19', '2024-01-24', '22:20'),
-(36, '9TDpoz1t', '9TDpoz1t', '2024-01-24', '22:21', '2024-01-24', '22:22', '2024-01-24', '22:23'),
-(37, '1uBYyqV8', '1uBYyqV8', '2024-01-24', '22:21', '2024-01-24', '22:23', '2024-01-24', '22:25'),
-(38, 'zRYOys38', 'zRYOys38', '2024-01-24', '22:24', '2024-01-24', '22:25', '2024-01-24', '22:26'),
-(39, 'seggZkD6', 'seggZkD6', '2024-01-24', '22:44', '2024-01-24', '22:46', '2024-01-24', '22:47'),
-(40, 'rUnVW4ol', 'rUnVW4ol', '2024-01-24', '22:46', '2024-01-24', '22:47', '2024-01-24', '22:48'),
-(41, 'iJIFdl0W', 'iJIFdl0W', '2024-01-24', '22:50', '2024-01-24', '22:52', '2024-01-24', '22:53'),
-(42, 'pfpemVYn', 'pfpemVYn', '2024-01-24', '22:51', '2024-01-24', '22:54', '2024-01-24', '22:53'),
-(43, '0aNcEwzr', '0aNcEwzr', '2024-01-24', '22:55', '2024-01-24', '22:56', '2024-01-24', '22:57'),
-(44, 'TeRUrigT', 'TeRUrigT', '2024-01-24', '23:01', '2024-01-24', '23:02', '2024-01-24', '23:03'),
-(45, 'NDcGIk26', 'NDcGIk26', '2024-01-24', '23:07', '2024-01-24', '23:08', '2024-01-24', '23:09'),
-(46, 'RUEpwIyI', 'RUEpwIyI', '2024-01-24', '23:12', '2024-01-24', '23:14', '2024-01-24', '23:15'),
-(47, 'sRy1F8C5', 'sRy1F8C5', '2024-01-24', '23:15', '2024-01-24', '23:19', '2024-01-24', '23:22'),
-(48, 'eYIFfaMC', 'eYIFfaMC', '2024-01-24', '23:19', '2024-01-24', '23:20', '2024-01-24', '23:20');
+(1, '1Oc0uJXk', 'Tu2qqJFY', '2024-01-05', '21:40', '2024-01-05', '09:40', '2024-02-02', '09:42'),
+(2, '2eb7oSeH', 'Yu2qqJFY', '2024-01-05', '21:40', '2024-01-05', '09:40', '2024-02-02', '09:42');
 
 -- --------------------------------------------------------
 
@@ -1116,39 +718,15 @@ CREATE TABLE `scores` (
   `acctID` varchar(10) NOT NULL,
   `fullname` varchar(100) NOT NULL,
   `score` int(10) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `scores`
 --
 
 INSERT INTO `scores` (`id`, `scoreID`, `quizID`, `acctID`, `fullname`, `score`) VALUES
-(1, 'XgP1I4Fc', 'bo8vvHHC', 'SNSBjwH9', 'Rumar C. Pamparo', 3),
-(2, 'JHkb4Fal', 'bo8vvHHC', 'SNSBjwH9', 'Allan Jay', 3),
-(3, 'I5HfyEZm', 'bo8vvHHC', 'SNSBjwH9', 'Mark ADDURU', 3),
-(4, '1ED2sfbQ', 'bo8vvHHC', 'SNSBjwH9', 'Rumar C. Pamparo', 9),
-(5, '8qlpWwtQ', 'bo8vvHHC', 'SNSBjwH9', 'Allan Jay', 3),
-(6, 'JMvLliIN', 'bo8vvHHC', 'VHXQ6s6O', 'generateName', 9),
-(7, 'dfllqGKq', 'eAzK97X0', 'VHXQ6s6O', 'Allan Jay', 2),
-(8, 'yrXHzhG6', 'FlzwiDL6', 'VHXQ6s6O', 'Mark ADDURU', 3),
-(9, 'MZGJr2uw', 'FlzwiDL6', 'VHXQ6s6O', 'Allan Jay C Caluigiran', 0),
-(10, 'opM6FNen', '2hegz6x0', 'VHXQ6s6O', 'Allan Jay C Caluigiran', 0),
-(12, 'C1a7Hafx', 'Fi2qqJFY', 'VHXQ6s6O', 'Allan Jay C Caluigiran', 0),
-(14, 'Cj0KGjWg', 'XnLKODbE', 'VHXQ6s6O', 'Allan Jay C Caluigiran', 1),
-(15, 'P9CcFxxX', 'BwZIUHhX', 'lLpiO905', 'JD B Tumaliuan', 0),
-(16, 'y9znlTxJ', 'lclnS76e', 'VHXQ6s6O', 'Allan C Caluigiran', 0),
-(17, '03tKjw3A', '5rVKnLLR', 'VHXQ6s6O', 'Allan C Caluigiran', 0),
-(18, 'XvsUIbU5', '95Q4bSLS', 'SNSBjwH9', 'Reneal C Accad', 0),
-(19, 'SqEi8Ljt', 'Ea5VXbZW', 'SNSBjwH9', 'Reneal C Accad', 3),
-(20, 'U522yv6L', '95Q4bSLS', 'VHXQ6s6O', 'Allan C Caluigiran', 0),
-(21, 'kX6nqSZ7', '95Q4bSLS', 'VHXQ6s6O', 'Allan C Caluigiran', 1),
-(22, 'EyIqTJcY', 'Ea5VXbZW', 'VHXQ6s6O', 'Allan C Caluigiran', 3),
-(23, 'AeMFHxaD', 'aa96zKC3', 'SNSBjwH9', 'Reneal C Accad', 1),
-(24, 'RT344mpS', '61oE4vgu', 'SNSBjwH9', 'Reneal C Accad', 1),
-(25, 'QIPHpF6D', '61oE4vgu', 'WhpOtets', 'Red H Ito ang laban', 2),
-(26, '6v38vX8Y', '61oE4vgu', 'WhpOtets', 'Red H Ito ang laban', 1),
-(27, 'Gx8ORzq6', 'QHsMKZZo', 'SNSBjwH9', 'Reneal C Accad', 0),
-(28, 'D1MIgBxS', '8ePQ5du4', 'VHXQ6s6O', 'Allan C Caluigiran', 1);
+(1, '1Oc0uJXk', '1Oc0uJXk', 'un2kt7px', 'Rumar C. Pamparo', 3),
+(2, '8ePQ5du4', '1Oc0uJXk', 'VHXQ6s6O', 'Allan C Caluigiran', 1);
 
 -- --------------------------------------------------------
 
@@ -1160,7 +738,7 @@ CREATE TABLE `subject` (
   `id` int(10) NOT NULL,
   `subjectName` varchar(50) NOT NULL,
   `subjectCode` varchar(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `subject`
@@ -1169,7 +747,7 @@ CREATE TABLE `subject` (
 INSERT INTO `subject` (`id`, `subjectName`, `subjectCode`) VALUES
 (1, 'SYSTEM ADMINISTRATION AND MAINTENANCE', 'IT 412'),
 (2, 'ENTREPRENEURSHIP', 'ELECTIVE 13'),
-(3, 'CAPSTONE 2', 'IT 411'),
+(3, 'CAPSTONE 1', 'IT 411'),
 (4, 'PRINCIPLES AND STRATEGIES IN TEACHING', 'GEC 12'),
 (5, 'SOCIAL AND PROFFESIONAL ISSUES', 'IT 326'),
 (6, 'INFORMATION ASSURANCE AND SECURITY 2', 'IT 325'),
@@ -1307,7 +885,7 @@ ALTER TABLE `subject`
 -- AUTO_INCREMENT for table `choices`
 --
 ALTER TABLE `choices`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=151;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=155;
 
 --
 -- AUTO_INCREMENT for table `class`
@@ -1337,7 +915,7 @@ ALTER TABLE `files`
 -- AUTO_INCREMENT for table `filllayout`
 --
 ALTER TABLE `filllayout`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT for table `friends`
@@ -1349,7 +927,7 @@ ALTER TABLE `friends`
 -- AUTO_INCREMENT for table `image`
 --
 ALTER TABLE `image`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1965;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1971;
 
 --
 -- AUTO_INCREMENT for table `members`
@@ -1367,7 +945,7 @@ ALTER TABLE `messages`
 -- AUTO_INCREMENT for table `post`
 --
 ALTER TABLE `post`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=279;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=281;
 
 --
 -- AUTO_INCREMENT for table `questionbank`
@@ -1379,7 +957,7 @@ ALTER TABLE `questionbank`
 -- AUTO_INCREMENT for table `questions`
 --
 ALTER TABLE `questions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=160;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=193;
 
 --
 -- AUTO_INCREMENT for table `reactions`

@@ -20,6 +20,7 @@ import { IoTimeOutline } from "react-icons/io5";
 import { usePostStore } from '../stores/usePostStore';
 import { useScheduleStore } from '../stores/useScheduleStore';
 import io from 'socket.io-client'
+import axios from 'axios';
 const socket = io.connect('http://localhost:5001')
 
 
@@ -37,19 +38,19 @@ const ClassQuizSetup = ({ subjectName, navigateClass, classCode, postType, refre
  })
 
   const currentSubjectName = subjectName
-  const choices = JSON.parse(localStorage.getItem('choices'))
-  const [questions, setquestions] =useState('')
-  const quiz = JSON.parse(localStorage.getItem('quiz'))
-  const images = JSON.parse(localStorage.getItem('images'))
+  const [choices, setChoices] = useState(null)
+  const [questions, setquestions] = useState('')
+  const [quiz, setQuiz] = useState(null)
+  const [images, setImages] = useState(null)
   const [currentBank, setcurrentBank] = useState('')
   const [bankSelected, setbankSelected] = useState(null)
   const [selectedBank, setselectedBank] = useState('')
-  const fillLayout = JSON.parse(localStorage.getItem('fillLayout'))
+  const [fillLayout, setFillLayout] = useState()
   const [isShowDurationBox, setisShowDurationBox] = useState(false)
   const [duration, setduration] = useState(0)
   const [random, setrandom] = useState(true)
   const [questionBank, setquestionBank] = useState(null)
-  const subjectNames = JSON.parse(localStorage.getItem('subjects')) || ''
+  const [subjectNames, setSubjectName] = useState()
   const [selectedSubject, setselectedSubject] = useState('')
   const [isShowCustomizedBox, setisShowCustomizedBox] = useState('setting')
   const [showLoading, setshowLoading] = useState(true)
@@ -76,7 +77,6 @@ const ClassQuizSetup = ({ subjectName, navigateClass, classCode, postType, refre
   const [postContent, setpostContent] = useState()
   const [objQuiz, setObjQuiz] =useState()
   
-
   let time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit'})
   let date = new Date().toDateString('en-US', { 
     year: 'numeric', 
@@ -91,6 +91,37 @@ const ClassQuizSetup = ({ subjectName, navigateClass, classCode, postType, refre
   const { addSchedule } = useScheduleStore()
 
   useEffect( () => {
+
+    //GET ALL IMAGE
+    axios.get('http://localhost:5001/images/getImages')
+    .then((res) => setImages(res.data))
+    .catch((err) => console.log(err))
+
+    //GET ALL SUBJECTS
+    axios.get('http://localhost:5001/subject/getSubject')
+    .then(res => setSubjectName(res.data))
+    .catch(err => console.error(err))
+
+    //GET ALL FILLLAYOUT
+    axios.get('http://localhost:5001/fillLayout/getFillLayout')
+    .then((res) => setFillLayout(res.data))
+    .catch((err) => console.log(err))
+
+    //GET ALL QUESTIONS
+    axios.get('http://localhost:5001/questions/getQuestions')
+    .then((res) => setquestions(res.data))
+    .catch((err) => console.log(err))
+
+    //GET ALL QUIZ
+    axios.get('http://localhost:5001/quiz/getQuiz')
+    .then((res) => setQuiz(res.data))
+    .catch((err) => console.log(err))
+
+    //GET ALL CHOICES
+    axios.get('http://localhost:5001/choices/getChoices')
+    .then((res) => setChoices(res.data))
+    .catch((err) => console.log(err))
+
     getBank()
     getQuestion()
     setTimeout(() => {
@@ -284,7 +315,6 @@ const ClassQuizSetup = ({ subjectName, navigateClass, classCode, postType, refre
     setselectState(!selectState)
     
   }
-
 
   const handlePostNow = () => {
     if (finalQuiz.length > 0) {
@@ -516,6 +546,23 @@ const ClassQuizSetup = ({ subjectName, navigateClass, classCode, postType, refre
         
     }
     refreshData()
+  }
+
+
+  //Shorten the string
+  const shorternString = (data) => {
+    if (data) {
+        if (data.length > 30) {
+            return data.substring(0, 30) + '...'
+        }
+        return data
+    }
+  }
+
+  //If the question is fillLayout it shows the layout
+  const handleFillLayoutShowContent = (fillLayoutID) => {
+    const filter = fillLayout.filter((data) => data.fillLayoutID === fillLayoutID).map((data) => data.fillContent)
+    return shorternString(filter.join(' '))
   }
 
   
@@ -811,7 +858,10 @@ const ClassQuizSetup = ({ subjectName, navigateClass, classCode, postType, refre
                                             <div className='d-flex w-100 align-items-center justify-content-center'>
                                                 <div className={style.cardQuest} key={index}>
                                                     <div id={style.circle}>{q.questionNumber}</div>
-                                                    <p>{q.questionContent}</p>
+                                                    {
+                                                        q.questionType === 'fill' ? handleFillLayoutShowContent(q.fillLayoutID) : <p>{shorternString(q.questionContent)}</p>
+                                                    }
+                                                    
                                                     <div className={style.typeQuest}>{q.questionType}</div>
                                                 </div>
                                                 <input type="checkbox" checked={q.checked} onChange={() => handleSelectQuestion(q.id, index)}/>

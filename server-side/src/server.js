@@ -22,6 +22,15 @@ const commentRoutes = require('./Routes/commentRoutes')
 const membersRoutes = require('./Routes/membersRoutes')
 const classListRoutes = require('./Routes/classListRoutes')
 const friendsRoutes = require('./Routes/friendsRoutes')
+const quizRoutes = require('./Routes/quizRoutes')
+const scoresRoutes = require('./Routes/scoresRoutes')
+const questionsRoutes = require('./Routes/questionRoutes')
+const choicesRoutes = require('./Routes/choicesRoutes')
+const fillLayoutRoutes = require('./Routes/fillLayoutRoutes')
+const scheduleRoutes = require('./Routes/scheduleRoutes')
+const subjectRoutes = require('./Routes/subjectsRoutes')
+
+
 
 const corsOptions = {
     origin: '*', 
@@ -62,6 +71,15 @@ app.use('/comments', commentRoutes)
 app.use('/members', membersRoutes)
 app.use('/classLists', classListRoutes)
 app.use('/friends', friendsRoutes)
+app.use('/quiz', quizRoutes)
+app.use('/scores', scoresRoutes)
+app.use('/questions', questionsRoutes)
+app.use('/choices', choicesRoutes)
+app.use('/fillLayout', fillLayoutRoutes)
+app.use('/schedule', scheduleRoutes)
+app.use('/subject', subjectRoutes)
+
+
 
 const getSchedule = () => {
     const query = "SELECT * FROM schedule"

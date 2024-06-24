@@ -27,6 +27,14 @@ const QuestionFillintheBlank = ({ finalQuestionSet, subjectName, handleSetFillLa
   const [questionContent, setQuestionContent] = useState('')
   const [image, setImage] = useState(null)
   const questionNumber = finalQuestionSet.length + 1
+  const user = JSON.parse(localStorage.getItem('user'))
+  let currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit'})
+  let currentDate = new Date().toDateString('en-US', { 
+          year: 'numeric', 
+          month: 'short', 
+          day: 'numeric',
+          weekday: 'short' 
+  })
 
   const [fillLayout, setFillLayout] = useState(
     [
@@ -50,7 +58,11 @@ const QuestionFillintheBlank = ({ finalQuestionSet, subjectName, handleSetFillLa
     const file = e.target.files[0]
     setImage({
       imageID: generateUniqueID(),
-      file: file
+      file: file,
+      acctID: user.acctID,
+      dateUploaded: currentDate,
+      timeUploaded: currentTime,
+      classCode: "none",
     })
   }
 
@@ -125,7 +137,7 @@ const QuestionFillintheBlank = ({ finalQuestionSet, subjectName, handleSetFillLa
     const question = {
       questionID: fillLayout[0].fillLayoutID,
       questionNumber,
-      questionContent: questionContent,
+      questionContent: 'none',
       questionType: 'fill',
       points,
       required,

@@ -2,6 +2,20 @@ const express = require('express')
 const router = express.Router()
 const db = require('../db')
 
+// GET ALL POST
+router.get('/getPost', (req, res)=> {
+    const query = 'SELECT post.*, schedule.* FROM `post` INNER JOIN schedule ON post.schedID = schedule.schedID'
+
+    db.query(query, (error, data, fields) => {
+        if (error) {
+            return res.status(404).send(error)
+        }else {
+            return res.status(200).json(data)
+        }
+    })
+})
+
+
 // Get post by classCode
 router.get('/getPostByClassCode/:classCode', (req, res) => {
     const classCode =  req.params.classCode

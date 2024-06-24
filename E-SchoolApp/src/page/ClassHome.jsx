@@ -235,6 +235,16 @@ const ClassHome = ({ currentSubjectName, currentImageClass, classCodeCurrent, cu
         .then((res) => setacctImagesList(res.data))
         .catch((err) => console.log(err))
 
+        //GET ALL QUIZ
+        axios.get('http://localhost:5001/quiz/getQuiz')
+        .then((res) => setquiz(res.data))
+        .catch((err) => console.log(err))
+
+        //GET ALL SCORE
+        axios.get('http://localhost:5001/scores/getScores')
+        .then((res) => setscores(res.data))
+        .catch((err) => console.log(err))
+
         //GET COMMENTS BY CLASSCODE
         getCommentsByClassCode()
 
@@ -1530,7 +1540,7 @@ const getImageUrlsByImageID = (imageID) => {
                                                         <div id={style.quizBox}>
                                                             <div className='d-flex gap-2'>
                                                                 <GiNotebook size={20} color='#186F65'/>
-                                                                <p>{quiz.filter((q) => q.quizID === post.quizID).map((q)=> q.quizTitle)}</p>
+                                                                <p>{quiz?.filter((q) => q.quizID === post.quizID).map((q)=> q.quizTitle)}</p>
                                                             </div>
                                                             {
                                                         

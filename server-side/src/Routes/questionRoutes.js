@@ -1,0 +1,78 @@
+const express = require('express')
+const router = express.Router()
+const db = require('../db')
+
+//API get quiz
+router.get('/getQuestions', (req, res) => {
+    const query = 'SELECT * FROM questions'
+
+    db.query(query, (error, data, field) => {
+        if (error) {
+            console.error(error)
+            res.status(404).send(error)
+        } else {
+            res.status(200).json(data)
+        }
+    })
+})
+
+
+router.post('/addQuestions', async (req, res) => {
+    const { choices, fillLayout, finalQuestionSet, imageSetQuestion } = req.body;
+
+    const questionQuery = "INSERT INTO questions(questionID, questionNumber, questionContent, questionType, points, keySensitive, questionAnswerText, numberOfAns, choicesID, imageID, fillLayoutID, subjectName) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)";
+    const choicesQuery = "INSERT INTO choices(choicesID, letter, content, correct) VALUES(?,?,?,?)";
+    const fillLayoutQuery = "INSERT INTO filllayout(fillContent, fillType, fillPosition, fillLayoutID) VALUES(?,?,?,?)";
+
+    try {
+        const addChoices = choices.map(choice => {
+            const { choicesID, letter, content, correct } = choice;
+            return new Promise((resolve, reject) => {
+                db.query(choicesQuery, [choicesID, letter, content, correct], (error, data) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(data);
+                    }
+                });
+            });
+        });
+
+        const addFillLayout = fillLayout.map(fill => {
+            const { fillContent, fillType, fillPosition, fillLayoutID } = fill;
+            return new Promise((resolve, reject) => {
+                db.query(fillLayoutQuery, [fillContent, fillType, fillPosition, fillLayoutID], (error, data) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(data);
+                    }
+                });
+            });
+        });
+
+        const addQuestions = finalQuestionSet.map(question => {
+            const { questionID, questionNumber, questionContent, questionType, points, keySensitive, questionAnswerText, numberOfAns, choicesID, imageID, fillLayoutID, subjectName } = question;
+            return new Promise((resolve, reject) => {
+                db.query(questionQuery, [questionID, questionNumber, questionContent, questionType, points, keySensitive, questionAnswerText, numberOfAns, choicesID, imageID, fillLayoutID, subjectName], (error, data) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(data);
+                    }
+                });
+            });
+        });
+
+        await Promise.all([...addChoices, ...addFillLayout, ...addQuestions]);
+
+        res.json({ message: 'Successfully submitted questions.' });
+
+    } catch (error) {
+        console.error('Transaction error: ', error);
+        res.status(500).json({ message: 'Failed to submit the data.' });
+    }
+});
+
+
+module.exports = router
