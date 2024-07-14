@@ -386,11 +386,12 @@ const ClassQuizSetup = ({ subjectName, navigateClass, classCode, postType, refre
                 for (let i = 0; i < final.length; i++) {
 
                     const data = {
-                        id: final[i].id,
-                        questionID: final[i].questionID, 
+                        finalQuestionSet: final,
+                        fillLayout: [],
+                        choices: [],
                     }
 
-                    axios.post('http://localhost:5001/questions/updateQuestions', data)
+                    axios.post('http://localhost:5001/questions/addQuestions', data)
                     .then( res => {
                         const result = res.data
                         console.log(result.message)

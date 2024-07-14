@@ -10,7 +10,7 @@ import notifSound from '../assets/sound/notif.mp3';
 import erroSound from '../assets/sound/error.mp3';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import StopwatchTimer from 'react-stopwatch-timer';
+import TimerComponent from '../components/TimerComponent'
 import LeaderBoard from './LeaderBoard'
 import io from 'socket.io-client'
 import { useScoreStore } from '../stores/useScoreStore'
@@ -48,6 +48,9 @@ const QuizTake = () => {
     const [isShowTimer, setisShowTimer] = useState(false)
     const [enableSubmit, setenableSubmit] = useState(false)
 
+
+    const [userAnswer, setUserAnswer] = useState([])
+
     const [currentQuiz, setCurrentQuiz] = useState()
 
     const { addScore } = useScoreStore()
@@ -84,17 +87,138 @@ const QuizTake = () => {
         },
     })
     
-    useEffect(() => {
+    useEffect( async () =>  {
+
+        try {
+           
+            // GET ALL CHOICES, FILL LAYOUT, IMAGES in parallel
+            const [choicesResponse, fillLayoutResponse, imagesResponse, quizResponse] = await Promise.all([
+                axios.get('http://localhost:5001/choices/getChoices'),
+                axios.get('http://localhost:5001/fillLayout/getFillLayout'),
+                axios.get('http://localhost:5001/images/getImages'),
+                axios.get(`http://localhost:5001/quiz/getQuizInnerJoinQuestion/${quizID}`),
+            ]);
+
+            const choices = choicesResponse.data
+            const fillLayout = fillLayoutResponse.data
+            const images = imagesResponse.data
+            const questions = quizResponse.data
+            let finalQuestions = []
+
+            // Update the state with the fetched data
+            setChoices(choices)
+            setFillLayout(fillLayout)
+            setImage(images)
+            setQuestions(questions)
+
+            
+
+            for (let i = 0; i < questions.length; i++) {
+                
+                questions[i].questionNumber = i+1
+                const type = questions[i].questionType
+                const points = questions[i].points
+                const keySensitive = questions[i].keySensitive
+                const answerText = questions[i].questionAnswerText
+                const choicesID = questions[i].choicesID
+                const fillLayoutID = questions[i].fillLayoutID
+
+                if (type === "enumeration" || type === "True Or False") {
+                    setanswers((oldData) => {
+                        let newData = [...oldData]
+
+                        // Ensure the element at the specific index is an array
+                        if (!Array.isArray(newData[i]) || numberOfAns > 1) {
+                            newData[i] = [];
+                        }
+
+                        newData[i][0] = {
+                            type: type,
+                            answer: answerText,
+                            keySensitive: keySensitive,
+                            points: points,
+                        }
+
+                        return newData
+                    })
+                }
+                
+                if (type === "choices") {
+
+                    const resuit = choices
+                    .filter((data) => data.choicesID === choicesID && data.correct === 1)
+                    .map((data, index) => ({
+                        letter: data.letter,
+                        index: index,
+                    }))
+
+                    setanswers((oldData) => {
+                        let newData = [...oldData]
+
+                        // Ensure the element at the specific index is an array
+                        if (!Array.isArray(newData[i]) || numberOfAns > 1) {
+                            newData[i] = [];
+                        }
+
+                       
+                        for (let x = 0; x < resuit.length; x++) {
+                            
+                            newData[i][resuit[x].index] = {
+                                type: type,
+                                answer: resuit[x].letter,
+                                keySensitive: keySensitive,
+                                points: points,
+                            }
+                        }
+
+                        return newData
+                        
+                    })
+                }
+
+                if (type === "fill") {
+
+                    const result = fillLayout
+                    .filter((data) => data.fillLayoutID === fillLayoutID)
+                    .map((data, index) => ({ ...data, originalIndex: index }))
+                    .filter((data) => data.fillType === "blank")
+                    .map((data) => ({
+                        answer: data.fillContent,
+                        index: data.originalIndex,
+                    }))
 
 
-        //GET QUESTION WITH QUIZID
-        axios.get('http://localhost:5001/quiz/getQuizInnerJoinQuestion/', + quizID)
-        .then((res) => {
-            const result = res.data
-            console.log('quizID', result)
-            setquestionSet(result)
-        })
-        .catch((err) => console.log(err))
+                    setanswers((oldData) => {
+                        let newData = [...oldData]
+
+                        // Ensure the element at the specific index is an array
+                        if (!Array.isArray(newData[i]) || numberOfAns > 1) {
+                            newData[i] = [];
+                        }
+
+                        for (let x = 0; x < result.length; x++) {
+                            const data = result[x]
+
+                            newData[i][data.index] = {
+                                type: type,
+                                answer: data.answer,
+                                keySensitive: keySensitive,
+                                points: points,
+                            }
+                        }
+
+                        return newData
+                    })
+                }
+                
+                finalQuestions.push(questions[i])
+            }
+            setquestionSet(finalQuestions)
+
+
+        } catch (error) {
+            console.log(error)
+        }
 
 
         //GET ALL POST
@@ -133,45 +257,15 @@ const QuizTake = () => {
             setquiz(result)
 
             const filter = result.filter((data) => data.quizID === quizID)
-            const questionID = filter[0].questionID
             setCurrentQuiz(filter[0])
             setduration(filter[0].duration)
             setquizTitle(filter[0].quizTitle)
             setquizInstructions(filter[0].quizInstructions)
 
-
-            //GET ALL QUESTIONS
-            axios.get('http://localhost:5001/questions/getQuestions')
-                .then((res) => {
-                    const questionsResults = res.data
-                    setQuestions(questionsResults)
-
-                    const filter = questionsResults.filter((data) => data.questionID === questionID)
-                    console.log('question Result', filter)
-                    setquestionSet(filter)
-                    setoverAll(filter.length)
-                    
-                })
-                .catch((err) => console.log(err))
             })
 
         .catch((err) => console.log(err))
 
-
-        //GET ALL CHOICES
-        axios.get('http://localhost:5001/choices/getChoices')
-        .then((res) => setChoices(res.data))
-        .catch((err) => console.log(err))
-
-        //GET ALL FILLLAYOUT
-        axios.get('http://localhost:5001/fillLayout/getFillLayout')
-        .then((res) => setFillLayout(res.data))
-        .catch((err) => console.log(err))
-
-        //GET ALL IMAGE
-        axios.get('http://localhost:5001/images/getImages')
-        .then((res) => setImage(res.data))
-        .catch((err) => console.log(err))
     },[])
 
 
@@ -204,7 +298,7 @@ const QuizTake = () => {
             });
         }
         
-    }
+    } 
 
     const convertTo12HourFormat = (time24) =>{
         if (time24) {
@@ -251,406 +345,295 @@ const QuizTake = () => {
 
     const handleSubmitAnswer = (e) => {
         e.preventDefault()
-        setisShowTimer(false)
-        const dataAnswer = answers
-        console.log('dataAnswer',dataAnswer)
 
-        let scoreFinal = 0
+        let score = 0
 
-        const requiredQuestions = questionSet.filter((q) => q.required === true || q.required === 0)
-        let filledQuestions = 0
+        for (let i = 0; i < answers.length; i++) {
 
-        for (let i = 0; i < requiredQuestions.length; i++) {
-            const currentQuestion = dataAnswer.filter((ans) => ans.number === requiredQuestions[i].questionNumber)
-            
-            if (currentQuestion) {
-                filledQuestions++
-            }else {
-                continue
-            }
-        }
+            if (answers[i]) {
+                if (
+                    answers[i].some(data => data.type === 'enumeration') ||
+                    answers[i].some(data => data.type === 'True Or False')
+                ) {
+                    const points = parseInt(answers[i][0].points)
 
-        if (filledQuestions === requiredQuestions.length) {
-            for (let i = 0; i < questionSet.length; i++) {
-            
-                if (questionSet[i].questionType === 'enumeration') {
-
-                    const correctAns = questionSet[i].questionAnswerText
-                    const currentAns = dataAnswer.filter((ans) => ans.number === questionSet[i].questionNumber).map((ans) => ans.answer)
-
-                    if (questionSet[i].keySensitive) {
-                        if (correctAns.toUpperCase() === currentAns[0].toUpperCase()) {
-                            let oldData = [...correctQuestionList]
-                            oldData.push({
-                                questionNumber: questionSet[i].questionNumber,
-                                answer: currentAns[0],
-                            })
-                            setcorrectQuestionList(oldData)
-                            
-                            const points = parseInt(questionSet[i].points)
-                            scoreFinal = scoreFinal + points
+                    //the question is not keysentive
+                    if (answers[i][0]?.keySensitive === 0) {
+                        if (answers[i][0]?.answer.toUpperCase() === userAnswer[i][0]?.answer.toUpperCase()) {
+                            score = points + score
                         }
-    
                     }else {
-                        if (correctAns === currentAns[0]) {
-                            let oldData = [...correctQuestionList]
-                            oldData.push({
-                                questionNumber: questionSet[i].questionNumber,
-                                answer: currentAns[0],
-                            })
-
-                            setcorrectQuestionList(oldData)
-                            const points = parseInt(questionSet[i].points)
-                            scoreFinal = scoreFinal + points
+                        if (answers[i][0]?.answer === userAnswer[i][0]?.answer) {
+                            score = points + score
                         }
                     }
-    
+                     
                 }
 
-                if (questionSet[i].questionType === 'True Or False') {
 
-                    const correctAns = questionSet[i].questionAnswerText === 1 ? true : false
-                    const currentAns = dataAnswer.filter((ans) => ans.number === questionSet[i].questionNumber).map((ans) => ans.answer)
-                    
-                    console.log('correctAns:', correctAns)
-                    console.log('currentAns:', currentAns[0])
 
-                        if (correctAns.toString() == currentAns[0].toString()) {
-                            let oldData = [...correctQuestionList]
-                            oldData.push({
-                                questionNumber: questionSet[i].questionNumber,
-                                answer: currentAns[0],
-                            })
-                            setcorrectQuestionList(oldData)
-                            
-                            const points = parseInt(questionSet[i].points)
-                            scoreFinal = scoreFinal + points
-                        }
-    
-                }
+                if (answers[i].some(data => data.type === 'choices')) {
 
-                
-                if (questionSet[i].questionType === 'choices') {
+                    let contains = 0
+                    const points = parseInt(answers[i][0].points)
+                    const numOfAnswer = answers[i].length
 
-                    const currentAns = dataAnswer.filter((ans) => ans.number === questionSet[i].questionNumber)
-                    const correctChoices = choices.filter((choice) => choice.choicesID === questionSet[i].choicesID && choice.correct).map((choice) => choice.letter)
-                    
-                    if (currentAns.length > 0) {
-                        if (currentAns.length > 1) {
-    
-                            const currentAnsList = currentAns.map((ans) => ans.answer)
-                            const correct = currentAnsList.every((letter) => correctChoices.includes(letter))
-                            
-                            console.log('currentAnsList:', currentAnsList)
-                            console.log('correct:', correct)
-                            
-                            if (correct) { 
-                                let oldData = [...correctQuestionList]
-                                oldData.push({
-                                    questionNumber: questionSet[i].questionNumber,
-                                    answer: currentAns,
-                                })
-    
-                                setcorrectQuestionList(oldData)
-    
-                                const points = parseInt(questionSet[i].points)
-                                scoreFinal = scoreFinal + points
-    
-                            }
-    
-                        }else {
-                           
-                            if (currentAns[0]?.answer === correctChoices[0]) {
+                    for (let x = 0; x < answers[i].length; x++) {
+                        const correctLetter = answers[i][x].answer
 
-                                let oldData = [...correctQuestionList]
-                                oldData.push({
-                                    questionNumber: questionSet[i].questionNumber,
-                                    answer: currentAns,
-                                })
-    
-                                setcorrectQuestionList(oldData)
-    
-                                const points = parseInt(questionSet[i].points)
-                                scoreFinal = scoreFinal + points
-
-                            }else {
-                                continue
-                            }
-                            
-                        }
-        
-                    }else {
-                        continue
-                    }
-                    
-                }
-                
-                if (questionSet[i].questionType === 'fill') {
-
-                    
-                    const currentAns = dataAnswer[i]
-                    //const currentAns = dataAnswer.filter((ans) => ans.number === questionSet[i].questionNumber).map((ans) => ans.answer)
-                    const blankFill = fillLayout.filter((fill) => fill.fillLayoutID === questionSet[i].fillLayoutID && fill.fillType === 'blank').map((fill) => fill.fillContent)
-                    //
-
-                    console.log("currentAns:", currentAns)
-                    console.log("blankFill:", blankFill)
-
-                    if (currentAns.length > 1) {
-                        const filterAns = currentAns.filter((ans) => ans.answer !== '').map((ans) => ans.answer)
-                        const correct = filterAns.every((ans, index) => ans === blankFill[index])
-                       
-                        if (correct) {
-                            let oldData = [...correctQuestionList]
-                            oldData.push({
-                                questionNumber: questionSet[i].questionNumber,
-                                answer: currentAns,
-                            })
-
-                            console.log(oldData)
-                            setcorrectQuestionList(oldData)
-
-                            const points = parseInt(questionSet[i].points)
-                            scoreFinal = scoreFinal + points
-                        }
-
-                    }else {
-                        if (questionSet[i].keySensitive) {
-                            if (currentAns.answer === blankFill[0]) {
-                                let oldData = [...correctQuestionList]
-                                oldData.push({
-                                    questionNumber: questionSet[i].questionNumber,
-                                    answer: currentAns,
-                                })
-    
-                                console.log(oldData)
-                                setcorrectQuestionList(oldData)
-    
-                                const points = parseInt(questionSet[i].points)
-                                scoreFinal = scoreFinal + points
+                        if (numOfAnswer > 1) {
+                            if (userAnswer[i].some(data => data?.answer === correctLetter)) {
+                                contains += 1
                             }
                         }else {
- 
-                            const myAns = currentAns.answer
-                            const corAns = blankFill[0]
 
-                            if (myAns.toUpperCase() === corAns.toUpperCase()) {
-                                let oldData = [...correctQuestionList]
-                                oldData.push({
-                                    questionNumber: questionSet[i].questionNumber,
-                                    answer: currentAns,
-                                })
-    
-                                console.log(oldData)
-                                setcorrectQuestionList(oldData)
-    
-                                const points = parseInt(questionSet[i].points)
-                                scoreFinal = scoreFinal + points
+                            //Check if the first user answer index is not undefiend and proceed to the next
+                            for (let x = 0; x < userAnswer[i].length; x++) {
+                                if (userAnswer[i][x] !== undefined) {
+                                    if (answers[i][0].answer === userAnswer[i][x].answer) {
+                                        score = points + score
+                                    }else {
+                                        break
+                                    }
+                                }
+                                
                             }
+                            
                         }
+                        
                         
                     }
 
+                    if (contains === answers[i].length) {
+                        score = points + score
+                    }
+                    
                 }
 
 
-            }
+                if (answers[i].some(data => data.type === 'fill')) {
 
-           
-            const { quizID } = quizTakeID
-
-            const data = {
-                    scoreID: generateUniqueId(),
-                    quizID: quizID,
-                    acctID: currentUser.acctID,
-                    fullname: generateFullname(currentUser.acctID),
-                    score: scoreFinal,
-            }
-                
-
-            addScore(data)
-            setfinalScore(scoreFinal)
-            console.log(correctQuestionList)
-            console.log('scoreFinal',scoreFinal)
-
-        }else {
-            const message = 'Please fill the required question.'
-            notify(message, 'err')
-        }
-        
-        console.log(questions)
-        setisShow('result')
-    }
-
-    const handleAnswers = (index, number, type, answer, limit, position) => {
-        const newAnswer = [...answers]
-        const numberOfAns = questionSet.filter((q) => q.questionNumber === number).map((q) => q.questionNumber)
-
-        console.log(index,number,type,answer,limit,position)
-
-        if (type === 'choices') {
-            if (limit > 1) {
-                console.log('more')
-                if (!Array.isArray(newAnswer[index])) {
-                    newAnswer[index] = []
-                    newAnswer[index][0] = {
-                        index,
-                        number,
-                        type,
-                        answer,
-                        correct: false,
-                    }
-
-                }else {
-                    
-                    for (let i = 0, items = 0; i < limit; i++) {
-
-                        if (newAnswer[index][i]) {
-                            items++
-                            if (newAnswer[index][i].answer === answer) {
-                                newAnswer[index].splice(i, 1)
-                                break
-                            }else {
-                                
-                                if (items === parseInt(limit)) {
-                                    console.log('executed')
-                                    newAnswer[index][0] =
-                                        {
-                                            index,
-                                            number,
-                                            type,
-                                            answer,
-                                            correct: false,
-                                        }
-                                    break
-                                }else {
-                                    continue
-                                }
-                                
+                    //Get the point in array the not undefined
+                    const getPoints = (data) => {
+                        for (let x = 0; x < data.length; x++) {
+                            
+                            if (data[x] !== undefined) {
+                               return parseInt(data[x].points)
                             }
-
-                            
-                            
-                        }else if (!newAnswer[index][i]) {
-                            console.log('execute space')
-                            newAnswer[index][i] =
-                                {
-                                    index,
-                                    number,
-                                    type,
-                                    answer,
-                                    correct: false,
-                                }
-                            break
-                        }else {
-                            console.log('execute full')
-                            newAnswer[index][0] =
-                                {
-                                    index,
-                                    number,
-                                    type,
-                                    answer,
-                                    correct: false,
-                                }
-                            break
                         }
                     }
+
+                    //Get the number of answer
+                    const getTheNumberOfAnswer = (data) => {
+                        let total = 0
+                        for (let x = 0; x < data.length; x++) {
+                            if (data[x] !== undefined) {
+                                total += 1
+                            }
+                        }
+                        return total
+                    }
+
+                    let correct = 0
+                    const points = getPoints(answers[i])
+                    const numOfAnswer = getTheNumberOfAnswer(answers[i])
+                    
+                    for (let x = 0; x < answers[i].length; x++) {
+                        
+                        if (answers[i][x] !== undefined) {
+
+                            //Check if keysentive 0 means false
+                            if (answers[i][x].keySensitive === 0) {
+                                if (answers[i][x].answer.toUpperCase() === userAnswer[i][x].answer.toUpperCase()) {
+                                    console.log("correct")
+                                    correct += 1
+                                }
+                            }else {
+                                if (answers[i][x].answer === userAnswer[i][x].answer) {
+                                    correct += 1
+                                }
+                            }
+                        }
+                    }
+
+                    //Check if the number of correct is same in the number of answer
+                    if (correct === numOfAnswer) {
+                        score = points + score
+                    }
                 }
 
-                
-                
-            }else {
-                newAnswer[index] = {
-                    index,
-                    number,
-                    type,
-                    answer,
-                    correct: false,
-                }
+
             }
-
             
         }
-        
-        if (type === 'fill') {
 
-            if (limit > 1) {
-
-                if (!Array.isArray(newAnswer[index])) {
-                    console.log('execute2')
-                    newAnswer[index] = []
-                    newAnswer[index][position] = {
-                        index,
-                        number,
-                        type,
-                        answer,
-                        correct: false,
-                    }
-                }else {
-
-                    const items = newAnswer[index].length
-
-                        newAnswer[index][position] = {
-                            index,
-                            number,
-                            type,
-                            answer,
-                            correct: false,
-                        }
-
-                   
-
-                }
-
-            }else {
-                newAnswer[index] = {
-                    index,
-                    number,
-                    type,
-                    answer,
-                    correct: false,
-                }
-            }
-
-
-        }
-        
-        if (type === 'enumeration' || type === 'True Or False') {
-
-            newAnswer[index] = {
-                index,
-                number,
-                type,
-                answer,
-                correct: false,
-            }
+        const data = {
+            scoreID: generateUniqueId(),
+            quizID: quizID,
+            acctID: currentUser.acctID,
+            fullname: generateFullname(),
+            score: score,
         }
 
-        console.log(newAnswer)
-        setanswers(newAnswer)
+        console.log(data)
+
+        axios.post("http://localhost:5001/scores/addScore", data)
+        .then((res) => {
+            const result = res.data
+            console.log(result.message)
+        })
+        .catch((err) => console.log(err))
+
+
+        setfinalScore(score)
+        setisShow('result')
+
     }
 
-    const containsAnswer = (answer, target, letter) => {
+    const enableSubmitAnswer = () => {
 
-        if (letter) {
-            if (answers[target]?.answer === letter) {
-                return true
+        let requiredQuestions = []
+
+        for (let i = 0; i < questions?.length; i++) {
+            
+            if (questions[i].required === 1) {
+                requiredQuestions.push(i)
             }
+        }
 
-             if (Array.isArray(answers[target])) {
-                const filter = answers[target].filter((ans) => ans.answer === letter)
-                if (filter.length > 0) {
-                    return true
-                }else {
+        if (requiredQuestions.length === 0) {
+            return false
+        }
+
+        if (userAnswer.length > 0) {
+             for (let x = 0; x < requiredQuestions.length; x++) {
+                if (userAnswer[x]?.length > 0) {
                     return false
                 }
-             }
+            }
+        }else {
+            return true
         }
+       
+        return true
+    }
+
+    const handleAnswers = (number, type, answer, numberOfAns, index, keySensitive) => {
+
+        if (type === "enumeration" || type === "True Or False") {
+            setUserAnswer((oldData) => {
+                let newData = [...oldData]
+
+                // Ensure the element at the specific index is an array
+                if (!Array.isArray(newData[number]) || numberOfAns > 1) {
+                    newData[number] = [];
+                }
+
+                newData[number][0] = {
+                    type: type,
+                    answer: answer,
+                    keySensitive: keySensitive,
+                }
+
+                return newData
+            }) 
+        }
+
+        if (type === "choices") {
+            setUserAnswer((oldData) => {
+                let newData = [...oldData]
+                
+                // Ensure the element at the specific index is an array
+                if (!Array.isArray(newData[number]) || numberOfAns > 1) {
+                    newData[number] = []
+                }
+                
+                if (newData[number].length !== 0) {
+
+                    if (newData[number][index]?.answer === answer) {
+                        let oldData = [...newData[number]]
+
+                        const result = oldData.filter(data => data !== undefined)
+                        .filter(data => data.answer !== answer)
+
+                        console.log(result)
+
+                        newData[number] = result
+
+                    }else {
+                     
+                         // Push the new answer to the array at the specific index
+                        newData[number][index] = {
+                            type: type,
+                            answer: answer,
+                            keySensitive: keySensitive,
+                        }
+                    }
+                }else {
+                   
+                     // Push the new answer to the array at the specific index
+                    newData[number][index] = {
+                        type: type,
+                        answer: answer,
+                        keySensitive: keySensitive,
+                    }
+                }
+
+               
+        
+                // Remove duplicates by converting to a Set and then back to an array
+                newData[number] = [...new Set(newData[number])]
+        
+                return newData
+            })
+        }
+
+        if (type === "fill") {
+            setUserAnswer((oldData) => {
+                let newData = [...oldData];
+                
+                // Ensure the element at the specific index is an array
+                if (!Array.isArray(newData[number] || numberOfAns > 1)) {
+                    newData[number] = []
+                }
+        
+                // Push the new answer to the array at the specific index
+                newData[number][index] = {
+                    type: type,
+                    answer: answer,
+                    keySensitive: keySensitive,
+                }
+        
+                // // Remove duplicates by converting to a Set and then back to an array
+                // newData[number][index] = [...new Set(newData[number])];
+        
+                return newData
+            });
+        }
+
+    }
+
+    const containsAnswer = (answer, letter) => {
+    
+        if (letter, answer) {
+            for (let i = 0; i < answer.length; i++) {
+
+                //Check if the current array is not empty to avoid error
+                if (answer[i]) {
+                    if (answer[i].answer === letter) {
+                        return true
+                    }
+                }
+                
+            }
+        }
+
+        return false
 
     }
 
     const generatePicture = (data) => {
-        return 'http://localhost:1/'+data
+        return 'http://localhost:1/'+ data
     }
 
     const generateCloseTime = () => {
@@ -665,21 +648,16 @@ const QuizTake = () => {
 
 
     const handleStart = () => {
-        const filterPost = post.filter((post) => post.postID === postID)
-        let time = filterPost[0].duration
-        console.log(time)
+       
         setisShow('take')
-        if (time > 0) {
+        if (duration > 0) {
             setisShowTimer(true)
-            start()
         }else {
             setenableSubmit(false)
-            //stop()
         }
 
         const { quizID } = quizTakeID
         const room = quizID
-        socket.emit('joinQuiz', room)
 
     }
 
@@ -695,9 +673,7 @@ const QuizTake = () => {
              <ToastContainer/>
             {
                 isShowTimer && (
-                    <div id={style.timer}>
-                        <p>{`Timer: ${minutes}:${seconds}`}</p>
-                    </div>
+                    <TimerComponent duration={duration} handleSubmitAnswer={handleSubmitAnswer}/>
                 )
             }
             
@@ -728,6 +704,7 @@ const QuizTake = () => {
                         <form action="" className={style.form} onSubmit={handleSubmitAnswer}>
                             {
                                 questionSet && (
+                                 
                                     questionSet.map((questions, target) => (
                                         
                                         questions.questionType === 'enumeration' && questions.imageID === 'none' && (
@@ -747,7 +724,7 @@ const QuizTake = () => {
                                                         id={style.textAnswer}
                                                         
                                                         required={questions.required ? true : false}
-                                                        onChange={(e) => handleAnswers(target, questions.questionNumber, questions.questionType, e.target.value, questions.numberOfAns)}
+                                                        onChange={(e) => handleAnswers(target, questions.questionType, e.target.value, questions.numberOfAns, 0, questions.keySensitive)}
                                                     >
                                                     </textarea>
                                                 </div>
@@ -772,7 +749,7 @@ const QuizTake = () => {
                                                         <textarea
                                                             id={style.textAnswer}
                                                             required={questions.required ? true : false}
-                                                            onChange={(e) => handleAnswers(target, questions.questionNumber, questions.questionType, e.target.value, questions.numberOfAns)}
+                                                            onChange={(e) => handleAnswers(target, questions.questionType, e.target.value, questions.numberOfAns, 0, questions.keySensitive)}
                                                         >
                                                         </textarea>
                                                     </div>
@@ -814,8 +791,8 @@ const QuizTake = () => {
                                                             .map((chs, index) => (
                                                             <div 
                                                                 key={index}
-                                                                className={ containsAnswer(answers[target], target, chs.letter) ? style.choicesActive : style.choices }
-                                                                onClick={(e) => handleAnswers(target, questions.questionNumber, questions.questionType, chs.letter, questions.numberOfAns)}
+                                                                className={ containsAnswer(userAnswer[target], chs.letter) ? style.choicesActive : style.choices }
+                                                                onClick={(e) => handleAnswers(target, questions.questionType, chs.letter, questions.numberOfAns, index, questions.keySensitive)}
                                                             >
                                                                 {chs.letter}. {chs.content}
 
@@ -843,10 +820,10 @@ const QuizTake = () => {
                                                             choices
                                                                 .filter((chs) => chs.choicesID === questions.choicesID)
                                                                 .map((chs, index) => (
-                                                                <div 
+                                                                <div
                                                                     key={index}
-                                                                    className={answers[target] === chs.letter ? style.choicesActiveImage : style.choicesImage }
-                                                                    onClick={(e) => handleAnswers(target, questions.questionNumber, questions.questionType, chs.letter, questions.numberOfAns)}
+                                                                    className={ containsAnswer(userAnswer[target], chs.letter) ? style.choicesActive : style.choices }
+                                                                    onClick={(e) => handleAnswers(target, questions.questionType, chs.letter, questions.numberOfAns, index, questions.keySensitive)}
                                                                 >
                                                                     {chs.letter}. {chs.content}
                                                                 </div>
@@ -891,7 +868,7 @@ const QuizTake = () => {
                                                                                 className={style.fillBlank}
                                                                                 placeholder='Write the answer'
                                                                                 required={questions.required ? true : false}
-                                                                                onChange={(e) => handleAnswers(target, questions.questionNumber, questions.questionType, e.target.value, questions.numberOfAns, index)}
+                                                                                onChange={(e) => handleAnswers(target, questions.questionType, e.target.value, questions.numberOfAns, index, questions.keySensitive)}
                                                                                 >
                                                                             </input>
                                                                         )
@@ -926,8 +903,7 @@ const QuizTake = () => {
                                                                                     className={style.fillBlank}
                                                                                     required={questions.required ? true : false}
                                                                                     placeholder='Write the answer'
-                                                                                    onChange={(e) => handleAnswers(target, questions.questionNumber, questions.questionType, e.target.value, questions.numberOfAns, index)}
-                                                                                    
+                                                                                    onChange={(e) => handleAnswers(target, questions.questionType, e.target.value, questions.numberOfAns, index, questions.keySensitive)}
                                                                                     >
                                                                                 </input>
                                                                             )
@@ -974,14 +950,14 @@ const QuizTake = () => {
                                                     <p style={{ margin: '0', fontSize: '10pt'}}>Answer:</p>
                                                     <div className='d-flex justify-content-center'>
                                                         <div 
-                                                            className={answers[target]?.answer === 'true' ? style.choicesActive : style.choices }
-                                                            onClick={() => handleAnswers(target, questions.questionNumber, questions.questionType, 'true')}
+                                                            className={ containsAnswer(userAnswer[target], 'true') ? style.choicesActive : style.choices }
+                                                            onClick={(e) => handleAnswers(target, questions.questionType,'true', questions.numberOfAns, 0, questions.keySensitive)}
                                                         >
                                                             true 
                                                         </div>
                                                         <div 
-                                                            className={answers[target]?.answer === 'false'? style.choicesActive : style.choices }
-                                                            onClick={() => handleAnswers(target, questions.questionNumber, questions.questionType, 'false')}
+                                                            className={ containsAnswer(userAnswer[target], 'false') ? style.choicesActive : style.choices }
+                                                            onClick={() => handleAnswers(target, questions.questionType, 'false', questions.numberOfAns, 0, questions.keySensitive)}
                                                         >
                                                             false
                                                         </div>
@@ -1007,13 +983,13 @@ const QuizTake = () => {
                                                         <p style={{ margin: '0', fontSize: '10pt'}}>Answer:</p>
                                                         <div className='d-flex'>
                                                             <div 
-                                                                className={answers[target]?.answer === 'true' ? style.choicesActive : style.choices }
-                                                                onClick={() => handleAnswers(target, questions.questionNumber, questions.questionType, 'true')}
+                                                                className={ containsAnswer(userAnswer[target], 'true') ? style.choicesActive : style.choices }
+                                                                onClick={(e) => handleAnswers(target, questions.questionType,'true', questions.numberOfAns, 0, questions.keySensitive)}
                                                             >true
                                                             </div>
                                                             <div 
-                                                                className={answers[target]?.answer === 'false' ? style.choicesActive : style.choices }
-                                                                onClick={() => handleAnswers(target, questions.questionNumber, questions.questionType, 'false')}
+                                                                className={ containsAnswer(userAnswer[target], 'false') ? style.choicesActive : style.choices }
+                                                                onClick={() => handleAnswers(target, questions.questionType, 'false', questions.numberOfAns, 0, questions.keySensitive)}
                                                             >false
                                                             </div>
                                                         </div>
@@ -1043,7 +1019,7 @@ const QuizTake = () => {
                             }
 
                         <div className='w-100 d-flex justify-content-end'>
-                            <button className={style.btnSubmit} type='submit' disabled={enableSubmit}>Submit</button>
+                            <button className={style.btnSubmit} type='submit' disabled={enableSubmitAnswer()}>Submit</button>
                         </div>
                         </form>
                     </div>
@@ -1056,7 +1032,7 @@ const QuizTake = () => {
                             <p>Your Score</p>
                             <h1>{finalScore}/{generateOverAllScore()}</h1>
                         </div>
-                        <button className={style.btnBack} onClick={() => updateRouteChoose('class')}>Back</button>
+                        <button className={style.btnBack} onClick={() => setisShow('leaderboards')}>LeaderBoard</button>
                        
                     </div>
                 ) ||

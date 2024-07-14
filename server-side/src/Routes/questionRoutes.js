@@ -16,6 +16,20 @@ router.get('/getQuestions', (req, res) => {
     })
 })
 
+//API get quiz
+router.get('/getQuestionsByQuizID/:quizID', (req, res) => {
+    const query = 'SELECT * FROM questions'
+
+    db.query(query, (error, data, field) => {
+        if (error) {
+            console.error(error)
+            res.status(404).send(error)
+        } else {
+            res.status(200).json(data)
+        }
+    })
+})
+
 //Update Questions
 router.post('/updateQuestions', (req, res) => {
     const { id, questionID } = req.body
@@ -35,13 +49,14 @@ router.post('/updateQuestions', (req, res) => {
 
 //Add questions
 router.post('/addQuestions', async (req, res) => {
-    const { choices, fillLayout, finalQuestionSet, imageSetQuestion } = req.body;
+    const { choices, fillLayout, finalQuestionSet } = req.body;
 
     const questionQuery = "INSERT INTO questions(questionID, questionNumber, questionContent, questionType, points, keySensitive, questionAnswerText, numberOfAns, choicesID, imageID, fillLayoutID, subjectName) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)";
     const choicesQuery = "INSERT INTO choices(choicesID, letter, content, correct) VALUES(?,?,?,?)";
     const fillLayoutQuery = "INSERT INTO filllayout(fillContent, fillType, fillPosition, fillLayoutID) VALUES(?,?,?,?)";
 
     try {
+        
         const addChoices = choices.map(choice => {
             const { choicesID, letter, content, correct } = choice;
             return new Promise((resolve, reject) => {

@@ -1084,10 +1084,14 @@ const getFilesUrlsByFileID = (fileID) => {
 }
 
 const ifAlreadyTaken = (quizID) => {
-    const filter = scores.filter((scr) => scr.quizID === quizID).map((scr) => scr.acctID)
-    if (userAccount.acctID === filter[0]) {
-        return true
+    const filter = scores?.filter((scr) => scr.quizID === quizID).map((scr) => scr.acctID)
+
+    if (filter) {
+        if (userAccount.acctID === filter[0]) {
+            return true
+        }
     }
+    
     return false
 }
 
@@ -1510,8 +1514,8 @@ const getImageUrlsByImageID = (imageID) => {
                                                     post.imageID !== 'none' && (
                                                         getImageUrlsByImageID(post.imageID) &&
                                                         getImageUrlsByImageID(post.imageID).map((data, index) => (
-                                                            <div className={style.imgContainer} onClick={() => handleViewImage(data)}>
-                                                                <img key={index} src={data} alt="photo" id={style.imgSend}/>
+                                                            <div key={index} className={style.imgContainer} onClick={() => handleViewImage(data)}>
+                                                                <img src={data} alt="photo" id={style.imgSend}/>
                                                             </div>
                                                         ))
                                                     )

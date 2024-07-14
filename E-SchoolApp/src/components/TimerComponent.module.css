@@ -1,0 +1,47 @@
+@font-face {
+    font-family: sanBold;
+    src: url('../assets/fonts/sanBold.ttf');
+}
+@font-face {
+    font-family: sanSemi;
+    src: url('../assets/fonts/sanSemi.ttf');
+}
+
+.timer {
+    background-color: #508D4E;
+    color: white;
+    animation: pop 0.5s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1%;
+    border-radius: 10px;
+}
+
+p {
+    font-family: bold;
+    margin: 0;
+}
+
+
+@keyframes pop {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.1);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
