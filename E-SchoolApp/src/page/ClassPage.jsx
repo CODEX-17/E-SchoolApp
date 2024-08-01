@@ -16,6 +16,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import * as XLSX from 'xlsx'
 import { ProgressBar } from  'react-loader-spinner';
+import io from 'socket.io-client'
+const socket = io.connect('http://localhost:5001')
 
 
 const ClassPage = () => {
@@ -34,7 +36,7 @@ const [errorMessage, setErrorMessage] = useState(false)
 
 const [dropHideList, setdropHideList] = useState(false)
 const [showPreview, setshowPreview] = useState('loading')
-const [currentSubjectName, setcurrentSubjectName] = useState()
+const [currentClassName, setcurrentClassName] = useState()
 const [currentClassCode, setcurrentClassCode] = useState()
 const [currentclassID, setcurrentclassID] =useState()
 const [currentMemberID, setcurrentMemberID] = useState()
@@ -51,17 +53,46 @@ const notif = new Howl({ src: [notifSound]})
 const errSound = new Howl({ src: [erroSound]})
 
 useEffect(() => {
+
     const acctID = userAccount.acctID
-    console.log(acctID)
+
+    //Socket for account Online
+    socket.emit('addOnlineList', acctID)
+
     axios.get('http://localhost:5001/classes/getClassesByAccount/' + acctID)
     .then((res) => {
         setshowPreview('classPage')
-        console.log(res.data)
-        setClassesList(res.data)
+        const result = res.data
+        console.log("result:", result)
+
+        if (result) {
+
+            let classCodeList = [acctID]
+
+            classCodeList = result.map((data) => data.classCode)
+
+            for (let i = 0; i < classCodeList.length; i++) {
+                //Join room as acctID will becomes roomID for notifications
+                socket.emit('joinRoom', classCodeList[i])
+            }
+            
+        }
+
+        const newValue = result.reduce((cls, current) => {
+
+            if (!cls.some(item => item.id === current.id)) {
+                cls.push(current);
+            }
+
+            console.log(cls)
+            return cls;
+        }, [])
+        
+        setClassesList(newValue)
     })
     .catch((err) => console.error(err))
 
-},[update])
+},[])
 
 
 const duplicateClassCodeCheck = (classCode) => {
@@ -205,6 +236,10 @@ const handleAddClass = (e) => {
     formData.append('memberType', 'admin')
     formData.append('image', imageFile)
 
+    for (let [key, value] of formData.entries()) {
+        console.log(`${key}: ${value}`)
+    }
+
     axios.post('http://localhost:5001/classes/addClass', formData, {
         headers: {
             'Content-Type':'multipart/form-data'
@@ -224,11 +259,10 @@ const handleAddClass = (e) => {
 
 }
 
-const handleOpenClass = (subjectName, classCode, membersID, imageID, id, classDesc) => {
+const handleOpenClass = (className, classCode, membersID, imageID, id, classDesc) => {
     setcurrentMemberID(membersID)
     setcurrentClassCode(classCode)
-    console.log('classCode',classCode)
-    setcurrentSubjectName(subjectName)
+    setcurrentClassName(className)
     setclassDesc(classDesc)
     setshowPreview('classHome')
     setcurrentclassID(id)
@@ -310,17 +344,18 @@ const handleFileImport = (e) => {
     
     if (selectedFile){
         if (selectedFile && fileTypes.includes(selectedFile.type)) {
-            setTypeError(null);
+            //setTypeError(null);
             let reader = new FileReader();
             reader.readAsArrayBuffer(selectedFile);
             reader.onload=(e) => {
                 const data = e.target.result
                 setExcelFile(data)
+                console.log(data)
             }
         }
 
         else{
-            setTypeError('Please select only excel file types');
+            //setTypeError('Please select only excel file types');
             setExcelFile(null);
         }
     }
@@ -360,9 +395,8 @@ const handleExcelFileSubmit = (e) => {
                         if (newClassCode === existingClassCode) {
                             exist = exist + 1
                             console.log(newClassCode + 'is exist')
-                        }else {
-                            continue
-                        }                    
+                        }
+                                          
                    }
 
                    if (exist === 0) {
@@ -373,7 +407,7 @@ const handleExcelFileSubmit = (e) => {
                         formData.append('classDesc', newClassCode)
                         formData.append('classCode', newClassCode)
                         formData.append('membersID', generatedID)
-                        formData.append('imageID', generatedID)
+                        formData.append('imageID', 'default')
                         formData.append('hidden', 'false')
                         formData.append('acctID', userAccount.acctID)
                         formData.append('firstname', userAccount.firstname)
@@ -447,7 +481,7 @@ const handleExcelFileSubmit = (e) => {
         {
             showPreview === 'classHome' && (
                 <ClassHome 
-                   currentSubjectName={currentSubjectName}
+                   currentClassName={currentClassName}
                    classCodeCurrent={currentClassCode}
                    currentMemberID={currentMemberID}
                    backToHomePage={backToHomePage}
@@ -628,6 +662,7 @@ const handleExcelFileSubmit = (e) => {
                                                     <div className={style.horizontalList}>
                                                         {
                                                             classesList.length > 0 ? (
+                                                                console.log(classesList),
                                                                 classesList.filter((data) => data.hidden === 'true' || data.hidden === true).map((data, index) => (
                                                                     <div className={style.classCard} key={index}>
                                                                         <AiFillEye size={20} className={style.btnVisible} title='Unhide class' onClick={() => handleUnHideClass(data.id)}/>

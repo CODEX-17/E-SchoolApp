@@ -17,6 +17,7 @@
     height: 50px;
     width: 100%;
     display: flex;
+    color: #3E3F40;
     font-family: normal;
 }
 
@@ -55,6 +56,108 @@
     right: 50px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     animation: slideDown 0.5s ease;
+}
+
+#notifContainer {
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 300px;
+  height: 350px;
+  border-radius: 5px;
+  background-color: white;
+  position: absolute;
+  padding: 10px;
+  margin-top: 450px;
+  right: 50px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  animation: slideDown 0.5s ease;
+}
+
+#title {
+  font-size: 15pt;
+  font-family: bold;
+  margin: 0;
+}
+
+.listNotif {
+  overflow-y: auto;
+  height: 90%;
+  padding-top: 2%;
+  border-top: 1px solid #dededf;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.head p {
+  font-size: 8pt;
+  margin: 0;
+  cursor: pointer;
+}
+
+.head p:hover {
+  font-size: 8pt;
+  margin: 0;
+  cursor: pointer;
+  color: #0c9cec;
+}
+
+.card {
+  padding: 2%;
+  display: flex;
+  position: relative;
+  gap: 2%;
+  align-items: center;
+  background-color: #ebebeb;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+#circle {
+  background-color: red;
+  color: red;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  position: absolute;
+  right: -2px;
+}
+
+#delete {
+  position: absolute;
+  right: 10px;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.card img {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  border: 2px solid #0c9cec;
+}
+
+.contentText {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.contentText p {
+  font-size: 8pt;
+  font-family: normal;
+  margin: 0;
+}
+
+.contentText h2 {
+  font-size: 10pt;
+  font-family: bold;
+  margin: 0;
 }
 
 .menuTop {

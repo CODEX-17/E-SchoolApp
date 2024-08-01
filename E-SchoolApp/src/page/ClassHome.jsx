@@ -25,42 +25,23 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios'
 import { IoMdSettings } from "react-icons/io";
 import ClassQuizSetup from './ClassQuizSetup';
-import ClassAssignment from './ClassAssignment';
 import { GiNotebook } from "react-icons/gi";
 import { useFilesStore } from '../stores/useFilesStore';
 import { SiFiles } from "react-icons/si";
 import { ProgressBar } from  'react-loader-spinner';
 import { useClassStore } from '../stores/useClassStore';
 import { IoCloseCircle } from "react-icons/io5";
-import { useQuizStore } from '../stores/useQuizStore';
 import LeaderBoard from './LeaderBoard';
-import { useScoreStore } from '../stores/useScoreStore';
-import { useMemberStore } from '../stores/useMemberStore';
-import { useReactionsStore } from '../stores/useReactionsStore';
-import { useCommentsStore } from '../stores/useCommentsStore';
 import { BiSolidMessageDetail } from "react-icons/bi";
 import { IoDocumentText } from "react-icons/io5";
 import { FaFolderOpen } from "react-icons/fa";
-import generateImageByImageID from '../utils/generateImageByImageID'
-
-import { FaPlus } from "react-icons/fa";
-import generateFullname from '../utils/generateFullname';
-import postContentHook from '../utils/postContentHook'
-
-
-import { IoSend } from "react-icons/io5";
-
-
-
 import io from 'socket.io-client'
 const socket = io.connect('http://localhost:5001')
 
 
-const ClassHome = ({ currentSubjectName, currentImageClass, classCodeCurrent, currentMemberID, backToHomePage, classDesc, currentclassID }) => {
+const ClassHome = ({ currentClassName, currentImageClass, classCodeCurrent, currentMemberID, backToHomePage, classDesc, currentclassID }) => {
 
- const { updateClass, getClass } = useClassStore()
 
- const [heartReact, setheartReact] = useState(false)
  const [uniqueId, setuniqueId] = useState('')
  const [likeReact, setlikeReact] = useState(false)
  const [choose, setChoose] = useState('home')
@@ -100,26 +81,18 @@ const ClassHome = ({ currentSubjectName, currentImageClass, classCodeCurrent, cu
  const [currentScore, setcurrentScore] = useState(0)
 
  const [currentPost, setCurrentPost] = useState(null)
+ const [schedulePostList, setschedulePostList] = useState([])
  const [postType, setPostType] = useState('')
  const [quizObj, setQuizObj] = useState('')
  const [filteredComments, setFilteredComments] = useState([])
  
- 
- const { uploadPost, deletePost, getPost, updateHeart } = usePostStore()
- const { uploadImage, getImages, images } = useImageStore()
- const { getAccountById, currentAccount} = useAccountStore()
  const { updateRouteChoose } = useNavigateStore()
- const { getAccounts } = useAccountStore()
  const { uploadFiles, getFiles } = useFilesStore()
- const { getQuiz } = useQuizStore()
- const { getScore } =useScoreStore()
- const { getMembers } = useMemberStore()
- const { getReactions, addReactions, deleteReactions} = useReactionsStore()
- const { getComments, addComments } = useCommentsStore()
  const navigate = useNavigate()
  
 
  const [showPostModal, setshowPostModal] = useState(false)
+ const [showSchedPost, setShowSchedPost] = useState(false)
  const [showChangeFileModal, setshowChangeFileModal] = useState(false)
  const [isShowSettings, setisShowSettings] = useState(true)
  const [showLoading, setshowLoading] =useState(true)
@@ -149,9 +122,9 @@ const ClassHome = ({ currentSubjectName, currentImageClass, classCodeCurrent, cu
  const [currentClassCode, setCurrentClassCode] = useState(classCodeCurrent)
  const [memberID, setmemberID] = useState(currentMemberID)
  
- const [updatedClassCode, setupdatedClassCode] = useState()
- const [updatedClassName, setupdatedClassName] = useState()
- const [updatedClassDesc, setupdatedClassDesc] = useState(classDescription)
+ const [updatedClassCode, setupdatedClassCode] = useState(classCodeCurrent)
+ const [updatedClassName, setupdatedClassName] = useState(currentClassName)
+ const [updatedClassDesc, setupdatedClassDesc] = useState(classDesc)
  const [currentClassImageID, setcurrentClassImageID] = useState()
 
 
@@ -187,9 +160,29 @@ const ClassHome = ({ currentSubjectName, currentImageClass, classCodeCurrent, cu
     }
  }
 
+ const parseDateTime = (dateStr, timeStr) => {
+    const [dayOfWeek, month, day, year] = dateStr.split(' ');
+    const [time, period] = timeStr.split(' ');
+    const [hours, minutes] = time.split(':');
+  
+    const monthIndex = new Date(`${month} 1, 2000`).getMonth();
+    let hours24 = parseInt(hours, 10);
+  
+    if (period === 'PM' && hours24 !== 12) {
+      hours24 += 12;
+    } else if (period === 'AM' && hours24 === 12) {
+      hours24 = 0;
+    }
+  
+    return new Date(year, monthIndex, day, hours24, minutes);
+  };
+
  useEffect(() => {
 
     if (currentClassCode) {
+
+        socket.emit('joinRoom', currentClassCode)
+
         axios.get('http://localhost:5001/classes/getClasses')
         .then((res) => {
             const value = res.data
@@ -213,8 +206,15 @@ const ClassHome = ({ currentSubjectName, currentImageClass, classCodeCurrent, cu
         axios.get('http://localhost:5001/post/getPostByClassCode/' + currentClassCode)
         .then((res) => {
             const value = res.data
-            console.log('currentPost: ',value)
-            setCurrentPost(value)
+            const noSchedPosts = value.filter((data) => data.schedStatus === 'no').sort((a, b) => {
+                const dateTimeA = parseDateTime(a.datePosted, a.timePosted);
+                const dateTimeB = parseDateTime(b.datePosted, b.timePosted);
+                return dateTimeA - dateTimeB;
+            }) 
+            setCurrentPost(noSchedPosts)
+
+            const schedPosts = value.filter((data) => data.schedStatus === 'yes')
+            setschedulePostList(schedPosts)
         })
         .catch((err) => {
             console.log(err)
@@ -256,6 +256,53 @@ const ClassHome = ({ currentSubjectName, currentImageClass, classCodeCurrent, cu
         
     }
 
+    socket.on('receivedSchedPost', (messageNotif) => {
+
+        //GET FILES BY CLASSCODE
+        axios.get('http://localhost:5001/files/getFilesByClassCode/' + currentClassCode)
+        .then((res) => {
+            const value = res.data
+            console.log('files', value)
+            setfilesLists(value)
+        })
+        .catch((err) => {
+            console.log(err)
+        })
+ 
+        //GET IMAGES BY CLASSCODE
+        axios.get('http://localhost:5001/images/getImagesByClassCode/' + currentClassCode)
+        .then((res) => {
+            const value = res.data
+            console.log('images', value)
+            setimageList(value)
+            setshowLoading(false)
+        })
+        .catch((err) => {
+            console.log(err)
+        })
+
+         //GET POST BY CLASSCODE
+         axios.get('http://localhost:5001/post/getPostByClassCode/' + currentClassCode)
+         .then((res) => {
+             const value = res.data
+             const noSchedPosts = value.filter((data) => data.schedStatus === 'no').sort((a, b) => {
+                 const dateTimeA = parseDateTime(a.datePosted, a.timePosted);
+                 const dateTimeB = parseDateTime(b.datePosted, b.timePosted);
+                 return dateTimeA - dateTimeB;
+             }) 
+             setCurrentPost(noSchedPosts)
+
+             console.log(messageNotif)
+ 
+             const schedPosts = value.filter((data) => data.schedStatus === 'yes')
+             setschedulePostList(schedPosts)
+         })
+         .catch((err) => {
+             console.log(err)
+         })
+         
+    });
+
  },[])
 
  
@@ -274,6 +321,34 @@ const ClassHome = ({ currentSubjectName, currentImageClass, classCodeCurrent, cu
         console.log(err)
     })
  )
+
+ const handlePostNow = (data) => {
+
+    if (data) {
+        const values = {
+            schedID: data.schedID,
+            time: time,
+            date: date,
+        }
+        console.log('selected POST', data)
+        axios.post('http://localhost:5001/post/postNowTheSchedule', values)
+        .then((res) => {
+            const data = res.data
+            console.log(data.message)
+            notify(data.message, 'success')
+
+            //setCurrentPost((oldData) => [...oldData, data])
+            socket.emit('UpdatePost', currentClassCode)
+
+            //Remove the post in schedulePostList variable
+            const result = schedulePostList.filter(data => data.schedID !== schedID)
+            setschedulePostList(result)
+        })
+        .catch((err) => console.log(err))
+
+    }
+   
+ }
 
  const getImagesByClassCode = () => (
 
@@ -314,21 +389,7 @@ const ClassHome = ({ currentSubjectName, currentImageClass, classCodeCurrent, cu
         //     notify(message, 'success')
         // })
         
-useEffect(()=> {
 
-        getAccounts()
-        getComments()
-        getMembers()
-        getScore()
-        getPost()
-        generateUniqueId()
-        getImages()
-        getClass()
-        getFiles()
-        getQuiz()
-        getReactions()
-    
-},[])
 
 const handleUploadImageClick = () => {
     inputImageFileRef.current.click()
@@ -619,6 +680,9 @@ const handleDeletePost = (postID, imageID, fileID) => {
         .catch((err) => console.log(err))
 
 
+        //Update post
+        socket.emit('UpdatePost', currentClassCode)
+
         const filter = currentPost.filter((data) => data.postID !== postID)
         setCurrentPost(filter)
     }
@@ -671,13 +735,13 @@ const handlePost = () => {
         let updated = [...currentPost]
         
         let updatedPost = {
-            postID: uniqueId,
+            postID: generateID(),
             acctID: userAccount.acctID,
             name: generateFullname(),
             timePosted: time,
             datePosted: date,
             postContent,
-            replyID: uniqueId,
+            replyID: generateID(),
             image: file,
             file: docxFiles,
             heartCount,
@@ -687,29 +751,32 @@ const handlePost = () => {
             postType: 'normal',
             quizID: 'none',
             schedID: 'none',
+            schedStatus: 'no',
+            dueStatus: 'no',
+            closeStatus: 'no',
             duration: 0,
             random: 'none',
         }
 
         // if image is not null it return unique id
         if (updatedPost.image) {
-            updatedPost.imageID = uniqueId
+            updatedPost.imageID = generateID()
         }else {
             updatedPost.imageID = 'none'
         }
 
         // if file is not null it return unique id
         if (updatedPost.file) {
-            updatedPost.fileID = uniqueId
+            updatedPost.fileID = generateID()
         }else {
             updatedPost.fileID = 'none'
         }
 
         // add post in variable
         updated.push(updatedPost)
-        setCurrentPost(updated)
+        // setCurrentPost(updated)
 
-        console.log(updatedPost)
+        console.log('updatedPost', updatedPost)
 
         // API for adding post
         axios.post('http://localhost:5001/post/addPost', updatedPost )
@@ -777,6 +844,9 @@ const handlePost = () => {
             setFile(null)
             setdocxFiles(null)
             setshowPostModal(false)
+
+            //Update post
+            socket.emit('UpdatePost', currentClassCode)
 
             // notification for success
             const message = 'posted successfully'
@@ -858,51 +928,6 @@ const generateFullname = () => {
     
 }
 
-const generateFullnameByAcctID = (acctID) => {
-    const filter = accountsList.filter((act) => act.acctID === acctID)
-    if (filter) {
-        return filter[0].firstname + ' ' + filter[0].middlename.charAt(0).toUpperCase() + ' '+filter[0].lastname
-    }
-    return ''
-}
-
-
-const handlePostAssignment = (id, content, quizID, duration, postType, random) => {
-    generateUniqueId()
-    let updated = [...currentPost]
-
-    let updatedPost = {
-
-        postID: id ? id : uniqueId,
-        acctID: userAccount.acctID,
-        name: generateFullname(),
-        timePosted: time,
-        datePosted: date,
-        postContent: content,
-        replyID: uniqueId,
-        imageID: 'none',
-        fileID: 'none',
-        heartCount,
-        likeCount,
-        classCode: currentClassCode,
-        subjectName,
-        postType: 'assignment',
-        quizID,
-        schedID: postType === 'post' ? ('none'):(id ? id : uniqueId),
-        duration,
-        random,
-
-    }
-
-    uploadPost(updatedPost)
-    updated.push(updatedPost)
-    setCurrentPost(updated)
-}
-
-const reset = () => {
-    setPostContent('')
-    setimageFile(null)
-}
 
 const handleEditedClassCode = (e) => {
     e.preventDefault()
@@ -1309,79 +1334,115 @@ const getImageUrlsByImageID = (imageID) => {
         }
 
         {
-                showPostModal && (
-                    <div className={style.postModalBackgroundDIV}>
-                        <div className={style.postModalContainer}>
-                            <div className={style.headerPostModal}>
-                                <div className='d-flex gap-2 align-items-center'>
-                                    <img src={imageUserPost(userAccount.acctID)} alt='profile picture' id={style.imgDp}/>
-                                    <p id={style.nameInPostModal}>{generateFullname()}</p>
-                                </div>
-                                <BiExit size={20} title='closed' cursor={'pointer'} onClick={closePostModal}/>
+            showPostModal && (
+                <div className={style.postModalBackgroundDIV}>
+                    <div className={style.postModalContainer}>
+                        <div className={style.headerPostModal}>
+                            <div className='d-flex gap-2 align-items-center'>
+                                <img src={imageUserPost(userAccount.acctID)} alt='profile picture' id={style.imgDp}/>
+                                <p id={style.nameInPostModal}>{generateFullname()}</p>
                             </div>
-                            <div className={style.bodyPostModal}>
-                            {
-                                file && 
-                                <div className={style.fileListPost}>
-                                    {
-                                        file.map((data, index) => (
-                                        <div className={style.imageDivPreview} key={index}>
-                                            <IoCloseCircle id={style.deleteImagePreview} size={25} onClick={() => deleteImageInPostModal(index)}/>
-                                            <img src={URL.createObjectURL(data)}></img>
-                                        </div>
-                                        ))
-                                    }
-                                </div>
-                            }
+                            <BiExit size={20} title='closed' cursor={'pointer'} onClick={closePostModal}/>
+                        </div>
+                        <div className={style.bodyPostModal}>
+                        {
+                            file && 
+                            <div className={style.fileListPost}>
+                                {
+                                    file.map((data, index) => (
+                                    <div className={style.imageDivPreview} key={index}>
+                                        <IoCloseCircle id={style.deleteImagePreview} size={25} onClick={() => deleteImageInPostModal(index)}/>
+                                        <img src={URL.createObjectURL(data)}></img>
+                                    </div>
+                                    ))
+                                }
+                            </div>
+                        }
 
-                            {
-                                docxFiles && 
-                                <div className={style.fileListPost}>
-                                    {
-                                        docxFiles.map((data, index) => (
-                                        <div className={style.fileDivPreview} key={index}>
-                                            <IoCloseCircle id={style.deleteImagePreview} size={25} onClick={() => deleteFilesInPostModal(index)}/>
-                                            <IoDocumentText size={25} color='white'/>
-                                            <p>{data.name}</p>
-                                        </div>
-                                        ))
-                                    }
-                                </div>
-                            }
-                                
-                                <textarea placeholder='Share your thoughts here...' onChange={(e) => setPostContent(e.target.value)}></textarea>
-                                <div className='d-flex w-100 mt-2 mb-5 gap-2'>
-                                    <div id={style.addImageUploadLayout} onClick={handleUploadImageClick}>
-                                        <input 
-                                            type="file"
-                                            ref={inputImageFileRef}
-                                            accept='image/*'
-                                            onChange={handleGetImage}
-                                            style={{ display:'none'}}
-                                            multiple
-                                        />
-                                        <FaRegImages color='#099AED' size={23} />
-                                        <h2>Add Image</h2>
+                        {
+                            docxFiles && 
+                            <div className={style.fileListPost}>
+                                {
+                                    docxFiles.map((data, index) => (
+                                    <div className={style.fileDivPreview} key={index}>
+                                        <IoCloseCircle id={style.deleteImagePreview} size={25} onClick={() => deleteFilesInPostModal(index)}/>
+                                        <IoDocumentText size={25} color='white'/>
+                                        <p>{data.name}</p>
                                     </div>
-                                    <div id={style.addImageUploadLayout} onClick={handleUploadFilesClick}>
-                                        <input 
-                                            type="file"
-                                            ref={inputFilesRef}
-                                            accept=".doc, .docx, .pdf, .txt, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-                                            onChange={handleGetFiles}
-                                            style={{ display:'none'}}
-                                            multiple
-                                        />
-                                        <MdOutlineAttachment color='#099AED' size={23} />
-                                        <h2>Add File</h2>
-                                    </div>
-                                </div>
-                                
-                                <button className={style.btnPostModal} onClick={handlePost}>Upload</button>
+                                    ))
+                                }
                             </div>
+                        }
+                            
+                            <textarea placeholder='Share your thoughts here...' onChange={(e) => setPostContent(e.target.value)}></textarea>
+                            <div className='d-flex w-100 mt-2 mb-5 gap-2'>
+                                <div id={style.addImageUploadLayout} onClick={handleUploadImageClick}>
+                                    <input 
+                                        type="file"
+                                        ref={inputImageFileRef}
+                                        accept='image/*'
+                                        onChange={handleGetImage}
+                                        style={{ display:'none'}}
+                                        multiple
+                                    />
+                                    <FaRegImages color='#099AED' size={23} />
+                                    <h2>Add Image</h2>
+                                </div>
+                                <div id={style.addImageUploadLayout} onClick={handleUploadFilesClick}>
+                                    <input 
+                                        type="file"
+                                        ref={inputFilesRef}
+                                        accept=".doc, .docx, .pdf, .txt, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                                        onChange={handleGetFiles}
+                                        style={{ display:'none'}}
+                                        multiple
+                                    />
+                                    <MdOutlineAttachment color='#099AED' size={23} />
+                                    <h2>Add File</h2>
+                                </div>
+                            </div>
+                            
+                            <button className={style.btnPostModal} onClick={handlePost}>Post</button>
                         </div>
                     </div>
-                )
+                </div>
+            )
+        }
+
+        {
+            showSchedPost && (
+                <div className={style.schedListContainer}>
+                    <div className={style.schedListCard}>
+                        <div className={style.schedHead}>
+                            <h1>Schedule Post</h1>
+                            <BiExit 
+                                size={20} 
+                                cursor={'pointer'} 
+                                title='closed'
+                                onClick={() => setShowSchedPost(false)}
+                            />
+                        </div>
+                        <div className={style.schedList}>
+                            {
+                                schedulePostList.length > 0 && 
+                                    schedulePostList.map((data, index) => (
+                                        <div className={style.cardSched} key={index}>
+                                            <div className='d-flex justify-content-between'>
+                                                <h1>Content:</h1>
+                                                <div id={style.badgeQuizId}>QuizID: {data.quizID}</div>
+                                            </div>
+                                            <p>{data.postContent.substring(0, 10)}</p>
+                                            <h1 style={{ fontSize: '8pt' }}>Date schedule: {data.datePosted} ({data.timePosted})</h1>
+                                            <button onClick={() => handlePostNow(data)}>Post Now</button>
+                                        </div>
+                                    ))
+                                
+                            }
+
+                        </div>
+                    </div>
+                </div>
+            )
         }
 
         {
@@ -1432,7 +1493,6 @@ const getImageUrlsByImageID = (imageID) => {
                                 <>
                                     <button className={choose === 'quizSetup' ? style.btnNavActive : style.btnNav} onClick={() => setChoose('quizSetup')}>Create Quiz</button>
                                     <button className={choose === 'leaderboard' ? style.btnNavActive : style.btnNav} onClick={() => setChoose('leaderboard')}>Leaderboard</button>
-                                    <button className={choose === 'assignment' ? style.btnNavActive : style.btnNav} onClick={() => setChoose('assignment')}>Assignment</button>
                                     <button className={choose === 'files' ? style.btnNavActive : style.btnNav} onClick={() => setChoose('files')}>Files</button>
                                 </>
                             )
@@ -1464,9 +1524,9 @@ const getImageUrlsByImageID = (imageID) => {
                         />
                         <div className='d-flex flex-column w-100'>
                             <p id={style.titleSetting}>Class Name</p>
-                            <input type="text" value={updatedClassName} placeholder={subjectName} onChange={(e) => setupdatedClassName(e.target.value)}/>
+                            <input type="text" value={updatedClassName} onChange={(e) => setupdatedClassName(e.target.value)}/>
                             <p id={style.titleSetting}>Class Code</p>
-                            <input type="text" ref={inputRef} value={updatedClassCode} placeholder={currentClassCode} onChange={handleEditedClassCode}/>
+                            <input type="text" ref={inputRef} value={updatedClassCode} onChange={handleEditedClassCode}/>
                             {isShowErrorMessage && <p className={style.errorMessage}>Class code already exist.</p>}
                             
                             <p id={style.titleSetting}>Description</p>
@@ -1490,7 +1550,7 @@ const getImageUrlsByImageID = (imageID) => {
                                 <div className='d-flex align-items-center gap-2'>
                                     <img src={imageUserPost(userAccount.acctID)} alt="profile" id={style.imgDp}/>
                                     <div className={style.postBotton} onClick={() => setshowPostModal(true)}>Share your thoughts here...</div>
-                                    <FaRegImages size={20} onClick={() => setshowPostModal(true)}/>
+                                    <FaRegImages size={20} title='View Draft Scheduled Post' onClick={() => setShowSchedPost(!showSchedPost)}/>
                                 </div>
                             </div>
                         </div>
@@ -1540,15 +1600,25 @@ const getImageUrlsByImageID = (imageID) => {
                                             }
 
                                             {
-                                                post.quizID !== 'none'  && (
+                                                post.quizID !== 'none' && (
                                                         <div id={style.quizBox}>
                                                             <div className='d-flex gap-2'>
                                                                 <GiNotebook size={20} color='#186F65'/>
                                                                 <p>{quiz?.filter((q) => q.quizID === post.quizID).map((q)=> q.quizTitle)}</p>
                                                             </div>
                                                             {
+                                                                post.dueStatus === 'yes' &&
+                                                                <div id={style.due}>Due</div>
+                                                            }
+
+                                                            {
+                                                                post.closeStatus === 'yes' &&
+                                                                <div id={style.closed}>Closed</div>
+                                                            }
+                                                            
+                                                            {
                                                         
-                                                                userAccount?.acctype === 'student' && (
+                                                                userAccount?.acctype === 'student' && post.closeStatus === 'no' && (
                                                                     !ifAlreadyTaken(post.quizID) ? (
                                                                         <button className={style.btnView} onClick={() => handleTakeQuiz(post.quizID, post.postID)}>Take</button>
                                                                     ):(
@@ -1624,7 +1694,6 @@ const getImageUrlsByImageID = (imageID) => {
             { choose === 'files' && <FilesClass classCode={classCode}/> }
             { choose === 'leaderboard' && <LeaderBoard/> }
             { choose === 'quizSetup' && <ClassQuizSetup subjectName={subjectName} navigateClass={navigateClass} postType={postType} classCode={classCode}/> }
-            { choose === 'assignment' && <ClassAssignment postType={postType} quizObj={quizObj} handlePostAssignment={handlePostAssignment}/> }
             { choose === 'members' && <ClassMembers memberID={memberID} currentClassCode={currentClassCode}/>}
 
         </div>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 24, 2024 at 07:09 AM
+-- Generation Time: Aug 01, 2024 at 04:15 AM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 8.1.6
 
@@ -45,7 +45,7 @@ CREATE TABLE `accounts` (
 
 INSERT INTO `accounts` (`acctID`, `acctype`, `email`, `password`, `firstname`, `middlename`, `lastname`, `status`, `imageID`) VALUES
 ('Tk6Bxe8U', 'admin', 'mark@gmail.com', 'mark123', 'Mark', 'Langcay', 'Adduru', 'logout', 'Tk6Bxe8U'),
-('un2kt7px', 'faculty', 'pamparor@gmail.com', 'rumar123', 'Rumar', 'Capoquian', 'Pamparo', 'online', 'un2kt7p1'),
+('un2kt7px', 'faculty', 'pamparor@gmail.com', 'rumar12345', 'Rumar', 'Capoquian', 'Pamparo', 'online', 'un2kt7px'),
 ('VHXQ6s6O', 'student', 'allan@gmail.com', 'allan123', 'Allan', 'Caranguioan', 'Caluigiran', 'logout', 'VHXQ6s6O');
 
 -- --------------------------------------------------------
@@ -78,7 +78,11 @@ INSERT INTO `choices` (`id`, `choicesID`, `letter`, `content`, `correct`) VALUES
 (151, 'h6iu0Ivc', 'A', 'dasds', 0),
 (152, 'h6iu0Ivc', 'B', 'ddd', 0),
 (153, 'h6iu0Ivc', 'C', 'aa', 1),
-(154, 'h6iu0Ivc', 'D', 'cvvc', 1);
+(154, 'h6iu0Ivc', 'D', 'cvvc', 1),
+(155, 'cndoArXj', 'A', 'aa', 0),
+(156, 'cndoArXj', 'C', 'cc', 0),
+(157, 'cndoArXj', 'D', 'dd', 1),
+(158, 'cndoArXj', 'B', 'bb', 0);
 
 -- --------------------------------------------------------
 
@@ -101,7 +105,12 @@ CREATE TABLE `class` (
 
 INSERT INTO `class` (`classID`, `className`, `classDesc`, `classCode`, `membersID`, `imageID`) VALUES
 (1, 'CAPSTONE 1', 'IT 4C', 'IT-CAP2', 'BiJ456Aj', 'xVKKzdPD'),
-(2, 'ENTREPRENEURSHIP 2', 'ENTREPRENEURSHIP EDDITED', 'IT-ELECT2', '42d8800e', 'YHXQ6s61');
+(2, 'ENTREPRENEURSHIP 2', 'ENTREPRENEURSHIP EDDITED', 'IT-ELECT2', '42d8800e', 'YHXQ6s61'),
+(1983, 'sample11', 'none', 'sample455', '4BOq5RAZ', '4BOq5RAZ'),
+(1984, 'sample55', 'none', 'saple777', 'b3rGUPML', 'b3rGUPML'),
+(1991, 'name1', 'class1', 'class1', 'jbnWPzX7', 'default'),
+(1992, 'name2', 'class2', 'class2', 'vHOk8HRN', 'default'),
+(1993, 'name3 updated', 'class3 updated', 'class3 upd', '6cQZ1Hjv', 'default');
 
 -- --------------------------------------------------------
 
@@ -113,19 +122,26 @@ CREATE TABLE `class_list` (
   `id` int(11) NOT NULL,
   `acctID` varchar(8) NOT NULL,
   `classCode` varchar(10) NOT NULL,
-  `hidden` varchar(5) NOT NULL
+  `classDesc` varchar(100) NOT NULL,
+  `hidden` varchar(5) NOT NULL,
+  `imageID` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `class_list`
 --
 
-INSERT INTO `class_list` (`id`, `acctID`, `classCode`, `hidden`) VALUES
-(1, 'un2kt7px', 'IT-CAP2', 'false'),
-(1836, 'un2kt7px', 'IT-ELECT2', 'false'),
-(1844, 'Tk6Bxe8U', 'IT-ELECT2', 'false'),
-(1845, 'VHXQ6s6O', 'IT-CAP2', 'false'),
-(1846, 'VHXQ6s6O', 'IT-ELECT2', 'false');
+INSERT INTO `class_list` (`id`, `acctID`, `classCode`, `classDesc`, `hidden`, `imageID`) VALUES
+(1, 'un2kt7px', 'IT-CAP2', 'IT 4C', 'false', 'xVKKzdPD'),
+(1836, 'un2kt7px', 'IT-ELECT2', 'ENTREPRENEURSHIP EDDITED', 'false', 'YHXQ6s61'),
+(1844, 'Tk6Bxe8U', 'IT-ELECT2', 'ENTREPRENEURSHIP EDDITED', 'false', 'YHXQ6s61'),
+(1845, 'VHXQ6s6O', 'IT-CAP2', 'IT 4C', 'false', 'xVKKzdPD'),
+(1846, 'VHXQ6s6O', 'IT-ELECT2', 'ENTREPRENEURSHIP EDDITED', 'false', 'YHXQ6s61'),
+(1849, 'un2kt7px', 'sample455', 'none', 'false', '4BOq5RA'),
+(1852, 'un2kt7px', 'saple777', 'none', 'false', 'b3rGUPML'),
+(1859, 'un2kt7px', 'class3 upd', 'class3', 'false', 'default'),
+(1860, 'un2kt7px', 'class1', 'class1', 'false', 'default'),
+(1861, 'un2kt7px', 'class2', 'class2', 'false', 'default');
 
 -- --------------------------------------------------------
 
@@ -167,7 +183,8 @@ INSERT INTO `comments` (`id`, `replyID`, `postID`, `classCode`, `acctID`, `fulln
 (30, 'gb3YpAQC', 'gb3YpAQC', 'IT-ELECT2', 'un2kt7px', 'Rumar C. Pamparo', 'astig perd', '04:34 PM', 'Thu Apr 18 2024', 'none', 'none'),
 (31, 'gb3YpAQC', 'gb3YpAQC', 'IT-ELECT2', 'VHXQ6s6O', 'Allan C. Caluigiran', 'petmalu', '04:38 PM', 'Thu Apr 18 2024', 'none', 'none'),
 (32, 'Bd4lkWFD', 'Bd4lkWFD', 'IT-CAP2', 'un2kt7px', 'Rumar C. Pamparo', 'nice', '02:50 PM', 'Fri May 03 2024', 'none', 'none'),
-(33, 'Bd4lkWFD', 'Bd4lkWFD', 'IT-CAP2', 'un2kt7px', 'Rumar C. Pamparo', 'dsads', '05:03 PM', 'Wed May 08 2024', 'none', 'none');
+(33, 'Bd4lkWFD', 'Bd4lkWFD', 'IT-CAP2', 'un2kt7px', 'Rumar C. Pamparo', 'dsads', '05:03 PM', 'Wed May 08 2024', 'none', 'none'),
+(34, '7rnywy9X', '7rnywy9X', 'IT-CAP2', 'un2kt7px', 'Rumar C. Pamparo', 'sample comment', '09:16 AM', 'Thu Jul 25 2024', 'none', 'none');
 
 -- --------------------------------------------------------
 
@@ -254,7 +271,11 @@ CREATE TABLE `friends` (
 --
 
 INSERT INTO `friends` (`id`, `acctID`, `friendAcctID`, `fullname`, `imageID`) VALUES
-(113, 'un2kt7px', 'Tk6Bxe8U', 'Mark L. Adduru', 'Tk6Bxe8U');
+(115, 'un2kt7px', 'VHXQ6s6O', 'Allan C. Caluigiran', 'VHXQ6s6O'),
+(116, 'VHXQ6s6O', 'un2kt7px', 'Rumar C. Pamparo', 'un2kt7px'),
+(117, 'Tk6Bxe8U', 'un2kt7px', 'Rumar C. Pamparo', 'un2kt7px'),
+(135, 'VHXQ6s6O', 'Tk6Bxe8U', 'Mark L. Adduru', 'Tk6Bxe8U'),
+(136, 'un2kt7px', 'Tk6Bxe8U', 'Mark L. Adduru', 'Tk6Bxe8U');
 
 -- --------------------------------------------------------
 
@@ -311,9 +332,24 @@ INSERT INTO `image` (`id`, `name`, `type`, `data`, `dateUploaded`, `timeUploaded
 (1965, '441270367_1152689112818157_6081257374215719744_n.jpg', 'image/jpeg', 'image_1717141496156.jpg', 'Fri May 31 2024', '03:44 PM', 'un2kt7px', 'IT-CAP2', '46bMycve'),
 (1966, '441277305_448048864277698_5511921002941859110_n.jpg', 'image/jpeg', 'image_1717141496159.jpg', 'Fri May 31 2024', '03:44 PM', 'un2kt7px', 'IT-CAP2', '46bMycve'),
 (1967, '440794579_406283208963146_325435484913997915_n.jpg', 'image/jpeg', 'image_1717141496159.jpg', 'Fri May 31 2024', '03:44 PM', 'un2kt7px', 'IT-CAP2', '46bMycve'),
-(1968, 'pexels-stywo-1261728.jpg', 'image/jpeg', 'image_1719161300026.jpg', 'undefined', 'undefined', 'un2kt7px', 'none', 'yxIKY57R'),
-(1969, 'pexels-stywo-1261728.jpg', 'image/jpeg', 'image_1719161300035.jpg', 'undefined', 'undefined', 'un2kt7px', 'none', 'yjI8wqhE'),
-(1970, 'pexels-stywo-1261728.jpg', 'image/jpeg', 'image_1719161300030.jpg', 'undefined', 'undefined', 'un2kt7px', 'none', 'UY47Y6EM');
+(1968, 'pexels-stywo-1261728.jpg', 'image/jpeg', 'image_1719161300026.jpg', 'Fri May 31 2024', '03:44 PM', 'un2kt7px', 'none', 'yxIKY57R'),
+(1969, 'pexels-stywo-1261728.jpg', 'image/jpeg', 'image_1719161300035.jpg', 'Fri May 31 2024', '03:44 PM', 'un2kt7px', 'none', 'yjI8wqhE'),
+(1970, 'pexels-stywo-1261728.jpg', 'image/jpeg', 'image_1719161300030.jpg', 'Fri May 31 2024', '03:44 PM', 'un2kt7px', 'none', 'UY47Y6EM'),
+(1971, 'default', 'image/jpeg', 'default.jpg', 'Fri May 31 2024', '03:44 PM', '	 un2kt7px', 'none', 'default'),
+(1975, 'fb.png', 'image/png', 'image_1721006490006.png', 'Fri May 31 2024', '03:44 PM', 'un2kt7px', 'none', '4BOq5RAZ'),
+(1976, 'DICEN SALON AND BARBERSHOP LAYOUT copy.jpg', 'image/jpeg', 'image_1721006530087.jpg', 'Fri May 31 2024', '03:44 PM', 'un2kt7px', 'none', 'b3rGUPML'),
+(1977, 'Kangkong-King-Sinigang-v0-Cropped2-scaled.jpg', 'image/jpeg', 'image_1721790691385.jpg', 'undefined', 'undefined', 'un2kt7px', 'none', 'VpHB3DyJ'),
+(1992, '284574827_1078717512724168_7633977314528252407_n - Copy - Copy.jpg', 'image/jpeg', 'image_1722260339815.jpg', 'Mon Jul 29 2024', '09:38 PM', 'VHXQ6s6O', 'IT-CAP2', ''),
+(1993, 'wp1870854.jpg', 'image/jpeg', 'image_1722261142282.jpg', 'Mon Jul 29 2024', '09:52 PM', 'VHXQ6s6O', 'IT-CAP2', ''),
+(1997, 'default', 'image/jpeg', 'none', '', '', '', '', 'none'),
+(1998, 'default', 'image/jpeg', 'none', '', '', '', '', 'none'),
+(1999, 'default', 'image/jpeg', 'none', '', '', '', '', 'none'),
+(2000, 'default', 'image/jpeg', 'none', '', '', '', '', 'default'),
+(2001, 'default', 'image/jpeg', 'none', '', '', '', '', 'default'),
+(2002, 'default', 'image/jpeg', 'none', '', '', '', '', 'default'),
+(2003, 'default', 'image/jpeg', 'none', '', '', '', '', 'default'),
+(2004, 'default', 'image/jpeg', 'none', '', '', '', '', 'default'),
+(2005, 'default', 'image/jpeg', 'none', '', '', '', '', 'default');
 
 -- --------------------------------------------------------
 
@@ -341,7 +377,22 @@ INSERT INTO `members` (`id`, `membersID`, `acctID`, `firstname`, `middlename`, `
 (1933, '42d8800e', 'un2kt7px', 'Rumar', 'Capoquian', 'Pamparo', 'admin', 'un2kt7px'),
 (1946, '42d8800e', 'Tk6Bxe8U', 'Mark', 'Langcay', 'Adduru', 'member', 'Tk6Bxe8U'),
 (1947, 'BiJ456Aj', 'VHXQ6s6O', 'Allan', 'Caranguioan', 'Caluigiran', 'member', 'VHXQ6s6O'),
-(1948, '42d8800e', 'VHXQ6s6O', 'Allan', 'Caranguioan', 'Caluigiran', 'member', 'VHXQ6s6O');
+(1948, '42d8800e', 'VHXQ6s6O', 'Allan', 'Caranguioan', 'Caluigiran', 'member', 'VHXQ6s6O'),
+(1949, 'zjVcGFGO', 'un2kt7px', 'Rumar', 'Capoquian', 'Pamparo', 'admin', 'un2kt7px'),
+(1950, 'zmPWZ1mU', 'un2kt7px', 'Rumar', 'Capoquian', 'Pamparo', 'admin', 'un2kt7px'),
+(1951, 'VIhJizN4', 'un2kt7px', 'Rumar', 'Capoquian', 'Pamparo', 'admin', 'un2kt7px'),
+(1952, 'sxb9Wsbg', 'un2kt7px', 'Rumar', 'Capoquian', 'Pamparo', 'admin', 'un2kt7px'),
+(1953, '4BOq5RAZ', 'un2kt7px', 'Rumar', 'Capoquian', 'Pamparo', 'admin', 'un2kt7px'),
+(1954, 'b3rGUPML', 'un2kt7px', 'Rumar', 'Capoquian', 'Pamparo', 'admin', 'un2kt7px'),
+(1955, 'XbWegrRq', 'un2kt7px', 'Rumar', 'Capoquian', 'Pamparo', 'admin', 'un2kt7px'),
+(1956, 'tkcXZz0J', 'un2kt7px', 'Rumar', 'Capoquian', 'Pamparo', 'admin', 'un2kt7px'),
+(1957, '9tb8whSn', 'un2kt7px', 'Rumar', 'Capoquian', 'Pamparo', 'admin', 'un2kt7px'),
+(1958, 'Twjz1w9l', 'un2kt7px', 'Rumar', 'Capoquian', 'Pamparo', 'admin', 'un2kt7px'),
+(1959, 'ZwQFdwj5', 'un2kt7px', 'Rumar', 'Capoquian', 'Pamparo', 'admin', 'un2kt7px'),
+(1960, 'G5kHawI4', 'un2kt7px', 'Rumar', 'Capoquian', 'Pamparo', 'admin', 'un2kt7px'),
+(1961, 'jbnWPzX7', 'un2kt7px', 'Rumar', 'Capoquian', 'Pamparo', 'admin', 'un2kt7px'),
+(1962, 'vHOk8HRN', 'un2kt7px', 'Rumar', 'Capoquian', 'Pamparo', 'admin', 'un2kt7px'),
+(1963, '6cQZ1Hjv', 'un2kt7px', 'Rumar', 'Capoquian', 'Pamparo', 'admin', 'un2kt7px');
 
 -- --------------------------------------------------------
 
@@ -459,15 +510,36 @@ INSERT INTO `messages` (`id`, `messageID`, `roomID`, `messageContent`, `messageS
 (95, 'R56txUAC', 'un2kt788', 'TESST\n', 'un2kt7px', 'VHXQ6s6O', 'Wed Jan 24 2024', '07:32 PM'),
 (96, 'pv6MLtQn', 'un2kt788', 'ASDASDASD\n', 'VHXQ6s6O', 'un2kt7px', 'Wed Jan 24 2024', '07:33 PM'),
 (97, 'fJAjvwo6', 'un2kt788', 'TESST\n', 'un2kt7px', 'VHXQ6s6O', 'Wed Jan 24 2024', '07:33 PM'),
-(98, '1qDlBAjP', 'kJAhSFzK', 'neal', 'un2kt7px', 'SNSBjwH9', 'Sun Jan 28 2024', '10:04 PM'),
-(99, '5gWbq7ia', 'kJAhSFzK', 'rumar', 'SNSBjwH9', 'un2kt7px', 'Sun Jan 28 2024', '10:04 PM'),
-(100, 'QJeoHI7p', '3FPGmFm9', 'uyy bro\n', '077e0510', 'VHXQ6s6O', 'Thu Feb 15 2024', '04:40 PM'),
-(101, 'DgvJNN6v', '3FPGmFm9', 'uy lannn', 'VHXQ6s6O', '077e0510', 'Thu Feb 15 2024', '04:40 PM'),
-(102, '3q5SfOKA', '3FPGmFm9', 'dsads', 'VHXQ6s6O', '077e0510', 'Thu Feb 15 2024', '04:41 PM'),
-(103, '7PjPV1bP', '3FPGmFm9', 'hey bro\n', '077e0510', 'VHXQ6s6O', 'Thu Feb 15 2024', '04:41 PM'),
-(104, 'DvhrfMlj', '3FPGmFm9', 'panget mo boy', 'VHXQ6s6O', '077e0510', 'Thu Feb 15 2024', '04:41 PM'),
-(105, 'WKgXXxqB', '3FPGmFm9', 'dsds', '077e0510', 'VHXQ6s6O', 'Thu Feb 15 2024', '04:43 PM'),
-(106, 'Po7cOU3f', '3FPGmFm9', 'dsadsad', 'VHXQ6s6O', '077e0510', 'Thu Feb 15 2024', '04:43 PM');
+(107, 'tn2kt700', 'Tk6Bxe8U', 'Oy tols', 'un2kt7px', 'Tk6Bxe8U', 'Wed Dec 20 2023', '01:21 PM'),
+(108, 'tn2kt700', 'Tk6Bxe8U', 'Oy mar', 'Tk6Bxe8U', 'un2kt7px', 'Wed Dec 20 2023', '01:25 PM'),
+(109, 'tn2kt700', 'Tk6Bxe8U', 'Oy mar', 'Tk6Bxe8U', 'un2kt7px', 'Wed Dec 20 2023', '01: 15 PM'),
+(110, 'pwoU9YOA', 'Tk6Bxe8U', 'sample', 'un2kt7px', 'Tk6Bxe8U', 'Fri Jul 19 2024', '12:15 PM');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `notifications`
+--
+
+CREATE TABLE `notifications` (
+  `id` int(11) NOT NULL,
+  `notificationID` varchar(8) NOT NULL,
+  `acctID` varchar(10) NOT NULL,
+  `title` varchar(100) NOT NULL,
+  `data` varchar(50) NOT NULL,
+  `content` varchar(100) NOT NULL,
+  `date` varchar(50) NOT NULL,
+  `time` varchar(50) NOT NULL,
+  `type` varchar(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `notifications`
+--
+
+INSERT INTO `notifications` (`id`, `notificationID`, `acctID`, `title`, `data`, `content`, `date`, `time`, `type`) VALUES
+(15, 'zHL3Hu6X', 'Tk6Bxe8U', 'Allan C. Caluigiran', 'image_1701668137802.png', 'added you as a friend.', 'Fri Jul 19 2024', '04:18 PM', 'profile'),
+(16, 'wWUeLTlo', 'Tk6Bxe8U', 'Rumar C. Pamparo', 'image_1701691103989.jpg', 'added you as a friend.', 'Fri Jul 19 2024', '05:15 PM', 'profile');
 
 -- --------------------------------------------------------
 
@@ -493,6 +565,9 @@ CREATE TABLE `post` (
   `postType` varchar(20) NOT NULL,
   `quizID` varchar(10) NOT NULL,
   `schedID` varchar(10) NOT NULL,
+  `schedStatus` varchar(5) NOT NULL,
+  `dueStatus` varchar(5) NOT NULL,
+  `closeStatus` varchar(5) NOT NULL,
   `duration` int(10) NOT NULL,
   `random` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -501,23 +576,28 @@ CREATE TABLE `post` (
 -- Dumping data for table `post`
 --
 
-INSERT INTO `post` (`id`, `postID`, `acctID`, `name`, `timePosted`, `datePosted`, `postContent`, `replyID`, `imageID`, `fileID`, `heartCount`, `likeCount`, `classCode`, `subjectName`, `postType`, `quizID`, `schedID`, `duration`, `random`) VALUES
-(1, '5B7Rww8K', 'un2kt7px', 'Rumar C. Pamparo', '09:52 PM', 'Wed Dec 06 2023', 'Multiple Images', '5B7Rww8K', '5B7Rww8K', 'none', 0, 0, 'IT-CAP2', 'CAPSTONE 2', 'normal', 'none', 'none', 0, ''),
-(3, 'GoWYC8s', 'un2kt7px', 'Rumar C. Pamparo', '08:51 PM', 'Thu Dec 07 2023', 'Single Images', 'GoWYC8sL', 'BgJ3t4MP', 'none', 0, 0, 'IT-CAP2', 'CAPSTONE 2', 'normal', 'none', 'none', 0, ''),
-(4, 'lz8YnK4M', 'un2kt7px', 'Rumar C. Pamparo', '08:52 PM', 'Thu Dec 07 2023', 'Single Files', 'lz8YnK4M', 'none', 'lz8YnK4M', 0, 0, 'IT-ELECT2', 'ENTREPRENEURSHIP 2', 'normal', 'none', 'none', 0, ''),
-(5, 'th5tRTPX', 'un2kt7px', 'Rumar C. Pamparo', '08:54 PM', 'Thu Dec 07 2023', 'Multi Files', 'th5tRTPX', 'none', 'th5tRTPX', 0, 0, 'IT-ELECT2', 'ENTREPRENEURSHIP 2', 'normal', 'none', 'none', 0, ''),
-(258, 'mORXxJYo', 'un2kt7px', 'Rumar C. Pamparo', '07:50 PM', 'Sun Apr 14 2024', 'test', 'mORXxJYo', 'mORXxJYo', 'none', 0, 0, 'IT-CAP2', 'CAPSTONE 2', 'normal', 'none', 'none', 0, 'none'),
-(259, 'dNf522yo', 'un2kt7px', 'Rumar C. Pamparo', '08:02 PM', 'Sun Apr 14 2024', 'try nga', 'dNf522yo', 'dNf522yo', 'none', 0, 0, 'IT-CAP2', 'CAPSTONE 2', 'normal', 'none', 'none', 0, 'none'),
-(260, 'Bd4lkWFD', 'un2kt7px', 'Rumar C. Pamparo', '08:04 PM', 'Sun Apr 14 2024', 'test1', 'Bd4lkWFD', 'Bd4lkWFD', 'none', 0, 0, 'IT-CAP2', 'CAPSTONE 2', 'normal', 'none', 'none', 0, 'none'),
-(269, 'TDVJI3IY', 'un2kt7px', 'Rumar C. Pamparo', '11:32 AM', 'Mon Apr 15 2024', 'pdf sample', 'TDVJI3IY', 'none', 'TDVJI3IY', 0, 0, 'IT-ELECT2', 'ENTREPRENEURSHIP 2', 'normal', 'none', 'none', 0, 'none'),
-(270, 'iwPl3xFW', 'un2kt7px', 'Rumar C. Pamparo', '11:37 AM', 'Mon Apr 15 2024', 'sample multiple', 'iwPl3xFW', 'none', 'iwPl3xFW', 0, 0, 'IT-ELECT2', 'ENTREPRENEURSHIP 2', 'normal', 'none', 'none', 0, 'none'),
-(271, 'XlcYbqYk', 'un2kt7px', 'Rumar C. Pamparo', '11:49 AM', 'Mon Apr 15 2024', 'nel', 'XlcYbqYk', 'none', 'XlcYbqYk', 0, 0, 'IT-ELECT2', 'ENTREPRENEURSHIP 2', 'normal', 'none', 'none', 0, 'none'),
-(272, 'DOann9lo', 'un2kt7px', 'Rumar C. Pamparo', '09:14 AM', 'Tue Apr 16 2024', 'sample multiple post', 'DOann9lo', 'DOann9lo', 'DOann9lo', 0, 0, 'IT-ELECT2', 'ENTREPRENEURSHIP 2', 'normal', 'none', 'none', 0, 'none'),
-(273, '1SXMpTpy', 'un2kt7px', 'Rumar C. Pamparo', '09:15 AM', 'Tue Apr 16 2024', 'sample', '1SXMpTpy', '1SXMpTpy', 'none', 0, 0, 'IT-ELECT2', 'ENTREPRENEURSHIP 2', 'normal', 'none', 'none', 0, 'none'),
-(277, 'gb3YpAQC', 'Tk6Bxe8U', 'Mark L. Adduru', '04:33 PM', 'Thu Apr 18 2024', 'sample lang perds', 'gb3YpAQC', 'gb3YpAQC', 'gb3YpAQC', 0, 0, 'IT-ELECT2', 'ENTREPRENEURSHIP 2', 'normal', 'none', 'none', 0, 'none'),
-(278, 'Ciaq97Dj', 'un2kt7px', 'Rumar C. Pamparo', '05:03 PM', 'Wed May 08 2024', 'sads', 'Ciaq97Dj', 'Ciaq97Dj', 'Ciaq97Dj', 0, 0, 'IT-CAP2', 'CAPSTONE 2', 'normal', 'none', 'none', 0, 'none'),
-(279, 'Tu2qqJFY', 'un2kt7px', 'Rumar C. Pamparo', '04:33 PM', 'Thu Apr 18 2024', 'Exercise 1', 'Tu2qqJFY', 'none', 'none', 0, 0, 'IT-CAP2', 'CAPSTONE 1', 'normal', '1Oc0uJXk', '1Oc0uJXk', 0, '1'),
-(280, 'Yu2qqJFY', 'un2kt7px', 'Rumar C. Pamparo', '04:33 PM', 'Thu Apr 18 2024', 'Exercise 2', 'Yu2qqJFY', 'none', 'none', 0, 0, 'IT-CAP2', 'CAPSTONE 1', 'normal', '2eb7oSeH', '2eb7oSeH', 0, '1');
+INSERT INTO `post` (`id`, `postID`, `acctID`, `name`, `timePosted`, `datePosted`, `postContent`, `replyID`, `imageID`, `fileID`, `heartCount`, `likeCount`, `classCode`, `subjectName`, `postType`, `quizID`, `schedID`, `schedStatus`, `dueStatus`, `closeStatus`, `duration`, `random`) VALUES
+(1, '5B7Rww8K', 'un2kt7px', 'Rumar C. Pamparo', '09:52 PM', 'Wed Dec 06 2023', 'Multiple Images', '5B7Rww8K', '5B7Rww8K', 'none', 0, 0, 'IT-CAP2', 'CAPSTONE 2', 'normal', 'none', 'none', 'no', 'no', 'no', 0, 'none'),
+(3, 'GoWYC8s', 'un2kt7px', 'Rumar C. Pamparo', '08:51 PM', 'Thu Dec 07 2023', 'Single Images', 'GoWYC8sL', 'BgJ3t4MP', 'none', 0, 0, 'IT-CAP2', 'CAPSTONE 2', 'normal', 'none', 'none', 'no', 'no', 'no', 0, 'none'),
+(4, 'lz8YnK4M', 'un2kt7px', 'Rumar C. Pamparo', '08:52 PM', 'Thu Dec 07 2023', 'Single Files', 'lz8YnK4M', 'none', 'lz8YnK4M', 0, 0, 'IT-ELECT2', 'ENTREPRENEURSHIP 2', 'normal', 'none', 'none', 'no', 'no', 'no', 0, 'none'),
+(5, 'th5tRTPX', 'un2kt7px', 'Rumar C. Pamparo', '08:54 PM', 'Thu Dec 07 2023', 'Multi Files', 'th5tRTPX', 'none', 'th5tRTPX', 0, 0, 'IT-ELECT2', 'ENTREPRENEURSHIP 2', 'normal', 'none', 'none', 'no', 'no', 'no', 0, 'none'),
+(258, 'mORXxJYo', 'un2kt7px', 'Rumar C. Pamparo', '07:50 PM', 'Sun Apr 14 2024', 'test', 'mORXxJYo', 'mORXxJYo', 'none', 0, 0, 'IT-CAP2', 'CAPSTONE 2', 'normal', 'none', 'none', 'no', 'no', 'no', 0, 'none'),
+(259, 'dNf522yo', 'un2kt7px', 'Rumar C. Pamparo', '08:02 PM', 'Sun Apr 14 2024', 'try nga', 'dNf522yo', 'dNf522yo', 'none', 0, 0, 'IT-CAP2', 'CAPSTONE 2', 'normal', 'none', 'none', 'no', 'no', 'no', 0, 'none'),
+(260, 'Bd4lkWFD', 'un2kt7px', 'Rumar C. Pamparo', '08:04 PM', 'Sun Apr 14 2024', 'test1', 'Bd4lkWFD', 'Bd4lkWFD', 'none', 0, 0, 'IT-CAP2', 'CAPSTONE 2', 'normal', 'none', 'none', 'no', 'no', 'no', 0, 'none'),
+(269, 'TDVJI3IY', 'un2kt7px', 'Rumar C. Pamparo', '11:32 AM', 'Mon Apr 15 2024', 'pdf sample', 'TDVJI3IY', 'none', 'TDVJI3IY', 0, 0, 'IT-ELECT2', 'ENTREPRENEURSHIP 2', 'normal', 'none', 'none', 'no', 'no', 'no', 0, 'none'),
+(270, 'iwPl3xFW', 'un2kt7px', 'Rumar C. Pamparo', '11:37 AM', 'Mon Apr 15 2024', 'sample multiple', 'iwPl3xFW', 'none', 'iwPl3xFW', 0, 0, 'IT-ELECT2', 'ENTREPRENEURSHIP 2', 'normal', 'none', 'none', 'no', 'no', 'no', 0, 'none'),
+(271, 'XlcYbqYk', 'un2kt7px', 'Rumar C. Pamparo', '11:49 AM', 'Mon Apr 15 2024', 'nel', 'XlcYbqYk', 'none', 'XlcYbqYk', 0, 0, 'IT-ELECT2', 'ENTREPRENEURSHIP 2', 'normal', 'none', 'none', 'no', 'no', 'no', 0, 'none'),
+(272, 'DOann9lo', 'un2kt7px', 'Rumar C. Pamparo', '09:14 AM', 'Tue Apr 16 2024', 'sample multiple post', 'DOann9lo', 'DOann9lo', 'DOann9lo', 0, 0, 'IT-ELECT2', 'ENTREPRENEURSHIP 2', 'normal', 'none', 'none', 'no', 'no', 'no', 0, 'none'),
+(273, '1SXMpTpy', 'un2kt7px', 'Rumar C. Pamparo', '09:15 AM', 'Tue Apr 16 2024', 'sample', '1SXMpTpy', '1SXMpTpy', 'none', 0, 0, 'IT-ELECT2', 'ENTREPRENEURSHIP 2', 'normal', 'none', 'none', 'no', 'no', 'no', 0, 'none'),
+(277, 'gb3YpAQC', 'Tk6Bxe8U', 'Mark L. Adduru', '04:33 PM', 'Thu Apr 18 2024', 'sample lang perds', 'gb3YpAQC', 'gb3YpAQC', 'gb3YpAQC', 0, 0, 'IT-ELECT2', 'ENTREPRENEURSHIP 2', 'normal', 'none', 'none', 'no', 'no', 'no', 0, 'none'),
+(278, 'Ciaq97Dj', 'un2kt7px', 'Rumar C. Pamparo', '05:03 PM', 'Wed May 08 2024', 'sads', 'Ciaq97Dj', 'Ciaq97Dj', 'Ciaq97Dj', 0, 0, 'IT-CAP2', 'CAPSTONE 2', 'normal', 'none', 'none', 'no', 'no', 'no', 0, 'none'),
+(279, 'Tu2qqJFY', 'un2kt7px', 'Rumar C. Pamparo', '02:24 PM', 'Mon Jul 29 2024', 'Exercise 1', 'Tu2qqJFY', 'none', 'none', 0, 0, 'IT-CAP2', 'CAPSTONE 1', 'normal', '1Oc0uJXk', 'Tu2qqJF6', 'yes', 'no', 'no', 0, '1'),
+(281, 'JEK8w5Au', 'un2kt7px', 'Rumar C Pamparo', '11:43 PM', 'Mon Jun 24 2024', 'post sample', 'JEK8w5Au', 'none', 'none', 0, 0, 'IT-CAP2', 'CAPSTONE 1', 'normal', 'Kd5FbBsT', 'none', 'no', 'no', 'no', 0, '1'),
+(282, 'cpGlnx6n', 'un2kt7px', 'Rumar C Pamparo', '11:47 PM', 'Mon Jun 24 2024', 'post sample 1', 'cpGlnx6n', 'none', 'none', 0, 0, 'IT-CAP2', 'CAPSTONE 1', 'normal', 'Kd5FbBsT', 'none', 'no', 'no', 'no', 0, '1'),
+(283, 'Yqw1TmMC', 'un2kt7px', 'Rumar C Pamparo', '10:13 AM', 'Wed Jul 24 2024', 'try quiz', 'Yqw1TmMC', 'none', 'none', 0, 0, 'IT-CAP2', 'CAPSTONE 1', 'normal', 'chcFBWv3', 'none', 'no', 'no', 'no', 0, '1'),
+(287, 'PCUTjEHf', 'un2kt7px', 'Rumar C Pamparo', '11:20 AM', 'Wed Jul 24 2024', 'sample final quiz post', 'PCUTjEHf', 'none', 'none', 0, 0, 'IT-CAP2', 'CAPSTONE 1', 'normal', 'D1d88JDT', 'none', 'no', 'no', 'no', 0, '1'),
+(288, '9VXI5qTk', 'un2kt7px', 'Rumar C Pamparo', '11:33 AM', 'Wed Jul 24 2024', 'sample final quiz', '9VXI5qTk', 'none', 'none', 0, 0, 'IT-CAP2', 'CAPSTONE 1', 'normal', 'HfMjnACD', 'none', 'no', 'no', 'no', 0, '1'),
+(289, '7rnywy9X', 'un2kt7px', 'Rumar C Pamparo', '11:01 AM', 'Thu Jul 25 2024', 'SAMPLE SCHED POST', '7rnywy9X', 'none', 'none', 0, 0, 'IT-CAP2', 'CAPSTONE 1', 'normal', 'TCTZ66aH', 'none', 'no', 'no', 'no', 0, '1');
 
 -- --------------------------------------------------------
 
@@ -543,8 +623,9 @@ CREATE TABLE `questionbank` (
 
 INSERT INTO `questionbank` (`id`, `bankID`, `bankTitle`, `subjectName`, `questionID`, `totalPoints`, `totalQuestions`, `time`, `date`) VALUES
 (1, 'Fi2qqJFY', 'try', 'CAPSTONE 1', 'Fi2qqJFY', 3, 3, '08:13 PM', 'Tue Jan 16 2024'),
-(2, 'bbLmxfIX', 'Javascript Questions', 'ENTREPRENEURSHIP', 'bbLmxfIX', 2, 2, '07:40 PM', 'Wed Jan 17 2024'),
-(3, 'UICd4r8F', 'Its all about Java', 'CAPSTONE 1', 'UICd4r8F', 3, 3, '09:10 PM', 'Wed Jan 17 2024');
+(3, 'UICd4r8F', 'Its all about Java', 'CAPSTONE 1', 'UICd4r8F', 3, 3, '09:10 PM', 'Wed Jan 17 2024'),
+(13, 'spr3Rs8E', 'sample titla', 'CAPSTONE 1', 'spr3Rs8E', 3, 3, '04:20 PM', 'Tue Jul 23 2024'),
+(14, 'JCRXTlwb', 'question final test', 'CAPSTONE 1', 'JCRXTlwb', 3, 3, '11:11 AM', 'Wed Jul 24 2024');
 
 -- --------------------------------------------------------
 
@@ -574,12 +655,12 @@ CREATE TABLE `questions` (
 --
 
 INSERT INTO `questions` (`id`, `questionID`, `questionNumber`, `questionContent`, `questionType`, `points`, `required`, `keySensitive`, `questionAnswerText`, `numberOfAns`, `choicesID`, `imageID`, `fillLayoutID`, `subjectName`) VALUES
-(30, 'bbLmxfIX', 3, 'In JavaScript, objects are immutable.', 'True Or False', 1, 1, 0, 'False', 0, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(53, 'bbLmxfIX', 1, 'none', 'fill', 1, 0, 0, 'none', 1, 'none', 'none', 'YXWApu2U', 'ENTREPRENEURSHIP'),
+(30, 'Kd5FbBsT', 3, 'In JavaScript, objects are immutable.', 'True Or False', 1, 1, 0, 'False', 1, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
+(53, 'Kd5FbBsT', 1, 'none', 'fill', 1, 0, 0, 'none', 1, 'none', 'none', 'YXWApu2U', 'ENTREPRENEURSHIP'),
 (55, 'Fi2qqJFY', 6, 'In Python, the print statement is used to display output to the console.', 'True Or False', 1, 0, 0, 'True', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
-(97, 'UICd4r8F', 1, 'What keyword is used to create a function in Python?', 'enumeration', 1, 0, 0, 'def', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
-(98, 'UICd4r8F', 2, 'Which of the following is used to inherit a class in Java?', 'choices', 1, 0, 0, 'none', 1, 'Pa2qqJFY', 'none', 'none', 'CAPSTONE 1'),
-(99, 'UICd4r8F', 3, 'none', 'fill', 1, 0, 0, 'none', 2, 'none', 'none', 'wPgjtqxZ', 'CAPSTONE 1'),
+(97, 'Kd5FbBsT', 1, 'What keyword is used to create a function in Python?', 'enumeration', 1, 0, 0, 'def', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
+(98, 'Kd5FbBsT', 2, 'Which of the following is used to inherit a class in Java?', 'choices', 1, 0, 0, 'none', 1, 'Pa2qqJFY', 'none', 'none', 'CAPSTONE 1'),
+(99, 'Kd5FbBsT', 3, 'none', 'fill', 1, 0, 0, 'none', 2, 'none', 'none', 'wPgjtqxZ', 'CAPSTONE 1'),
 (100, 'Fi2qqJFY', 1, 'Which of the following is a mutable data type in Python?', 'enumeration', 1, 0, 0, 'list', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
 (101, 'Fi2qqJFY', 2, 'Which of the following methods is used to add an element to the end of an array in JavaScript?', 'choices', 1, 0, 0, 'none', 1, 'C2pvxjPd', 'none', 'none', 'CAPSTONE 1'),
 (160, 'Qdr6JsPc', 1, 'Which of the following is used to inherit a class in Java?', 'choices', 1, 0, 0, 'none', 1, 'Pa2qqJFY', 'none', 'none', 'CAPSTONE 1'),
@@ -614,7 +695,73 @@ INSERT INTO `questions` (`id`, `questionID`, `questionNumber`, `questionContent`
 (189, 'kf12ami0', 1, 'dasd', 'enumeration', 1, 0, 0, 'asd', 1, 'none', 'yxIKY57R', 'none', 'SYSTEM ADMINISTRATION AND MAINTENANCE'),
 (190, 'KYZE9iQv', 2, 'das', 'enumeration', 1, 0, 0, 'asdas', 1, 'none', 'UY47Y6EM', 'none', 'SYSTEM ADMINISTRATION AND MAINTENANCE'),
 (191, 'aCPXaMGI', 1, 'In JavaScript, objects are immutable.', 'True Or False', 1, 1, 0, 'False', 0, 'none', 'none', 'none', 'ENTREPRENEURSHIP'),
-(192, 'aCPXaMGI', 2, 'none', 'fill', 1, 0, 0, 'none', 1, 'none', 'none', 'YXWApu2U', 'ENTREPRENEURSHIP');
+(192, 'aCPXaMGI', 2, 'none', 'fill', 1, 0, 0, 'none', 1, 'none', 'none', 'YXWApu2U', 'ENTREPRENEURSHIP'),
+(193, 'thK8Hjmu', 2, 'Which of the following is a mutable data type in Python?', 'enumeration', 1, 0, 0, 'list', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
+(194, 'thK8Hjmu', 3, 'Which of the following methods is used to add an element to the end of an array in JavaScript?', 'choices', 1, 0, 0, 'none', 1, 'C2pvxjPd', 'none', 'none', 'CAPSTONE 1'),
+(195, 'thK8Hjmu', 1, 'In Python, the print statement is used to display output to the console.', 'True Or False', 1, 0, 0, 'True', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
+(196, 'thK8Hjmu', 2, 'Which of the following is a mutable data type in Python?', 'enumeration', 1, 0, 0, 'list', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
+(197, 'thK8Hjmu', 1, 'In Python, the print statement is used to display output to the console.', 'True Or False', 1, 0, 0, 'True', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
+(198, 'thK8Hjmu', 3, 'Which of the following methods is used to add an element to the end of an array in JavaScript?', 'choices', 1, 0, 0, 'none', 1, 'C2pvxjPd', 'none', 'none', 'CAPSTONE 1'),
+(199, 'thK8Hjmu', 2, 'Which of the following is a mutable data type in Python?', 'enumeration', 1, 0, 0, 'list', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
+(200, 'thK8Hjmu', 3, 'Which of the following methods is used to add an element to the end of an array in JavaScript?', 'choices', 1, 0, 0, 'none', 1, 'C2pvxjPd', 'none', 'none', 'CAPSTONE 1'),
+(201, 'thK8Hjmu', 1, 'In Python, the print statement is used to display output to the console.', 'True Or False', 1, 0, 0, 'True', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
+(208, 'VUO5Wd4f', 1, 'In Python, the print statement is used to display output to the console.', 'True Or False', 1, 0, 0, 'True', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
+(209, 'VUO5Wd4f', 2, 'Which of the following is a mutable data type in Python?', 'enumeration', 1, 0, 0, 'list', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
+(210, 'VUO5Wd4f', 3, 'Which of the following methods is used to add an element to the end of an array in JavaScript?', 'choices', 1, 0, 0, 'none', 1, 'C2pvxjPd', 'none', 'none', 'CAPSTONE 1'),
+(211, 'UICd4r8F', 1, 'dasd', 'enumeration', 1, 0, 0, 'asd', 1, 'none', 'yxIKY57R', 'none', 'SYSTEM ADMINISTRATION AND MAINTENANCE'),
+(212, 'UICd4r8F', 3, '', 'fill', 1, 0, 0, 'none', 1, 'none', 'none', 'Z22IU74j', 'SYSTEM ADMINISTRATION AND MAINTENANCE'),
+(213, 'KMsigJNX', 1, 'dasd', 'enumeration', 1, 0, 0, 'asd', 1, 'none', 'yxIKY57R', 'none', 'SYSTEM ADMINISTRATION AND MAINTENANCE'),
+(214, 'KMsigJNX', 4, 'Which of the following is a mutable data type in Python?', 'enumeration', 1, 0, 0, 'list', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
+(215, 'KMsigJNX', 3, 'In Python, the print statement is used to display output to the console.', 'True Or False', 1, 0, 0, 'True', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
+(216, 'KMsigJNX', 2, '', 'fill', 1, 0, 0, 'none', 1, 'none', 'none', 'Z22IU74j', 'SYSTEM ADMINISTRATION AND MAINTENANCE'),
+(217, 'KMsigJNX', 1, 'dasd', 'enumeration', 1, 0, 0, 'asd', 1, 'none', 'yxIKY57R', 'none', 'SYSTEM ADMINISTRATION AND MAINTENANCE'),
+(218, 'KMsigJNX', 3, 'In Python, the print statement is used to display output to the console.', 'True Or False', 1, 0, 0, 'True', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
+(219, 'KMsigJNX', 2, '', 'fill', 1, 0, 0, 'none', 1, 'none', 'none', 'Z22IU74j', 'SYSTEM ADMINISTRATION AND MAINTENANCE'),
+(220, 'KMsigJNX', 1, 'dasd', 'enumeration', 1, 0, 0, 'asd', 1, 'none', 'yxIKY57R', 'none', 'SYSTEM ADMINISTRATION AND MAINTENANCE'),
+(221, 'KMsigJNX', 4, 'Which of the following is a mutable data type in Python?', 'enumeration', 1, 0, 0, 'list', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
+(222, 'KMsigJNX', 3, 'In Python, the print statement is used to display output to the console.', 'True Or False', 1, 0, 0, 'True', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
+(223, 'KMsigJNX', 2, '', 'fill', 1, 0, 0, 'none', 1, 'none', 'none', 'Z22IU74j', 'SYSTEM ADMINISTRATION AND MAINTENANCE'),
+(224, 'KMsigJNX', 4, 'Which of the following is a mutable data type in Python?', 'enumeration', 1, 0, 0, 'list', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
+(225, 'KMsigJNX', 1, 'dasd', 'enumeration', 1, 0, 0, 'asd', 1, 'none', 'yxIKY57R', 'none', 'SYSTEM ADMINISTRATION AND MAINTENANCE'),
+(226, 'KMsigJNX', 2, '', 'fill', 1, 0, 0, 'none', 1, 'none', 'none', 'Z22IU74j', 'SYSTEM ADMINISTRATION AND MAINTENANCE'),
+(227, 'KMsigJNX', 4, 'Which of the following is a mutable data type in Python?', 'enumeration', 1, 0, 0, 'list', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
+(228, 'KMsigJNX', 3, 'In Python, the print statement is used to display output to the console.', 'True Or False', 1, 0, 0, 'True', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
+(290, 'J4Gymr6X', 1, 'sample question 1', 'enumeration', 1, 0, 0, 'sample question 1', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
+(291, 'J4Gymr6X', 2, 'sample question 2', 'enumeration', 1, 0, 0, 'sample question 2', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
+(292, 'J4Gymr6X', 3, 'sample question 3', 'enumeration', 1, 0, 0, 'sample question 3', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
+(293, 'XXMG8ks4', 1, 'sample question 1', 'enumeration', 1, 0, 0, 'sample question 1', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
+(294, 'XXMG8ks4', 2, 'sample question 2', 'enumeration', 1, 0, 0, 'sample question 2', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
+(295, 'XXMG8ks4', 3, 'sample question 3', 'enumeration', 1, 0, 0, 'sample question 3', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
+(296, 'vNB77hij', 1, 'sample question 1', 'enumeration', 1, 0, 0, 'sample question 1', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
+(297, 'vNB77hij', 2, 'sample question 2', 'enumeration', 1, 0, 0, 'sample question 2', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
+(298, 'vNB77hij', 3, 'sample question 3', 'enumeration', 1, 0, 0, 'sample question 3', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
+(299, 'spr3Rs8E', 3, 'sample question 3', 'enumeration', 1, 0, 0, 'sample question 3', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
+(300, 'spr3Rs8E', 1, 'sample question 1', 'enumeration', 1, 0, 0, 'sample question 1', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
+(301, 'spr3Rs8E', 2, 'sample question 2', 'enumeration', 1, 0, 0, 'sample question 2', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
+(311, 'dN2XmVU5', 1, 'In Python, the print statement is used to display output to the console.', 'True Or False', 1, 0, 0, 'True', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
+(312, 'dN2XmVU5', 1, 'In Python, the print statement is used to display output to the console.', 'True Or False', 1, 0, 0, 'True', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
+(313, 'dN2XmVU5', 2, 'Which of the following is a mutable data type in Python?', 'enumeration', 1, 0, 0, 'list', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
+(314, 'dN2XmVU5', 3, 'Which of the following methods is used to add an element to the end of an array in JavaScript?', 'choices', 1, 0, 0, 'none', 1, 'C2pvxjPd', 'none', 'none', 'CAPSTONE 1'),
+(315, 'dN2XmVU5', 2, 'Which of the following is a mutable data type in Python?', 'enumeration', 1, 0, 0, 'list', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
+(316, 'dN2XmVU5', 3, 'Which of the following methods is used to add an element to the end of an array in JavaScript?', 'choices', 1, 0, 0, 'none', 1, 'C2pvxjPd', 'none', 'none', 'CAPSTONE 1'),
+(317, 'dN2XmVU5', 1, 'In Python, the print statement is used to display output to the console.', 'True Or False', 1, 0, 0, 'True', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
+(318, 'dN2XmVU5', 2, 'Which of the following is a mutable data type in Python?', 'enumeration', 1, 0, 0, 'list', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
+(319, 'dN2XmVU5', 3, 'Which of the following methods is used to add an element to the end of an array in JavaScript?', 'choices', 1, 0, 0, 'none', 1, 'C2pvxjPd', 'none', 'none', 'CAPSTONE 1'),
+(329, 'LuNpxVVK', 1, 'dasd', 'enumeration', 1, 0, 0, 'asd', 1, 'none', 'yxIKY57R', 'none', 'SYSTEM ADMINISTRATION AND MAINTENANCE'),
+(330, 'LuNpxVVK', 2, '', 'fill', 1, 0, 0, 'none', 1, 'none', 'none', 'Z22IU74j', 'SYSTEM ADMINISTRATION AND MAINTENANCE'),
+(333, 'JCRXTlwb', 1, 'sample question', 'enumeration', 1, 0, 0, 'sample answer', 1, 'none', 'VpHB3DyJ', 'none', 'CAPSTONE 1'),
+(334, 'JCRXTlwb', 2, 'sample question 2', 'enumeration', 1, 0, 0, 'sample question 2', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
+(335, 'JCRXTlwb', 3, 'sample', 'choices', 1, 0, 0, 'none', 1, 'cndoArXj', 'none', 'none', 'CAPSTONE 1'),
+(363, 'HfMjnACD', 1, 'sample question', 'enumeration', 1, 0, 0, 'sample answer', 1, 'none', 'VpHB3DyJ', 'none', 'CAPSTONE 1'),
+(364, 'HfMjnACD', 2, 'sample question 2', 'enumeration', 1, 0, 0, 'sample question 2', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
+(365, 'HfMjnACD', 3, 'sample', 'choices', 1, 0, 0, 'none', 1, 'cndoArXj', 'none', 'none', 'CAPSTONE 1'),
+(366, 'TCTZ66aH', 1, 'dasd', 'enumeration', 1, 0, 0, 'asd', 1, 'none', 'yxIKY57R', 'none', 'SYSTEM ADMINISTRATION AND MAINTENANCE'),
+(367, 'TCTZ66aH', 2, '', 'fill', 1, 0, 0, 'none', 1, 'none', 'none', 'Z22IU74j', 'SYSTEM ADMINISTRATION AND MAINTENANCE'),
+(368, 'biLQsyzq', 1, 'dasd', 'enumeration', 1, 0, 0, 'asd', 1, 'none', 'yxIKY57R', 'none', 'SYSTEM ADMINISTRATION AND MAINTENANCE'),
+(369, 'biLQsyzq', 2, '', 'fill', 1, 0, 0, 'none', 1, 'none', 'none', 'Z22IU74j', 'SYSTEM ADMINISTRATION AND MAINTENANCE'),
+(370, 'tXND6smY', 1, 'In Python, the print statement is used to display output to the console.', 'True Or False', 1, 0, 0, 'True', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
+(371, 'tXND6smY', 2, 'Which of the following is a mutable data type in Python?', 'enumeration', 1, 0, 0, 'list', 1, 'none', 'none', 'none', 'CAPSTONE 1'),
+(372, 'tXND6smY', 3, 'Which of the following methods is used to add an element to the end of an array in JavaScript?', 'choices', 1, 0, 0, 'none', 1, 'C2pvxjPd', 'none', 'none', 'CAPSTONE 1');
 
 -- --------------------------------------------------------
 
@@ -634,21 +781,37 @@ CREATE TABLE `quiz` (
   `date` varchar(20) NOT NULL,
   `duration` int(10) NOT NULL,
   `random` varchar(10) NOT NULL,
-  `autoView` varchar(10) NOT NULL
+  `autoView` varchar(10) NOT NULL,
+  `postStatus` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `quiz`
 --
 
-INSERT INTO `quiz` (`quizID`, `quizTitle`, `quizInstructions`, `questionID`, `subjectName`, `totalPoints`, `totalQuestions`, `time`, `date`, `duration`, `random`, `autoView`) VALUES
-('1bRWITVE', 'Java Script Quiz', 'Answer properly.', 'bbLmxfIX', 'ENTREPRENEURSHIP', 2, 2, '03:35 AM', 'Mon Jan 22 2024', 0, '1', '0'),
-('1Oc0uJXk', 'Python Quiz', 'Answer properly.', 'Fi2qqJFY', 'CAPSTONE 1', 3, 3, '05:30 PM', 'Thu Jan 18 2024', 0, '1', '0'),
-('2eb7oSeH', 'Java Quiz', 'Answer properly.', 'UICd4r8F', 'CAPSTONE 1', 3, 3, '11:09 PM', 'Wed Jan 24 2024', 0, '1', '0'),
-('aCPXaMGI', 'java quiz', 'nice', 'aCPXaMGI', 'ENTREPRENEURSHIP', 2, 2, '12:57 PM', 'Mon Jun 24 2024', 30, '1', '0'),
-('e61DROKC', 'ASDAS', 'DASD', 'e61DROKC', 'ENTREPRENEURSHIP', 2, 2, '09:51 AM', 'Fri Jun 21 2024', 0, '1', '0'),
-('Qdr6JsPc', 'dasdas', 'dasdasd', 'Qdr6JsPc', 'CAPSTONE 1', 2, 2, '06:25 PM', 'Thu Jun 06 2024', 0, '1', '0'),
-('UUAVMWI5', 'exercise 101', 'exercise 101', 'UUAVMWI5', 'CAPSTONE 1', 3, 3, '01:52 PM', 'Wed Jun 12 2024', 0, '1', '0');
+INSERT INTO `quiz` (`quizID`, `quizTitle`, `quizInstructions`, `questionID`, `subjectName`, `totalPoints`, `totalQuestions`, `time`, `date`, `duration`, `random`, `autoView`, `postStatus`) VALUES
+('1bRWITVE', 'Java Script Quiz', 'Answer properly.', 'bbLmxfIX', 'ENTREPRENEURSHIP', 2, 2, '03:35 AM', 'Mon Jan 22 2024', 0, '1', '0', 'posted'),
+('1Oc0uJXk', 'Python Quiz', 'Answer properly.', 'Fi2qqJFY', 'CAPSTONE 1', 3, 3, '05:30 PM', 'Thu Jan 18 2024', 2, '1', '0', '	 posted'),
+('2eb7oSeH', 'Java Quiz', 'Answer properly.', 'UICd4r8F', 'CAPSTONE 1', 3, 3, '11:09 PM', 'Wed Jan 24 2024', 0, '1', '0', '	 posted'),
+('aCPXaMGI', 'java quiz', 'nice', 'aCPXaMGI', 'ENTREPRENEURSHIP', 2, 2, '12:57 PM', 'Mon Jun 24 2024', 30, '1', '0', '	 posted'),
+('AtQvM5AA', 'asd', 'asd', 'AtQvM5AA', 'CAPSTONE 1', 5, 5, '11:18 PM', 'Mon Jun 24 2024', 0, '1', '0', '	 posted'),
+('biLQsyzq', 'SAMPLE SCHED POST', 'SAMPLE SCHED POST', 'biLQsyzq', 'CAPSTONE 1', 2, 2, '02:31 PM', 'Wed Jul 24 2024', 0, '1', '0', 'draft'),
+('D1d88JDT', 'sample final title', 'sample final inst', 'D1d88JDT', 'CAPSTONE 1', 3, 3, '11:20 AM', 'Wed Jul 24 2024', 0, '1', '0', 'posted'),
+('dN2XmVU5', 'asds', 'wdasd', 'dN2XmVU5', 'CAPSTONE 1', 3, 3, '09:55 AM', 'Wed Jul 24 2024', 0, '1', '0', 'posted'),
+('e61DROKC', 'ASDAS', 'DASD', 'e61DROKC', 'ENTREPRENEURSHIP', 2, 2, '09:51 AM', 'Fri Jun 21 2024', 0, '1', '0', '	 posted'),
+('HfMjnACD', 'SAMPLE', 'SAMPLE', 'HfMjnACD', 'CAPSTONE 1', 3, 3, '11:33 AM', 'Wed Jul 24 2024', 0, '1', '0', 'posted'),
+('Kd5FbBsT', 'asd', 'asd', 'Kd5FbBsT', 'CAPSTONE 1', 5, 5, '11:18 PM', 'Mon Jun 24 2024', 0, '1', '0', '	 posted'),
+('LuNpxVVK', 'sample', 'sample', 'LuNpxVVK', 'CAPSTONE 1', 2, 2, '11:00 AM', 'Wed Jul 24 2024', 0, '1', '0', 'posted'),
+('qb4sOFmH', 'asd', 'asd', 'qb4sOFmH', 'CAPSTONE 1', 5, 5, '11:13 PM', 'Mon Jun 24 2024', 0, '1', '0', '	 posted'),
+('Qdr6JsPc', 'dasdas', 'dasdasd', 'Qdr6JsPc', 'CAPSTONE 1', 2, 2, '06:25 PM', 'Thu Jun 06 2024', 0, '1', '0', '	 posted'),
+('rGaeUvUs', 'asd', 'asd', 'rGaeUvUs', 'CAPSTONE 1', 5, 5, '11:17 PM', 'Mon Jun 24 2024', 0, '1', '0', '	 posted'),
+('TCTZ66aH', 'SAMPLE SCHED POST', 'SAMPLE SCHED POST', 'TCTZ66aH', 'CAPSTONE 1', 2, 2, '02:29 PM', 'Wed Jul 24 2024', 0, '1', '0', 'posted'),
+('thK8Hjmu', 'asd', 'asd', 'thK8Hjmu', 'CAPSTONE 1', 3, 3, '05:47 PM', 'Wed Jun 26 2024', 0, '1', '0', '	 posted'),
+('tXND6smY', 'sample post now', 'sample', 'tXND6smY', 'CAPSTONE 1', 3, 3, '03:17 PM', 'Mon Jul 29 2024', 0, '1', '0', 'posted'),
+('UcAtwUlg', 'asd', 'asd', 'UcAtwUlg', 'CAPSTONE 1', 2, 2, '05:39 PM', 'Wed Jun 26 2024', 0, '1', '0', '	 posted'),
+('UUAVMWI5', 'exercise 101', 'exercise 101', 'UUAVMWI5', 'CAPSTONE 1', 3, 3, '01:52 PM', 'Wed Jun 12 2024', 0, '1', '0', '	 posted'),
+('VUO5Wd4f', 'new', 'new', 'VUO5Wd4f', 'CAPSTONE 1', 3, 3, '05:48 PM', 'Wed Jun 26 2024', 0, '1', '0', '	 posted'),
+('ZLTe3e5t', 'asd', 'asd', 'ZLTe3e5t', 'CAPSTONE 1', 3, 3, '05:44 PM', 'Wed Jun 26 2024', 0, '1', '0', '	 posted');
 
 -- --------------------------------------------------------
 
@@ -677,7 +840,8 @@ INSERT INTO `reactions` (`id`, `reactID`, `postID`, `acctID`, `classCode`, `reac
 (45, 'S63hVZAm', '1SXMpTpy', 'un2kt7px', 'IT-ELECT2', 'heart'),
 (46, '7jUiSBua', '1SXMpTpy', 'un2kt7px', 'IT-ELECT2', 'like'),
 (47, 'jAmPiGdS', 'gb3YpAQC', 'un2kt7px', 'IT-ELECT2', 'heart'),
-(48, 'fWhVAv6d', 'gb3YpAQC', 'VHXQ6s6O', 'IT-ELECT2', 'heart');
+(48, 'fWhVAv6d', 'gb3YpAQC', 'VHXQ6s6O', 'IT-ELECT2', 'heart'),
+(49, 'r9ZhOI5P', 'JEK8w5Au', 'VHXQ6s6O', 'IT-CAP2', 'heart');
 
 -- --------------------------------------------------------
 
@@ -702,8 +866,7 @@ CREATE TABLE `schedule` (
 --
 
 INSERT INTO `schedule` (`id`, `schedID`, `postID`, `schedDate`, `schedTime`, `dueDate`, `dueTime`, `closeDate`, `closeTime`) VALUES
-(1, '1Oc0uJXk', 'Tu2qqJFY', '2024-01-05', '21:40', '2024-01-05', '09:40', '2024-02-02', '09:42'),
-(2, '2eb7oSeH', 'Yu2qqJFY', '2024-01-05', '21:40', '2024-01-05', '09:40', '2024-02-02', '09:42');
+(52, 'Tu2qqJF6', 'Tu2qqJF6', 'Fri Jul 29 2024', '01:05 PM', 'Fri Jul 29 2024', '12:44 PM', 'Fri Jul 29 2024', '12:45 PM');
 
 -- --------------------------------------------------------
 
@@ -726,7 +889,8 @@ CREATE TABLE `scores` (
 
 INSERT INTO `scores` (`id`, `scoreID`, `quizID`, `acctID`, `fullname`, `score`) VALUES
 (1, '1Oc0uJXk', '1Oc0uJXk', 'un2kt7px', 'Rumar C. Pamparo', 3),
-(2, '8ePQ5du4', '1Oc0uJXk', 'VHXQ6s6O', 'Allan C Caluigiran', 1);
+(2, '8ePQ5du4', '1Oc0uJXk', 'VHXQ6s6O', 'Allan C Caluigiran', 1),
+(29, 'CW7weSRU', 'Kd5FbBsT', 'VHXQ6s6O', 'Allan C Caluigiran', 4);
 
 -- --------------------------------------------------------
 
@@ -830,6 +994,12 @@ ALTER TABLE `messages`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `notifications`
+--
+ALTER TABLE `notifications`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `post`
 --
 ALTER TABLE `post`
@@ -885,25 +1055,25 @@ ALTER TABLE `subject`
 -- AUTO_INCREMENT for table `choices`
 --
 ALTER TABLE `choices`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=155;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=159;
 
 --
 -- AUTO_INCREMENT for table `class`
 --
 ALTER TABLE `class`
-  MODIFY `classID` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1983;
+  MODIFY `classID` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1994;
 
 --
 -- AUTO_INCREMENT for table `class_list`
 --
 ALTER TABLE `class_list`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1847;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1862;
 
 --
 -- AUTO_INCREMENT for table `comments`
 --
 ALTER TABLE `comments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- AUTO_INCREMENT for table `files`
@@ -921,67 +1091,73 @@ ALTER TABLE `filllayout`
 -- AUTO_INCREMENT for table `friends`
 --
 ALTER TABLE `friends`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=115;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=137;
 
 --
 -- AUTO_INCREMENT for table `image`
 --
 ALTER TABLE `image`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1971;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2006;
 
 --
 -- AUTO_INCREMENT for table `members`
 --
 ALTER TABLE `members`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1949;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1964;
 
 --
 -- AUTO_INCREMENT for table `messages`
 --
 ALTER TABLE `messages`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=107;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=111;
+
+--
+-- AUTO_INCREMENT for table `notifications`
+--
+ALTER TABLE `notifications`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `post`
 --
 ALTER TABLE `post`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=281;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=303;
 
 --
 -- AUTO_INCREMENT for table `questionbank`
 --
 ALTER TABLE `questionbank`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `questions`
 --
 ALTER TABLE `questions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=193;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=373;
 
 --
 -- AUTO_INCREMENT for table `reactions`
 --
 ALTER TABLE `reactions`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT for table `schedule`
 --
 ALTER TABLE `schedule`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
 
 --
 -- AUTO_INCREMENT for table `scores`
 --
 ALTER TABLE `scores`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `subject`
 --
 ALTER TABLE `subject`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

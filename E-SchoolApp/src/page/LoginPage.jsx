@@ -44,7 +44,8 @@ const handleSubmit = (e) => {
         if (result.length > 0) {
             localStorage.setItem('user', JSON.stringify(result[0]))
             console.log(result)
-            if (result.acctype === 'admin') {
+            if (result[0].acctype === 'admin') {
+                console.log('admin here!')
                 navigate('/adminPage')
             }else{
                 navigate('/home')

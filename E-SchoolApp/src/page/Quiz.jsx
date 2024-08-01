@@ -124,7 +124,7 @@ useEffect(() => {
     // create a uniqueID for the questionsSet when mount this page
     setuniqueId(generateUniqueID()) 
 
-    axios.get('http://localhost:5001/getSubjects')
+    axios.get('http://localhost:5001/subject/getSubject')
     .then(res => setsubjectNameList(res.data))
     .catch(err => console.error(err))
 
@@ -741,10 +741,12 @@ const handleTORFquestionAdd = (e) => {
 
 const computeTotalPoints = () => {
     let total = 0
-    for (let i = 0; i < questionObj.length; i++) {
-        const points = parseInt(questionObj[i].points);
-        total += points
+    if (finalQuestionSet) {
+      for (let i = 0; i < finalQuestionSet.length; i++) {
+        total += finalQuestionSet[i].points
+      }  
     }
+    
     return total
 }
 
@@ -889,44 +891,80 @@ const handleSubmitFinalQuestions = () => {
     console.log('final:',finalQuestionSet)
     console.log('images:', imageSetQuestion)
 
+    setShowLoading(true)
+
+    const uniqueID = generateUniqueID()
+
     if (finalQuestionSet.length > 0) {
+
+        //Make a one questionID in set of arraytQuestions
+        const finalQuestionList = 
+        finalQuestionSet.map((oldData) => ({
+            ...oldData,
+            questionID: uniqueID
+        }))
+
+        const bank = [{
+            bankID: uniqueID,
+            bankTitle: quizTitle,
+            subjectName: subjectName,
+            questionID: uniqueID,
+            totalPoints: computeTotalPoints(),
+            totalQuestions: finalQuestionSet.length,
+            time: currentTime,
+            date: currentDate,
+        }]
 
         const data = {
             choices,
             fillLayout,
-            finalQuestionSet,
+            finalQuestionSet: finalQuestionList,
+            bank: bank,
         }
 
-        
         axios.post('http://localhost:5001/questions/addQuestions', data)
         .then((res) => {
             const data = res.data
-            console.log(data.message)
+            const messageQuestions = data.message
+            console.log(messageQuestions)
+
+            if (imageSetQuestion.length > 0) {
+                for (let i = 0; i < imageSetQuestion.length; i++) {
+                    
+                    const formData = new FormData
+                    formData.append('image', imageSetQuestion[i].file)
+                    formData.append('imageID', imageSetQuestion[i].imageID)
+                    formData.append('dateUploaded', imageSetQuestion[i].datePosted)
+                    formData.append('timeUploaded', imageSetQuestion[i].timePosted)
+                    formData.append('acctID', imageSetQuestion[i].acctID)
+                    formData.append('classCode', imageSetQuestion[i].classCode)
+    
+                    axios.post('http://localhost:5001/images/addImage', formData)
+                    .then((res) => {
+                        const data = res.data
+                        const messageImage = data.message
+                        console.log(messageImage)
+
+                        notify(messageQuestions, 'success')
+                    })
+                    .catch((error) => console.log(error))
+                }  
+            }else {
+                notify(messageQuestions, 'success')
+            }
+
+            setTimeout(() => {
+                setQuizTitle('')
+                setQuizDescription('')
+                setsubjectName(null)
+                setFinalQuestionSet([])
+                setChoices([])
+                setfillLayoutSet([])
+                setImageSetQuestion([])
+                setShowLoading(false)
+            }, 2000);
         })
         .catch((error) => console.log(error))
-
-        if (imageSetQuestion.length > 0) {
-            for (let i = 0; i < imageSetQuestion.length; i++) {
-                
-                const formData = new FormData
-                formData.append('image', imageSetQuestion[i].file)
-                formData.append('imageID', imageSetQuestion[i].imageID)
-                formData.append('dateUploaded', imageSetQuestion[i].datePosted)
-                formData.append('timeUploaded', imageSetQuestion[i].timePosted)
-                formData.append('acctID', imageSetQuestion[i].acctID)
-                formData.append('classCode', imageSetQuestion[i].classCode)
-
-                axios.post('http://localhost:5001/images/addImage', formData)
-                .then((res) => {
-                    const data = res.data
-                    console.log(data.message)
-                })
-                .catch((error) => console.log(error))
-            }  
-        }
-
-
-
 
     }
 
@@ -1128,7 +1166,6 @@ const resetQuestionsVariables = () => {
                                 handleSetSubjectName={handleSetSubjectName}
                                 handleSetQuestionTitle={handleSetQuestionTitle}
                                 subjectName={subjectName}
-                                quiz
                                 handleSetQuestionDescription={handleSetQuestionDescription}
                             />
     

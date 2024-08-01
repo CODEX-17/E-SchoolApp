@@ -2,12 +2,17 @@ import React, { useEffect, useState } from 'react'
 import style from './NavBarComponent.module.css';
 import logo from '../assets/logo-white.png'
 import titleLogo from '../assets/title.png'
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import sample from '../assets/sample.jpg'
 import { useNavigateStore } from '../stores/useNavigateStore';
 import { IoNotifications } from "react-icons/io5";
-import generateImageByImageID from '../utils/generateImageByImageID';
 import generateFullname from '../utils/generateFullname';
+import { BsFilePost } from "react-icons/bs";
+import { GiNotebook } from "react-icons/gi";
+import { AiOutlineDelete } from "react-icons/ai"
 import axios from 'axios';
+import io from 'socket.io-client'
+const socket = io.connect('http://localhost:5001')
 
 const NavbarComponent = () => {
   const navigate = useNavigate()
@@ -17,23 +22,47 @@ const NavbarComponent = () => {
   const [userImage, setUserImage] = useState(null)
   const user = JSON.parse(localStorage.getItem('user'))
   const [isShowManageAcct, setIsShowManageAcct] = useState(false)
+  const [isShowNotification, setIsShowNotification] = useState(false)
+  const [notificationList, setNotificationList] = useState([])
+  const [isShowRedDots, setIsShowRedDots] = useState(false)
 
   useEffect(() => {
+
+    //Join room as acctID will becomes roomID for notifications
+    socket.emit('joinRoom', user.acctID)
+    
+    //Listen to add notification sockets
+    socket.on('receivedNotification', (data) => {
+      setIsShowRedDots(true)
+      setNotificationList((oldData) => [...oldData, data])
+    })
     
     if (user) {
       const acctID = user.acctID
 
-      axios.get('http://localhost:5001/images/getImagesByImageID/' + acctID)
+      setUserImage('http://localhost:5001/' + user.data)
+
+      //API get notifications
+      axios.get('http://localhost:5001/notification/getNotification/' + acctID)
       .then((res) => {
-          const result = res.data
-          const url = 'http://localhost:5001/'
-          setUserImage(url + result[0].data)
+        if (res.data) {
+          setNotificationList(res.data)
+        }
       })
       .catch((err) => console.log(err)) 
     }
     
+
     
   },[])
+
+  const generateImages = (data) => {
+    if (data) {
+        const url = 'http://localhost:5001/'
+      return url + data
+    }
+  }
+
 
   const handleLogout = () => { 
     updateRouteChoose('class')
@@ -55,6 +84,45 @@ const NavbarComponent = () => {
     setIsShowManageAcct(!isShowManageAcct)
   }
 
+  const handleDeleteAllNotification = () => {
+
+    //API delete all notifications
+    axios.post('http://localhost:5001/notification/deleteAllNotification/' + user.acctID)
+    .then((res) => {
+      const result = res.data
+      console.log(result.message)
+
+      //delete all notifications value in variable
+      setNotificationList([])
+    })
+    .catch((err) => console.log(err))
+
+  }
+
+  const handleDeleteNotification = (notificationID) => {
+
+    const data = {
+      acctID: user.acctID,
+      notificationID: notificationID,
+    }
+
+    //API delete specific notifications
+    axios.post('http://localhost:5001/notification/deleteOneNotification', data)
+    .then((res) => {
+      const result = res.data
+      console.log(result.message)
+
+      //delete specific notifications value in variable
+      setNotificationList((oldData) => {
+        const newData = oldData.filter((data) => data.notificationID !== notificationID)
+        return newData
+      })
+      
+    })
+    .catch((err) => console.log(err))
+
+  }
+
   return (
     <div className={style.navbar}>
         <div className={style.left}>
@@ -63,7 +131,11 @@ const NavbarComponent = () => {
         </div>
         <div className={style.right}>
           <div className={style.menuTop}>
-            <IoNotifications id={style.notif}/>
+            <div className='position-relative'>
+              { isShowRedDots && <div id={style.circle}>.</div> }
+              <IoNotifications id={style.notif} onClick={() => {setIsShowNotification(!isShowNotification), setIsShowRedDots(false)}}/>
+            </div>
+            
             <img src={userImage}  alt="profile" id={style.profile} onClick={handleProfile}/>
           </div>
           {
@@ -85,6 +157,65 @@ const NavbarComponent = () => {
                     <button className={style.btnLogout} onClick={handleLogout}>Sign out</button>
                 </div>
                   
+              </div>
+            )
+          }
+
+          {
+            isShowNotification && (
+              <div id={style.notifContainer}>
+                <div className={style.head}>
+                  <h2 id={style.title}>Notification</h2>
+                  <p onClick={handleDeleteAllNotification}>Clear All</p>
+                </div>
+                
+                <div className={style.listNotif}>
+                  {
+                    notificationList.length > 0 ? (
+                      notificationList.map((data) => (
+                        <>
+                          {data.type === 'quiz' && (
+                            <div className={style.card} key={data.id}>
+                              <GiNotebook size={25} color='#508D4E'/>
+                              <div className={style.contentText}>
+                                <h2>Quiz posted</h2>
+                                <p><i>{data.date} at {data.time}</i></p>
+                              </div>
+                              <AiOutlineDelete size={20} color='#3E3F40' id={style.delete} title='delete notification' onClick={() => handleDeleteNotification(data.notificationID)}/>
+                            </div>
+                          )}
+
+                          {data.type === 'post' && (
+                            <div className={style.card} key={data.id}>
+                              <BsFilePost size={25} color='#EB5B00'/>
+                              <div className={style.contentText}>
+                                <h2>{data.title}</h2>
+                                <p style={{ fontSize: '9pt' }}>posted</p>
+                                <p><i>{data.date} at {data.time}</i></p>
+                              </div>
+                              <AiOutlineDelete size={20} color='#3E3F40' id={style.delete} title='delete notification' onClick={() => handleDeleteNotification(data.notificationID)}/>
+                            </div>
+                          )}
+
+                          {data.type === 'profile' && (
+                            <div className={style.card} key={data.id}>
+                              <img src={generateImages(data.data)} alt="profile pic"/>
+                              <div className={style.contentText}>
+                                <h2>{data.title}</h2>
+                                <p style={{ fontSize: '9pt' }}>{data.content}</p>
+                                <p><i>{data.date} at {data.time}</i></p>
+                              </div>
+                              <AiOutlineDelete size={20} color='#3E3F40' id={style.delete} title='delete notification' onClick={() => handleDeleteNotification(data.notificationID)}/>
+                            </div>
+                          )}
+                        </>
+                      ))
+                    ) : (
+                      <p>No notification.</p>
+                    )
+                  }
+
+                </div>
               </div>
             )
           }

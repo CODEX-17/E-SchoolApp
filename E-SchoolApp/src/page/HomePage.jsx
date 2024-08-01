@@ -11,9 +11,7 @@ import ActivityPage from './ActivityPage'
 import ManageAccout from './ManageAccout'
 import FilePage from './FilePage'
 import QuizTake from './QuizTake'
-import io from 'socket.io-client';
 import FriendsPage from './FriendsPage'
-// const socket = io.connect('http://localhost:5001');
 
 const HomePage = () => {
   const { routeChoose } = useNavigateStore()
@@ -23,11 +21,6 @@ const HomePage = () => {
     if (!localStorage.getItem('user')) {
       navigate('/')
     }
-      // socket.on('onlinePerson', (data) => {
-      //   if (data) {
-      //     socket.emit('addOnlinePerson', currentUser.acctID)
-      //   }
-      // })
   },[])
 
   return (

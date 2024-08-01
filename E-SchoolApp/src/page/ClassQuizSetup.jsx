@@ -17,6 +17,7 @@ import { MdExitToApp } from "react-icons/md";
 import { SlNotebook } from "react-icons/sl";
 import { BsCalendar3 } from "react-icons/bs";
 import { IoTimeOutline } from "react-icons/io5";
+import { RiDraftLine } from "react-icons/ri";
 import { usePostStore } from '../stores/usePostStore';
 import { useScheduleStore } from '../stores/useScheduleStore';
 import io from 'socket.io-client'
@@ -39,8 +40,9 @@ const ClassQuizSetup = ({ subjectName, navigateClass, classCode, postType, refre
 
   const currentSubjectName = subjectName
   const [choices, setChoices] = useState(null)
-  const [questions, setquestions] = useState('')
+  const [questions, setquestions] = useState([])
   const [quiz, setQuiz] = useState(null)
+  const [quizDraftList, setquizDraftList] = useState([])
   const [images, setImages] = useState(null)
   const [currentBank, setcurrentBank] = useState('')
   const [bankSelected, setbankSelected] = useState(null)
@@ -50,10 +52,10 @@ const ClassQuizSetup = ({ subjectName, navigateClass, classCode, postType, refre
   const [duration, setduration] = useState(0)
   const [random, setrandom] = useState(true)
   const [questionBank, setquestionBank] = useState(null)
-  const [subjectNames, setSubjectName] = useState()
+  const [subjectNames, setSubjectName] = useState([])
   const [selectedSubject, setselectedSubject] = useState('')
   const [isShowCustomizedBox, setisShowCustomizedBox] = useState('setting')
-  const [showLoading, setshowLoading] = useState(true)
+  const [showLoading, setshowLoading] = useState(false)
   const [autoViewScore, setautoViewScore] = useState(false)
   const [selectState, setselectState] = useState(false)
   const [loadingMessage, setloadingMessage] = useState('Getting questions...')
@@ -62,9 +64,10 @@ const ClassQuizSetup = ({ subjectName, navigateClass, classCode, postType, refre
   const [quizTitle, setquizTitle] = useState()
   const [finalQuiz, setfinalQuiz] = useState([])
   const [isShowSavingLoad, setisShowSavingLoad] = useState(false)
-  const { addQuiz } = useQuizStore()
-  const { addQuestions, getQuestion } = useQuestionsStore()
+  const [disabledSaveButton, setDisabledSaveButton] = useState(false)
+ 
   const [isShowPreview, setisShowPreview] = useState(false)
+  const [isShowDraft, setisShowDraft] = useState(false)
   const [isShowPostModal, setisShowPostModal] = useState(false)
   const [isShowscheduleSetup, setisShowscheduleSetup] = useState(false)
   const currentUser = JSON.parse(localStorage.getItem('user'))
@@ -86,21 +89,22 @@ const ClassQuizSetup = ({ subjectName, navigateClass, classCode, postType, refre
     weekday: 'short' 
  })
 
-
-  const { getBank } = useBankStore()
-  const { uploadPost } = usePostStore()
-  const { addSchedule } = useScheduleStore()
-
   useEffect( () => {
 
     //GET ALL IMAGE
     axios.get('http://localhost:5001/images/getImages')
-    .then((res) => setImages(res.data))
+    .then((res) => {
+        setImages(res.data)
+        console.log("image", res.data)
+    })
     .catch((err) => console.log(err))
 
     //GET ALL SUBJECTS
     axios.get('http://localhost:5001/subject/getSubject')
-    .then(res => setSubjectName(res.data))
+    .then(res => {
+        setSubjectName(res.data)
+        console.log("subject name", res.data)
+    })
     .catch(err => console.error(err))
 
     //GET ALL FILLLAYOUT
@@ -110,12 +114,31 @@ const ClassQuizSetup = ({ subjectName, navigateClass, classCode, postType, refre
 
     //GET ALL QUESTIONS
     axios.get('http://localhost:5001/questions/getQuestions')
-    .then((res) => setquestions(res.data))
+    .then((res) => {
+        const result = res.data
+        setquestions(() => {
+            return result.map((data) => ({ ...data, checked: false }))
+        })
+    })
+    .catch((err) => console.log(err))
+
+    //GET ALL BANK
+    axios.get('http://localhost:5001/questionBank/getQuestionBank')
+    .then((res) => {
+        setquestionBank(res.data)
+        console.log("questionBank", res.data)
+    })
     .catch((err) => console.log(err))
 
     //GET ALL QUIZ
     axios.get('http://localhost:5001/quiz/getQuiz')
-    .then((res) => setQuiz(res.data))
+    .then((res) => {
+        const result = res.data
+        setQuiz(result)
+
+        const draft = result.filter((data) => data.postStatus === 'draft')
+        setquizDraftList(draft)
+    })
     .catch((err) => console.log(err))
 
     //GET ALL CHOICES
@@ -123,16 +146,7 @@ const ClassQuizSetup = ({ subjectName, navigateClass, classCode, postType, refre
     .then((res) => setChoices(res.data))
     .catch((err) => console.log(err))
 
-    getBank()
-    getQuestion()
-    setTimeout(() => {
-        setquestions(JSON.parse(localStorage.getItem('questions')) || null)
-        const data = JSON.parse(localStorage.getItem('bank')) || null
-        addCheckedProperty()
-        setquestionBank(data)
-        setshowLoading(false)
-    }, 3000);
-    
+
   },[])
 
   const notify = (message, state) => {
@@ -180,16 +194,9 @@ const ClassQuizSetup = ({ subjectName, navigateClass, classCode, postType, refre
     return result
   }
 
-  const addCheckedProperty = () => {
-    const updated = JSON.parse(localStorage.getItem('questions')) || null
-    for (let i = 0; i < updated.length; i++) {
-        updated[i].checked = false;
-    }
-    setquestions(updated)
-  }
-
   const handleBankSelected = (bankID) => {
     const filter = questionBank.filter((bank) => bank.bankID === bankID)
+    console.log("questions", questions)
     const questionID = filter[0].questionID
     let selectedQuestions = questions.filter((q) => q.questionID === questionID)
     console.log(selectedQuestions)
@@ -315,25 +322,33 @@ const ClassQuizSetup = ({ subjectName, navigateClass, classCode, postType, refre
     
   }
 
-  const handlePostNow = () => {
-    if (finalQuiz.length > 0) {
-        if (quizTitle) {
-            if (quizInstruction) {
-                setisShowPostModal(true)
+  const handleShowPostModal = (quiz) => {
+    console.log(objQuiz)
+    if (quiz.quizID) {
+        setObjQuiz(quiz)
+        setquizTitle(quiz.quizTitle)
+        setquizInstruction(quiz.quizInstructions)
+        setisShowPostModal(true)
+    }else {
+        if (finalQuiz.length > 0) {
+            if (quizTitle) {
+                if (quizInstruction) {
+                    setisShowPostModal(true)
+                }else {
+                    const message = 'Please enter quiz instruction.'
+                    notify(message, 'err')
+                }
             }else {
-                const message = 'Please enter quiz instruction.'
+                const message = 'Please enter quiz title.'
                 notify(message, 'err')
             }
         }else {
-            const message = 'Please enter quiz title.'
+            const message = 'Please create quiz first.'
             notify(message, 'err')
-        }
-    }else {
-        const message = 'Please create quiz first.'
-        notify(message, 'err')
+        }  
     }
-    
-    
+
+
     
   }
 
@@ -358,6 +373,7 @@ const ClassQuizSetup = ({ subjectName, navigateClass, classCode, postType, refre
                 duration,
                 random,
                 autoView: autoViewScore,
+                postStatus: 'draft',
             }
 
             setObjQuiz(quiz)
@@ -382,24 +398,24 @@ const ClassQuizSetup = ({ subjectName, navigateClass, classCode, postType, refre
             }
 
             //UpdateQuestions in database
-            if (final.length > 0) {
-                for (let i = 0; i < final.length; i++) {
-
-                    const data = {
-                        finalQuestionSet: final,
-                        fillLayout: [],
-                        choices: [],
-                    }
-
-                    axios.post('http://localhost:5001/questions/addQuestions', data)
-                    .then( res => {
-                        const result = res.data
-                        console.log(result.message)
-                    })
-                    .catch(err => console.error(err))
-                } 
+           
+            const data = {
+                finalQuestionSet: final,
+                fillLayout: [],
+                choices: [],
+                bank:[],
             }
+
+            axios.post('http://localhost:5001/questions/addQuestions', data)
+            .then( res => {
+                const result = res.data
+                console.log(result.message)
+            })
+            .catch(err => console.error(err))
+                
             
+            
+            setDisabledSaveButton(true)
 
             setTimeout(() => {
                 setisShowSavingLoad(false)
@@ -452,6 +468,30 @@ const ClassQuizSetup = ({ subjectName, navigateClass, classCode, postType, refre
 
   }
 
+  const handleDeleteQuizInDraft = (quizID, questionID) => {
+    if (quizID && questionID) {
+        const filterDraftQuiz = quizDraftList.filter((data) => data.quizID !== quizID)
+        const filterQuiz = quiz.filter((data) => data.quizID !== quizID)
+        
+        const data = {
+            quizID,
+            questionID
+        }
+
+        //API DELETE THE QUIZ IN DATABASE
+        axios.post('http://localhost:5001/quiz/deleteQuiz', data)
+        .then((res) => {
+            const result = res.data
+            console.log(result.message)
+            setQuiz(filterQuiz)
+            setquizDraftList(filterDraftQuiz)
+        })
+        .catch((err) => console.log(err))
+
+        
+    }
+  }
+
   const handlePost = () => {
     if (isShowscheduleSetup) {
 
@@ -472,8 +512,8 @@ const ClassQuizSetup = ({ subjectName, navigateClass, classCode, postType, refre
                             postID: uniqueID,
                             acctID: currentUser.acctID,
                             name,
-                            timePosted: time,
-                            datePosted: date,
+                            timePosted: schedTime,
+                            datePosted: schedDate,
                             postContent,
                             replyID: uniqueID,
                             imageID: 'none',
@@ -482,9 +522,12 @@ const ClassQuizSetup = ({ subjectName, navigateClass, classCode, postType, refre
                             likeCount: 0,
                             classCode,
                             subjectName,
-                            postType,
+                            postType: 'normal',
                             quizID: objQuiz.quizID,
                             schedID: uniqueID,
+                            schedStatus: 'yes',
+                            dueStatus: 'no',
+                            closeStatus: 'no',
                             duration,
                             random,
                         }
@@ -500,15 +543,45 @@ const ClassQuizSetup = ({ subjectName, navigateClass, classCode, postType, refre
                             closeTime,
                         }
 
-                        
-                        socket.emit('schedulePost', sched, data)
-                   
-                        addSchedule(sched)
-                        refreshData()
-                        setisShowPostModal(false)
+                        //API ADDING POST
 
-                        const message = 'Quiz posted successfully'
-                        notify(message, 'success')
+                        axios.post('http://localhost:5001/post/addPost', data)
+                        .then( res => {
+                            const result = res.data
+                            console.log(result.message)
+
+                            //API ADDING SCHEDULE
+                            axios.post('http://localhost:5001/schedule/addSchedule', sched)
+                            .then((res) => {
+                                const result = res.data
+                                console.log(result.message)
+
+                                setloadingMessage("Uploading post.")
+                                setisShowPostModal(false)
+                                setshowLoading(true)
+                                setDisabledSaveButton(true)
+                                setfinalQuiz([])
+
+                                //Removed to draft the posted quiz
+                                if (quizDraftList) {
+                                    const result = quizDraftList.filter((data) => data.quizID !== data.quizID)
+                                    setquizDraftList(result)
+                                }
+
+                                setTimeout(() => {
+                                    const message = 'Quiz posted successfully'
+                                    notify(message, 'success')
+                                    setObjQuiz()
+                                    setshowLoading(false)
+                                }, 3000);
+
+                            })
+                            .catch((err) => console.log(err))
+                            
+                            
+                        })
+                        .catch(err => console.error(err))
+
                     }else {
                         const message = 'Makesure save your quiz first.'
                         notify(message, 'err')
@@ -547,39 +620,53 @@ const ClassQuizSetup = ({ subjectName, navigateClass, classCode, postType, refre
                 likeCount: 0,
                 classCode, 
                 subjectName,
-                postType,
+                postType: 'normal',
                 quizID: objQuiz.quizID,
                 schedID: 'none',
+                schedStatus: 'no',
+                dueStatus: 'no',
+                closeStatus: 'no',
                 duration,
                 random,
             }
+
+            console.log(objQuiz)
 
            axios.post('http://localhost:5001/post/addPost', data)
             .then( res => {
                 const result = res.data
                 console.log(result.message)
 
-                setSavingMessage("Uploading post.")
+                setloadingMessage("Uploading post.")
                 setisShowPostModal(false)
                 setshowLoading(true)
+                setDisabledSaveButton(true)
+                setfinalQuiz([])
+
+                //Removed to draft the posted quiz
+                if (quizDraftList) {
+                    const result = quizDraftList.filter((data) => data.quizID !== data.quizID)
+                    setquizDraftList(result)
+                }
 
                 setTimeout(() => {
                     const message = 'Quiz posted successfully'
                     notify(message, 'success')
+                    setObjQuiz()
                     setshowLoading(false)
                 }, 3000);
                 
             })
             .catch(err => console.error(err))
 
-            
         }else {
             const message = 'Makesure save your quiz first.'
             notify(message, 'err')
         }
         
     }
-    refreshData()
+
+
   }
 
 
@@ -587,7 +674,7 @@ const ClassQuizSetup = ({ subjectName, navigateClass, classCode, postType, refre
   const shorternString = (data) => {
     if (data) {
         if (data.length > 30) {
-            return data.substring(0, 30) + '...'
+            return data.substring(0, 20) + '...'
         }
         return data
     }
@@ -625,13 +712,56 @@ const ClassQuizSetup = ({ subjectName, navigateClass, classCode, postType, refre
                     <p>{quizInstruction ? quizInstruction : 'insert instruction'}</p>
                     <div className={style.listView}>
                         {
-                            finalQuiz.map((q) => (
+                            finalQuiz.map((data) => (
                                 <div className={style.cardPrev}>
-                                    <p>{q.questionContent}</p>
-                                    <div className='d-flex gap-2'>
-                                        <div id={style.badge}><p>{q.questionType}</p></div>
-                                        <MdDeleteOutline size={20} id={style.deleteQuest} onClick={() =>handleDeleteQuestion(q.id)}/>
+                                    <div className='d-flex w-100 justify-content-between position-relative'>
+                                        <h1>Question:</h1>
+                                        <MdDeleteOutline size={20} id={style.deleteQuest} onClick={() =>handleDeleteQuestion(data.id)}/>
                                     </div>
+                                    {
+                                      data.questionType === 'fill' ? (handleFillLayoutShowContent(data.fillLayoutID)) : (<p>{data.questionContent}</p>)
+                                    }
+                                    <div className='d-flex w-100 gap-2 mt-2'>
+                                        <div id={style.badge}><p>{data.questionType}</p></div>
+                                    </div>
+                                </div>
+                            ))
+                        }
+                       
+                    </div>
+                </div>
+            )
+        }
+
+        {
+            isShowDraft && (
+                <div className={style.prevDev}>
+                    <MdExitToApp size={20} id={style.exitQuesPrev} onClick={() => setisShowDraft(false)}/>
+                    <h2>Draft Quiz</h2>
+                    <div className={style.listView}>
+                        {
+                            quizDraftList.map((data) => (
+                                <div className={style.cardDraft}>
+                                    <div className='d-flex flex-column w-100'>
+                                        <div className='d-flex flex-column w-100 mt-2 position-relative'>
+                                            <h2>Title:</h2>
+                                            <h1>{data.quizTitle}</h1>
+                                            <MdDeleteOutline size={20} id={style.deleteQuest} onClick={() =>handleDeleteQuizInDraft(data.quizID, data.questionID)}/>
+                                        </div>       
+                                        <div className='d-flex flex-column mt-2'>
+                                            <h2>Instructions:</h2>
+                                            <p>{data.quizInstructions}</p>
+                                        </div>
+                                        <div className='d-flex flex-column mt-2'>
+                                            <h2>Subject:</h2>
+                                            <p>{data.subjectName}</p>
+                                        </div>
+                                        <div className='d-flex mt-2'>
+                                            <button onClick={() => handleShowPostModal(data)}>Post</button>
+                                        </div>
+                                        
+                                    </div>
+                                    
                                 </div>
                             ))
                         }
@@ -711,11 +841,16 @@ const ClassQuizSetup = ({ subjectName, navigateClass, classCode, postType, refre
                     <div className={style.left}>
                         <div className='d-flex align-items-center gap-5'>
                             <h2>Create Quiz</h2>
-                            <VscPreview size={25} id={style.preview} title='preview' onClick={handlePreview}/>
+                            <div className='d-flex gap-2'>
+                                <VscPreview size={25} id={style.preview} title='preview' onClick={handlePreview}/>
+                                <RiDraftLine size={24} id={style.preview} title='view draft quiz' onClick={() => setisShowDraft(!isShowDraft)}/>
+                            </div>
+
                         </div>
                             <select className='form-control' id={style.selectSubj} onChange={handleSelectSubject}>
                                 <option value="#">Select subject</option>
                                 {
+                                    subjectNames.length > 0 &&
                                     subjectNames.map((subj, index) => (
                                         <option value={subj.subjectName} key={index}>{subj.subjectName}</option>
                                     ))
@@ -902,7 +1037,9 @@ const ClassQuizSetup = ({ subjectName, navigateClass, classCode, postType, refre
                                             </div>
                                             
                                         ))
-                                    ):('no selected questions.')
+                                    ):(
+                                        'no selected questions.'
+                                    )
                                 }
                             
                             </div>
@@ -910,9 +1047,9 @@ const ClassQuizSetup = ({ subjectName, navigateClass, classCode, postType, refre
                         <div className={style.botRight}>
                             <button id={style.btnSetDurations} onClick={() => setisShowCustomizedBox('duration')}><LuTimer/> Set Duration</button>
                             {
-                                objQuiz && <button onClick={handlePostNow}>Post</button>
+                                objQuiz && <button onClick={handleShowPostModal}>Post</button>
                             }
-                            <button onClick={handleSaveQuiz}>Save Quiz</button>
+                            <button onClick={handleSaveQuiz} disabled={disabledSaveButton}>Save Quiz</button>
 
                         </div>
                     </div>

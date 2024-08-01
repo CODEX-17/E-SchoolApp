@@ -16,6 +16,22 @@ router.get('/getFriends', (req, res) => {
     })
 })
 
+//API to get friends in database
+router.get('/getFriendsByAcctID/:acctID', (req, res) => {
+    const acctID = req.params.acctID
+    const query = 'SELECT friends.*, image.data FROM friends INNER JOIN image ON friends.imageID = image.imageID WHERE friends.acctID=?'
+
+    db.query(query,[acctID], (error, data, field) => {
+        if (error) {
+            console.error(error)
+            res.status(404).send(error)
+        }else {
+            res.status(200).json(data)
+        }
+    })
+})
+
+
 //API add friends to database
 router.post('/addFriends', (req, res) => {
 

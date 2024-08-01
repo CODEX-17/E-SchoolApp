@@ -24,7 +24,7 @@ const LeaderBoard = () => {
 
   const accounts = JSON.parse(localStorage.getItem('accounts'))
   const currentUser = JSON.parse(localStorage.getItem('user'))
-  const [subjects, setSubject] = useState()
+  const [subjects, setSubject] = useState([])
 
   const { getScore } = useScoreStore()
   const { getQuiz } = useQuizStore()
@@ -42,24 +42,14 @@ const LeaderBoard = () => {
     .then((res) => setscores(res.data))
     .catch((err) => console.log(err))
 
-    //GET ALL SCORE
+    //GET ALL SUBJECT
     axios.get('http://localhost:5001/subject/getSubject')
     .then((res) => setSubject(res.data))
     .catch((err) => console.log(err))
     
-    setTimeout(() => {
-        refreshData()
-    }, 3000);
   },[])
 
-  const refreshData = () => {
-    const scores = JSON.parse(localStorage.getItem('scores'))
-    const quiz = JSON.parse(localStorage.getItem('quiz'))
-    setquiz(quiz)
-    setscores(scores)
-  }
 
-  
   const generateName = (scoreID) => {
     const filter = scores.filter((scr) => scr.scoreID === scoreID).map((scr) => scr.fullname)
     return filter[0]
@@ -89,7 +79,7 @@ const LeaderBoard = () => {
             
             <select value={currentSubject} className={style.select} onChange={handleSelectSubject}>
                 {
-                    subjects?.map((sub) => (
+                    subjects.map((sub) => (
                         <option value={sub.subjectName}>{sub.subjectName}</option>
                     ))
                 }

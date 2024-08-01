@@ -1,9 +1,17 @@
+@font-face {
+    font-family: bold;
+    src: url('../assets/fonts/Montserrat-Bold.ttf');
+}
+@font-face {
+    font-family: normal;
+    src: url('../assets/fonts/Montserrat-Regular.ttf');
+}
 
 .container {
     width: 100%;
     height: 100vh;
     display: flex;
-    font-family: sanSemi;
+    font-family: normal;
     color: #3E3F40;
     position: relative;
 }
@@ -116,7 +124,7 @@
 }
 
 .title {
-    font-size: sanBold;
+    font-size: bold;
     font-size: 15pt;
 }
 
@@ -203,7 +211,7 @@
 .cardProfile p {
     margin: 0;
     color: white;
-    font-family: sanBold;
+    font-family: bold;
 }
 
 #btnExit {
@@ -224,7 +232,7 @@
 
 .horizontalHead h2 {
     font-size: 15pt;
-    font-family: sanBold;
+    font-family: bold;
 }
 
 .formBody {
@@ -249,11 +257,13 @@
 .vertical h2 {
     margin: 0;
     font-size: 15pt;
+    font-family: bold;
 }
 
 .vertical p {
     margin: 0;
     font-size: 10pt;
+    font-family: normal;
 }
 
 .content {
@@ -265,32 +275,10 @@
 }
 
 .content h2 {
-    font-family: sanBold;
+    font-family: bold;
     font-size: 20pt;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-@font-face {
-    font-family: sanBold;
-    src: url('../assets/fonts/sanBold.ttf');
-}
-@font-face {
-    font-family: sanSemi;
-    src: url('../assets/fonts/sanSemi.ttf');
-}
 
 @keyframes pop {
     0% {

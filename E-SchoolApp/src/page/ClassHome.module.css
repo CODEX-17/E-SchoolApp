@@ -396,6 +396,87 @@
     background-color: #a9a3a3;
 }
 
+.schedListContainer {
+  position: absolute;
+  right: 0;
+  width: 73%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+}
+
+.schedListCard {
+  background-color: white;
+  width: 70%;
+  height: 80%;
+  border-radius: 10px;
+  padding: 3%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  animation: pop 0.5s ease-in-out;
+}
+
+.schedHead {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #c2c2c2;
+}
+
+.schedHead h1 {
+  font-size: 13pt;
+  font-family: bold;
+}
+
+.schedList {
+  height: auto;
+  max-height: 95%;
+  overflow-y: auto;
+  flex-wrap: wrap;
+  display: flex;
+  justify-content: center;
+}
+
+.cardSched {
+  background-color: #dbdbdb;
+  width: 40%;
+  margin: 2%;
+  border-radius: 5px;
+  padding: 2%;
+}
+
+.cardSched h1 {
+  font-size: 10pt;
+}
+
+.cardSched button {
+  background-color: #099AED;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  font-family: bold;
+  font-size: 10pt;
+  width: 100%;
+  height: 30px;
+}
+
+.cardSched button:hover {
+  opacity: 0.5;
+}
+
+#badgeQuizId {
+  background-color: #508D4E;
+  font-size: 8pt;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: bold;
+  color: white;
+  border-radius: 5px;
+  padding-left: 2%;
+  padding-right: 2%;
+}
+
 .postModalBackgroundDIV {
   width: 100%;
   height: 100%;
@@ -642,6 +723,7 @@
     position: relative;
     background-color: white;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    animation: pop 0.5s ease;
 }
 
 .top {
@@ -850,6 +932,7 @@
     flex: 1500px;
     border-radius: 0px 24px 24px 0px;
     padding: 2%;
+    position: relative;
 }
 
 .btnView {
@@ -916,6 +999,29 @@
     align-items: center;
     justify-content: space-between;
 }
+
+#due {
+  background-color: #FF4C4C;
+  color: white;
+  font-size: 8pt;
+  font-family: normal;
+  padding-left: 2%;
+  padding-right: 2%;
+  border-radius: 5px;
+  animation: pop 0.5s ease;
+}
+
+#closed {
+  background-color: #173B45;
+  color: white;
+  font-size: 8pt;
+  font-family: normal;
+  padding-left: 2%;
+  padding-right: 2%;
+  border-radius: 5px;
+  animation: pop 0.5s ease;
+}
+
 
 @keyframes pop {
     0% {

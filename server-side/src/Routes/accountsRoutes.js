@@ -20,10 +20,55 @@ router.get('/getAccounts', (req, res) => {
     })
 })
 
+//API DELETE ACCOUNT BY ACCTID
+router.post('/deleteAccount/:acctID', (req, res) => {
+    
+    const acctID = req.params.acctID
+    const query = 'DELETE FROM accounts WHERE acctID=?'
+    const imageQuery = 'DELETE FROM image WHERE imageID=?'
+
+    db.query(query,[acctID], (error, data, fields) => {
+        if (error) {
+            console.error(error)
+            res.status(404).send(error)
+        } else {
+
+            db.query(imageQuery, [acctID], (error, data, field) => {
+                if (error) {
+                    console.log(error)
+                    res.status(404).send(error)
+                }else {
+                    res.status(200).json({ message: 'Successfully deleted account.' })
+                }
+            })
+
+        }
+    })
+})
+
+
+//API UPDATE ACCOUNTS
+router.post('/UpdateAccounts', (req, res) => {
+
+    const query = 'UPDATE accounts SET acctID=? acctype=? email=? password=? firstname=? middlename=? lastname=? status=? imageID=? WHERE acctID=?'
+
+    const { acctID, acctype, email, password, firstname, middlename, lastname, status, imageID } = req.body 
+
+    db.query(query,[acctID, acctype, email, password, firstname, middlename, lastname, status, imageID], (error, data, fields) => {
+        if (error) {
+            console.error(error)
+            res.status(404).send(error)
+        } else {
+            console.log('Successfully update account.')
+            res.status(200).json({ message: 'Successfully update account.' })
+        }
+    })
+})
+
 router.post('/verifyAccount', (req, res) => {
     const email = req.body.email
     const password = req.body.password
-    const query = 'SELECT * FROM accounts WHERE email=? && password=?'
+    const query = 'SELECT accounts.*, image.data FROM accounts INNER JOIN image ON accounts.imageID = image.imageID WHERE accounts.email=? && accounts.password=?'
 
     db.query(query, [email, password], (error, data, fields) => {
         if (error) {
@@ -143,6 +188,60 @@ router.post('/updateAccount', uploadImage.single('image'), (req, res) => {
     
 })
 
+//API ADD ACCOUNT
+router.post('/addAccount', uploadImage.single('image'), (req, res) => {
+    
+    const { acctID, acctype, email, password, firstname, middlename, lastname, status, imageID } = req.body
+    const file = req.file
+
+    const query = 'INSERT INTO accounts(acctID, acctype, email, password, firstname, middlename, lastname, status, imageID) VALUES(?,?,?,?,?,?,?,?,?)'
+    const queryImage = 'INSERT INTO image(name, type, data, dateUploaded, timeUploaded, acctID, classCode, imageID) VALUES(?,?,?,?,?,?,?,?)'
+
+    db.query(query,[acctID, acctype, email, password, firstname, middlename, lastname, status, imageID], (error, data, fields) => {
+        if (error) {
+            console.error(error)
+            res.status(404).send(error)
+        } else {
+
+            if (file) {
+                let { filename, mimetype, originalname } = req.file
+                const classCode = 'none'
+                let currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit'})
+                let currentDate = new Date().toDateString('en-US', { 
+                        year: 'numeric', 
+                        month: 'short', 
+                        day: 'numeric',
+                        weekday: 'short' 
+                })
+
+                db.query(queryImage, [originalname, mimetype, filename, currentDate, currentTime, acctID, classCode, imageID], (error, data, field) => {
+                    if (error) {
+                        console.log(error)
+                        res.status(404).send(error)
+                    }
+
+                    const values = {
+                        name: originalname,
+                        type: mimetype,
+                        data: filename,
+                        dateUploaded: currentDate,
+                        timeUploaded: currentTime,
+                        acctID: acctID,
+                        classCode: classCode,
+                        imageID: imageID,
+                    }
+
+                    res.status(200).json({ message: 'Successfully added account.', obj: values})
+                })
+
+            }else {
+                 res.status(200).json({ message: 'Successfully added account.' })
+            }
+
+           
+        }
+    })
+})
 
 
 

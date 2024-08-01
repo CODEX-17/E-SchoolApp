@@ -16,19 +16,7 @@ router.get('/getQuestions', (req, res) => {
     })
 })
 
-//API get quiz
-router.get('/getQuestionsByQuizID/:quizID', (req, res) => {
-    const query = 'SELECT * FROM questions'
 
-    db.query(query, (error, data, field) => {
-        if (error) {
-            console.error(error)
-            res.status(404).send(error)
-        } else {
-            res.status(200).json(data)
-        }
-    })
-})
 
 //Update Questions
 router.post('/updateQuestions', (req, res) => {
@@ -50,10 +38,14 @@ router.post('/updateQuestions', (req, res) => {
 //Add questions
 router.post('/addQuestions', async (req, res) => {
     const { choices, fillLayout, finalQuestionSet } = req.body;
+    const bank = req.body.bank
 
     const questionQuery = "INSERT INTO questions(questionID, questionNumber, questionContent, questionType, points, keySensitive, questionAnswerText, numberOfAns, choicesID, imageID, fillLayoutID, subjectName) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)";
     const choicesQuery = "INSERT INTO choices(choicesID, letter, content, correct) VALUES(?,?,?,?)";
     const fillLayoutQuery = "INSERT INTO filllayout(fillContent, fillType, fillPosition, fillLayoutID) VALUES(?,?,?,?)";
+    const questionBankQuery = 'INSERT INTO questionbank(bankID, bankTitle, subjectName, questionID, totalPoints, totalQuestions, time, date) VALUES(?,?,?,?,?,?,?,?)';
+
+    console.log(bank)
 
     try {
         
@@ -96,7 +88,21 @@ router.post('/addQuestions', async (req, res) => {
             });
         });
 
-        await Promise.all([...addChoices, ...addFillLayout, ...addQuestions]);
+        const addQuestionBank = bank.map(bank => {
+            const { bankID, bankTitle, subjectName, questionID, totalPoints, totalQuestions, time, date } = bank;
+            return new Promise((resolve, reject) => {
+                db.query(questionBankQuery, [bankID, bankTitle, subjectName, questionID, totalPoints, totalQuestions, time, date], (error, data) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(data);
+                    }
+                });
+            });
+        });
+
+    
+        await Promise.all([...addChoices, ...addFillLayout, ...addQuestions, ...addQuestionBank]);
 
         res.json({ message: 'Successfully submitted questions.' });
 

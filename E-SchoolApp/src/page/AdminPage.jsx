@@ -69,50 +69,95 @@ const [quizSet, setquizSet] = useState()
 const [scheduleSet, setscheduleSet] = useState()
 const [subjectSet, setsubjectSet] = useState()
 
+const [selectedData, setSelectedData] = useState(null)
+
 const notif = new Howl({ src: [notifSound]})
 const errSound = new Howl({ src: [erroSound]})
 
 useEffect(() => {
-    getSchedule() 
-    getFriend()
-    getQuiz()
-    getChoices()
-    getQuestion()
-    getFillLayout()
-    getMembers()
-    getClass()
-    getPost()
-    getImages()
-    getAccounts()
-    getMessages()
-    getFiles()
-    getSubjects()
+
+    //GET ALL ACCOUNT
+    axios.get('http://localhost:5001/accounts/getAccounts')
+    .then((res) => setaccountSet(res.data))
+    .catch((err) => console.log(err))
+
+    //GET ALL CHOICES
+    axios.get('http://localhost:5001/choices/getChoices')
+    .then((res) => setchoicesSet(res.data))
+    .catch((err) => console.log(err))
+
+    //GET ALL CLASSES
+    axios.get('http://localhost:5001/classes/getClasses')
+    .then((res) => setclassesSet(res.data))
+    .catch((err) => console.log(err))
+
+    //GET ALL FILES
+    axios.get('http://localhost:5001/files/getFiles')
+    .then((res) => setfilesSet(res.data))
+    .catch((err) => console.log(err))
+
+    //GET ALL FILES
+    axios.get('http://localhost:5001/files/getFiles')
+    .then((res) => setfilesSet(res.data))
+    .catch((err) => console.log(err))
+
+    //GET ALL FILLLAYOUT
+    axios.get('http://localhost:5001/fillLayout/getFillLayout')
+    .then((res) => setfillLayoutSet(res.data))
+    .catch((err) => console.log(err))
+
+    //GET ALL FRIENDS
+    axios.get('http://localhost:5001/friends/getFriends')
+    .then((res) => setfriendsSet(res.data))
+    .catch((err) => console.log(err))
+
+    //GET ALL FRIENDS
+    axios.get('http://localhost:5001/images/getImages')
+    .then((res) => setimagesSet(res.data))
+    .catch((err) => console.log(err))
+
+    //GET ALL MEMBERS
+    axios.get('http://localhost:5001/members/getMembers')
+    .then((res) => setmembersSet(res.data))
+    .catch((err) => console.log(err))
+
+    //GET ALL MESSAGES
+    axios.get('http://localhost:5001/message/getMessages')
+    .then((res) => setmessagesSet(res.data))
+    .catch((err) => console.log(err))
+    
+    //GET ALL POST
+    axios.get('http://localhost:5001/post/getPost')
+    .then((res) => setpostSet(res.data))
+    .catch((err) => console.log(err))
+
+    //GET ALL QUESTIONS
+    axios.get('http://localhost:5001/questions/getQuestions')
+    .then((res) => setquestionsSet(res.data))
+    .catch((err) => console.log(err))
+
+    //GET ALL QUIZ
+    axios.get('http://localhost:5001/quiz/getQuiz')
+    .then((res) => setquizSet(res.data))
+    .catch((err) => console.log(err))
+
+     //GET ALL SCHEDULE
+     axios.get('http://localhost:5001/schedule/getSchedule')
+     .then((res) => setscheduleSet(res.data))
+     .catch((err) => console.log(err))
+
+    //GET ALL SUBJECT
+    axios.get('http://localhost:5001/subject/getSubject')
+    .then((res) => setsubjectSet(res.data))
+    .catch((err) => console.log(err))
+
     generateUniqueId()
 
     setTimeout(() => {
-      generateDatas()
       setshowLoading(false)
     }, 5000);
 
-},[])
-
-
-const generateDatas = () => {
-    setimagesSet(JSON.parse(localStorage.getItem('images')))
-    setaccountSet(JSON.parse(localStorage.getItem('accounts')))
-    setchoicesSet(JSON.parse(localStorage.getItem('choices')))
-    setclassesSet(JSON.parse(localStorage.getItem('class')))
-    setfilesSet(JSON.parse(localStorage.getItem('files')))
-    setfillLayoutSet(JSON.parse(localStorage.getItem('fillLayout')))
-    setfriendsSet(JSON.parse(localStorage.getItem('friends')))
-    setmembersSet(JSON.parse(localStorage.getItem('members')))
-    setmessagesSet(JSON.parse(localStorage.getItem('messages')))
-    setpostSet(JSON.parse(localStorage.getItem('post')))
-    setquestionsSet(JSON.parse(localStorage.getItem('questions')))
-    setquizSet(JSON.parse(localStorage.getItem('quiz')))
-    setscheduleSet(JSON.parse(localStorage.getItem('schedules')))
-    setsubjectSet(JSON.parse(localStorage.getItem('subjects')))
-}
+},[choose])
 
 const [accountID, setAccountID] = useState()
 const [accountType, setAccountType] = useState('student')
@@ -214,7 +259,8 @@ const generateUniqueId = () => {
         const randomIndex = Math.floor(Math.random() * charset.length)
         result += charset.charAt(randomIndex)
     }
-    setuniqueID(result)
+
+    return result
 }
 
 const handleUploadImage = (e) => {
@@ -227,261 +273,166 @@ const handleUploadImage = (e) => {
     }
 }
 
-const handleEdit = (state, choose, id) => {
-    setisShowModalEdit(state)
+const handleEdit = (data, type) => {
+
+    const details = data
+    const choose = type
+
     setAddChoose(choose)
-    setcurrentID(id)
 
     if (choose === 'accounts') {
-        const filter = accountSet.filter((act) => act.acctID === id)
-
-        setAccountID(filter[0].acctID)
-        setAccountType(filter[0].acctype)
-        setEmail(filter[0].email)
-        setPassword(filter[0].password)
-        setFirstname(filter[0].firstname)
-        setMiddlename(filter[0].middlename)
-        setLastname(filter[0].lastname)
-        setStatus(filter[0].status)
-        setImageID(filter[0].imageID)
-
-        setisShowModalEdit(true)
+        setAccountID(details.acctID)
+        setAccountType(details.acctype)
+        setEmail(details.email)
+        setPassword(details.password)
+        setFirstname(details.firstname)
+        setMiddlename(details.middlename)
+        setLastname(details.lastname)
+        setStatus(details.status)
+        setImageID(details.imageID)
     }
 
     if (choose === 'choices') {
-        const filter = choicesSet.filter((choice) => choice.id === id)
-
-        setchoicesID(filter[0].choicesID)
-        setLetter(filter[0].letter)
-        setContent(filter[0].content)
-        setCorrect(filter[0].correct)
-        
+        setchoicesID(details.choicesID)
+        setLetter(details.letter)
+        setContent(details.content)
+        setCorrect(details.correct)
     }
     
     if (choose === 'class') {
-        const filter = classesSet.filter((classes) => classes.classID  === id)
-
-        setClassID(filter[0].classID )
-        setClassName(filter[0].className)
-        setClassDescription(filter[0].classDesc)
-        setClassCode(filter[0].classCode)
-        setMembersID(filter[0].membersID)
-        setImageID(filter[0].imageID)
-        setHiddden(filter[0].hidden)
-
-        const data = {
-            classID: filter[0].classID,
-            className: filter[0].className,
-            classDesc: filter[0].classDesc,
-            classCode: filter[0].classCode,
-            membersID: filter[0].membersID,
-            imageID: filter[0].imageID,
-            lastname: filter[0].lastname,
-            hidden: filter[0].hidden
-        }
-
-        updateAccounts(data)
+        setClassID(details.classID)
+        setClassName(details.className)
+        setClassDescription(details.classDesc)
+        setClassCode(details.classCode)
+        setMembersID(details.membersID)
+        setImageID(details.imageID)
+        setHiddden(details.hidden)
     }
 
     if (choose === 'files') {
-        const filter = filesSet.filter((files) => files.id === id)
-
-        console.log(filter)
-        setId(filter[0].id)
-        setName(filter[0].name)
-        setType(filter[0].type)
-        setData(filter[0].data)
-        setFileID(filter[0].fileID)
+        setId(details.id)
+        setName(details.name)
+        setType(details.type)
+        setData(details.data)
+        setFileID(details.fileID)
     }
 
     if (choose === 'fillLayout') {
-        const filter = fillLayoutSet.filter((fillLayout) => fillLayout.id === id)
-
-        setId(filter[0].id)
-        setFillContent(filter[0].fillContent)
-        setFillType(filter[0].fillType)
-        setFillPosition(filter[0].fillPosition)
-        setFillLayoutID(filter[0].fillLayoutID)
+        setId(details.id)
+        setFillContent(details.fillContent)
+        setFillType(details.fillType)
+        setFillPosition(details.fillPosition)
+        setFillLayoutID(details.fillLayoutID)
     }
 
     if (choose === 'friends') {
-        const filter = friendsSet.filter((friend) => friend.id === id)
-
-        setId(filter[0].id)
-        setAccountID(filter[0].acctID)
-        setFriendAccountID(filter[0].friendAcctID)
-        setFullName(filter[0].fullname)
-
-        const data = {
-            id : filter[0].id ,
-            acctID: filter[0].acctID,
-            friendAcctID: filter[0].friendAcctID,
-            fullname: filter[0].fullname,
-        }
-
-        updateAccounts(data)
+        setId(details.id)
+        setAccountID(details.acctID)
+        setFriendAccountID(details.friendAcctID)
+        setFullName(details.fullname)
     }
 
     if (choose === 'image') {
-        const filter = imagesSet.filter((img) => img.id === id)
-
-        setId(filter[0].id)
-        setName(filter[0].name)
-        setType(filter[0].type)
-        setData(filter[0].data)
-        setImageID(filter[0].imageID)
+        setId(details.id)
+        setName(details.name)
+        setType(details.type)
+        setData(details.data)
+        setImageID(details.imageID)
     }
 
     if (choose === 'members') {
-        const filter = membersSet.filter((member) => member.ID === id)
-
-        setId(filter[0].ID)
-        setMembersID(filter[0].membersID)
-        setAccountID(filter[0].acctID)
-        setMiddleName(filter[0].midleName)
-        setFirstName(filter[0].firstName)
-        setLastname(filter[0].lastName)
-        setMemberType(filter[0].memberType)
-        setHiddden(filter[0].hidden)
-
-        const data = {
-            ID : filter[0].ID ,
-            membersID: filter[0].membersID,
-            acctID: filter[0].acctID,
-            firstName: filter[0].firstName,
-            midleName: filter[0].midleName,
-            lastName: filter[0].lastName,
-            memberType: filter[0].memberType,
-            hidden: filter[0].hidden
-        }
-
-        updateAccounts(data)
+        setId(details.id)
+        setMembersID(details.membersID)
+        setAccountID(details.acctID)
+        setMiddleName(details.middlename)
+        setFirstName(details.firstname)
+        setLastname(details.lastname)
+        setMemberType(details.memberType)
     }
 
     if (choose === 'messages') {
-        const filter = messagesSet.filter((message) => message.id === id)
-
-        setId(filter[0].id)
-        setMessageID(filter[0].messageID)
-        setRoomID(filter[0].roomID)
-        setMessageContent(filter[0].messageContent)
-        setMessageSender(filter[0].messageSender)
-        setMessageReceiver(filter[0].messageReceiver)
-        setDate(filter[0].date)
-        setTime(filter[0].time)
+        setId(details.id)
+        setMessageID(details.messageID)
+        setRoomID(details.roomID)
+        setMessageContent(details.messageContent)
+        setMessageSender(details.messageSender)
+        setMessageReceiver(details.messageReceiver)
+        setDate(details.date)
+        setTime(details.time)
     }
 
     if (choose === 'post') {
-        const filter = postSet.filter((posted) => posted.id === id)
-
-        setId(filter[0].id)
-        setPostID(filter[0].postID)
-        setAccountID(filter[0].acctID)
-        setName(filter[0].name)
-        setTimePosted(filter[0].timePosted)
-        setDatePosted(filter[0].datePosted)
-        setPostContent(filter[0].postContent)
-        setReplyID(filter[0].replyID)
-        setImageID(filter[0].imageID)
-        setFileID(filter[0].fileID)
-        setHeartCount(filter[0].heartCount)
-        setLikeCount(filter[0].likeCount)
-        setClassCode(filter[0].classCode)
-        setSubjectName(filter[0].subjectName)
-        setPostType(filter[0].postType)
-        setQuizID(filter[0].quizID)
-        setScheduleID(filter[0].schedID)
-        setDuration(filter[0].duration)
-        setRandom(filter[0].random)
-
-        const data = {
-            id  : filter[0].id  ,
-            postID: filter[0].postID,
-            acctID: filter[0].acctID,
-            name: filter[0].name,
-            timePosted: filter[0].timePosted,
-            datePosted: filter[0].datePosted,
-            postContent: filter[0].postContent,
-            replyID: filter[0].replyID,
-            imageID : filter[0].imageID ,
-            fileID: filter[0].fileID,
-            heartCount: filter[0].heartCount,
-            likeCount: filter[0].likeCount,
-            classCode: filter[0].classCode,
-            subjectName: filter[0].subjectName,
-            postType: filter[0].postType,
-            schedID: filter[0].schedID,
-            duration: filter[0].duration,
-            random: filter[0].random
-        }
-
-        updateAccounts(data)
+        setId(details.id)
+        setPostID(details.postID)
+        setAccountID(details.acctID)
+        setName(details.name)
+        setTimePosted(details.timePosted)
+        setDatePosted(details.datePosted)
+        setPostContent(details.postContent)
+        setReplyID(details.replyID)
+        setImageID(details.imageID)
+        setFileID(details.fileID)
+        setHeartCount(details.heartCount)
+        setLikeCount(details.likeCount)
+        setClassCode(details.classCode)
+        setSubjectName(details.subjectName)
+        setPostType(details.postType)
+        setQuizID(details.quizID)
+        setScheduleID(details.schedID)
+        setDuration(details.duration)
+        setRandom(details.random)
     }
 
     if (choose === 'questions') {
-        const filter = questionsSet.filter((quest) => quest.id === id)
-
-        setId(filter[0].id)
-        setQuestionID(filter[0].questionID)
-        setQuestionNumber(filter[0].questionNumber)
-        setQuestionContent(filter[0].questionContent)
-        setQuestionType(filter[0].questionType)
-        setPostContent(filter[0].postContent)
-        setPoints(filter[0].points)
-        setRequired(filter[0].required)
-        setKeySensitive(filter[0].keySensitive)
-        setQuestionAnswerText(filter[0].questionAnswerText)
-        setNumberOfAnswer(filter[0].numberOfAns)
-        setchoicesID(filter[0].choicesID)
-        setImageID(filter[0].imageID)
-        setFillLayoutID(filter[0].fillLayoutID)
-        setSubjectName(filter[0].subjectName)
+        setId(details.id)
+        setQuestionID(details.questionID)
+        setQuestionNumber(details.questionNumber)
+        setQuestionContent(details.questionContent)
+        setQuestionType(details.questionType)
+        setPostContent(details.postContent)
+        setPoints(details.points)
+        setRequired(details.required)
+        setKeySensitive(details.keySensitive)
+        setQuestionAnswerText(details.questionAnswerText)
+        setNumberOfAnswer(details.numberOfAns)
+        setchoicesID(details.choicesID)
+        setImageID(details.imageID)
+        setFillLayoutID(details.fillLayoutID)
+        setSubjectName(details.subjectName)
     }
 
     if (choose === 'quiz') {
-        const filter = quizSet.filter((quiz) => quiz.id === id)
-
-        setQuizID(filter[0].quizID)
-        setQuizTitle(filter[0].quizTitle)
-        setQuizInstruction(filter[0].quizInstructions)
-        setQuestionID(filter[0].questionID)
-        setSubjectName(filter[0].subjectName)
-        setTotalPoints(filter[0].totalPoints)
-        setTotalQuestions(filter[0].totalQuestions)
-        setCreator(filter[0].creator)
-        setTime(filter[0].time)
-        setDate(filter[0].date)
+        setQuizID(details.quizID)
+        setQuizTitle(details.quizTitle)
+        setQuizInstruction(details.quizInstructions)
+        setQuestionID(details.questionID)
+        setSubjectName(details.subjectName)
+        setTotalPoints(details.totalPoints)
+        setTotalQuestions(details.totalQuestions)
+        setCreator(details.creator)
+        setTime(details.time)
+        setDate(details.date)
     }
 
     if (choose === 'schedule') {
-        const filter = scheduleSet.filter((sched) => sched.id === id)
-
-        setId(filter[0].id)
-        setScheduleID(filter[0].schedID)
-        setPostID(filter[0].postID)
-        setScheduleDate(filter[0].schedDate)
-        setScheduleTime(filter[0].schedTime)
-        setDueDate(filter[0].dueDate)
-        setDueTime(filter[0].dueTime)
-        setCloseDate(filter[0].closeDate)
-        setCloseTime(filter[0].closeTime)
+        setId(details.id)
+        setScheduleID(details.schedID)
+        setPostID(details.postID)
+        setScheduleDate(details.schedDate)
+        setScheduleTime(details.schedTime)
+        setDueDate(details.dueDate)
+        setDueTime(details.dueTime)
+        setCloseDate(details.closeDate)
+        setCloseTime(details.closeTime)
     }
 
     if (choose === 'subject') {
-        const filter = subjectSet.filter((subj) => subj.id === id)
-        console.log(filter)
-        setId(filter[0].id)
-        setSubjectName(filter[0].subjectName)
-        setSubjectCode(filter[0].subjectCode)
-
-        const data = {
-            id  : filter[0].id  ,
-            subjectName: filter[0].subjectName,
-            subjectCode: filter[0].subjectCode
-        }
-
-        updateAccounts(data)
+        setId(details.id)
+        setSubjectName(details.subjectName)
+        setSubjectCode(details.subjectCode)
     }
+
+    setisShowModalEdit(true)
 }
 
 const navigate = useNavigate()
@@ -496,7 +447,10 @@ const handleChoose = (data) => {
 }
 
 const generateFullname = () => {
-    return currentUser.firstname+' '+currentUser.middlename+'. '+currentUser.lastname
+    if (currentUser) {
+        return currentUser.firstname + ' ' + currentUser.middlename.substring(0, 1) + '. ' + currentUser.lastname
+    }
+    
 }
 
 const notify = (message, state) => {
@@ -530,29 +484,33 @@ const notify = (message, state) => {
     
 }
 
-const generateProfilePic = () => {
-    if (currentUser && imagesSet) {
-        
-        const filter = imagesSet.filter((images) => images.imageID === currentUser.imageID).map((img) => img.data)
-        return 'http://localhost:5001/'+filter[0]
-    }
-    
+const generateProfilePic = (data) => {
+    if (data) {
+        return 'http://localhost:5001/' + data
+    }  
 }
 
 const fullname = generateFullname()
 const [addChoose, setAddChoose] = useState()
+
+
 
 /// DELETE SECTIONS ///
 
 const handleDelete = (data, fieldName) => {
 
     if (fieldName === 'accounts') {
-        deleteAccount(data)
-        const filter = accountSet.filter((account) => account.acctID !== data)
-        setaccountSet(filter)
+        
+        axios.post('http://localhost:5001/accounts/deleteAccount/' + data)
+        .then ((res) => {
+            const result = res.data
+            const message = result.message
 
-        const message = 'Account deleted'
-        notify(message, 'success')
+            const filter = accountSet.filter((account) => account.acctID !== data)
+            setaccountSet(filter)
+
+            notify(message, 'success')
+        })
     }
     
     if (fieldName === 'choices') {
@@ -653,11 +611,18 @@ const handleDelete = (data, fieldName) => {
     }
 
     if (fieldName === 'subjects') {
-        deleteSubject(data)
-        const filter = subjectSet.filter((sub) => sub.id !== data)
-        setsubjectSet(filter)
-        const message = 'Subjects deleted'
-        notify(message, 'success')
+
+        axios.post('http://localhost:5001/subject/deleteSubject/' + data)
+        .then((res) =>{
+            const result = res.data
+            const message = result.message
+
+            const filter = subjectSet.filter((subj) => subj.subjectCode !== data)
+
+            setsubjectSet(filter)
+            notify(message, 'success')
+        })
+        .catch((err) => console.log(err))
     }
 }
 
@@ -665,12 +630,11 @@ const handleDelete = (data, fieldName) => {
 
 const handleAddAccounts = (e) => {
     e.preventDefault()
-    const { imageID } = imageFile
-
-    let updated = [...accountSet]
+    const { file } = imageFile
+    const id = generateUniqueId()
 
     const data = {
-        acctID: uniqueID,
+        acctID: id,
         acctype: accountType,
         email,
         password,
@@ -678,13 +642,36 @@ const handleAddAccounts = (e) => {
         middlename,
         lastname,
         status,
-        imageID,
+        imageID: id,
     }
 
-    updated.push(data)
-    console.log(data)
-    setaccountSet(updated)
-    addAccounts(data)
+    const formData = new FormData
+
+    formData.append('acctID', id)
+    formData.append('acctype', accountType)
+    formData.append('email', email)
+    formData.append('password', password)
+    formData.append('firstname', firstname)
+    formData.append('middlename', middlename)
+    formData.append('lastname', lastname)
+    formData.append('status', 'offline')
+    formData.append('imageID', id)
+    formData.append('image', file)
+
+    axios.post('http://localhost:5001/accounts/addAccount', formData)
+    .then((res) => {
+        const result = res.data
+        const message = result.message
+        const value = result.obj
+        console.log(res.data)
+
+        setimagesSet((oldData) => [...oldData, value])
+
+        setaccountSet((oldData) => [...oldData, data])
+        notify(message, 'success')
+    })
+    .catch((err) => console.log(err))
+
 }
 
 const handleAddChoices = (e) => {
@@ -705,15 +692,19 @@ const handleAddChoices = (e) => {
 
 const handleAddClass = (e) => {
     e.preventDefault()
+    const { file } = imageFile
+    const id = generateUniqueId()
+
     let updated = [...classesSet]
+
     const data = {
         className,
         classDesc: classDescription,
         classCode,
         membersID: uniqueID,
         imageID,
-        hidden,
     }
+
     updated.push(data)
     setclassesSet(updated)
     addClasses(data)
@@ -907,14 +898,33 @@ const handleAddSchedule = (e) => {
 
 const handleAddSubject = (e) => {
     e.preventDefault()
-    let updated = [...subjectSet]
-    const data = {
-        subjectName,
-        subjectCode,
+    
+    if (subjectSet) {
+        const filter = subjectSet.filter((data) => data.subjectCode === subjectCode)
+
+        const data = {
+            id: subjectSet.length,
+            subjectName,
+            subjectCode,
+        }
+
+        if (filter.length > 0) {
+            notify('Subject Code already taken.', 'err')
+        }else {
+
+            axios.post('http://localhost:5001/subject/addSubject', data)
+            .then((res) =>{
+                const result = res.data
+                const message = result.message
+
+                setsubjectSet((oldData) => [...oldData, data])
+                notify(message, 'success')
+            })
+            .catch((err) => console.log(err))
+
+        }
     }
-    updated.push(data)
-    setsubjectSet(updated)
-    addSubject(data)
+    
 }
 
 /// EDIT SECTIONS ///
@@ -934,6 +944,7 @@ const handleEditAccounts = (e) => {
         imageID,
     }
 
+    console.log(data)
     updateAccounts(data)
     
     //const filter = accountSet.filter((act) => act.acctID !== currentID)
@@ -1395,10 +1406,6 @@ const handleEditSubject = (e) => {
                                                 <label for="exampleInputEmail1" className="form-label">Member Type</label>
                                                 <input type="text" className="form-control" required onChange={(e) => setImageID(e.target.value)}/>
                                             </div>
-                                            <div className="mb-3">
-                                                <label for="exampleInputEmail1" className="form-label">Hidden</label>
-                                                <input type="text" className="form-control" required onChange={(e) => setMemberType(e.target.value)}/>
-                                            </div>
                                         </div>
                                         
                                         <button type="submit" className="btn btn-primary">Submit</button>
@@ -1780,7 +1787,6 @@ const handleEditSubject = (e) => {
                             {
                                 addChoose === 'accounts' && (
                                     
-                                   
                                             <form className={style.formAdd} onSubmit={handleEditAccounts}>
                                                 <div className='d-flex gap-2'>
                                                     <div className="mb-3">
@@ -1834,7 +1840,7 @@ const handleEditSubject = (e) => {
                                                 <div className='d-flex gap-2'>
                                                     <div className="mb-3">
                                                         <label for="exampleInputEmail1" className="form-label">Upload Image</label>
-                                                        <input type="file" accept='images/*' required className="form-control" onChange={handleUploadImage}/>
+                                                        <input type="file" accept='images/*' className="form-control" onChange={handleUploadImage}/>
                                                     </div>
                                                     
                                                 </div>
@@ -2026,10 +2032,6 @@ const handleEditSubject = (e) => {
                                             <div className="mb-3">
                                                 <label for="exampleInputEmail1" className="form-label">Member Type</label>
                                                 <input type="text" className="form-control" value={memberType} required onChange={(e) => setImageID(e.target.value)}/>
-                                            </div>
-                                            <div className="mb-3">
-                                                <label for="exampleInputEmail1" className="form-label">Hidden</label>
-                                                <input type="text" className="form-control" value={hiddden} required onChange={(e) => setMemberType(e.target.value)}/>
                                             </div>
                                         </div>
                                         
@@ -2471,7 +2473,7 @@ const handleEditSubject = (e) => {
                     <h2>{fullname}</h2>
                     <p>Admin Account</p>
                 </div>
-                <img src={generateProfilePic()} alt="profile" id={style.profilePic} onClick={() => setShowProfileCard(!showProfileCard)}/>
+                <img src={generateProfilePic(currentUser.data)} alt="profile" id={style.profilePic} onClick={() => setShowProfileCard(!showProfileCard)}/>
             </div>
             {
                 showProfileCard && (
@@ -2522,7 +2524,7 @@ const handleEditSubject = (e) => {
                                                 <td>{acct.lastname}</td>
                                                 <td>{acct.status}</td>
                                                 <td>{acct.imageID}</td>
-                                                <td> <button type="button" class="btn btn-primary" onClick={() =>handleEdit(true, 'accounts', acct.acctID)}>Edit</button></td>
+                                                <td> <button type="button" class="btn btn-primary" onClick={() =>handleEdit(acct, 'accounts')}>Edit</button></td>
                                                 <td> <button type="button" class="btn btn-danger" onClick={() => handleDelete(acct.acctID, 'accounts')}>Delete</button></td>
                                             </tr>
                                         ))
@@ -2577,10 +2579,6 @@ const handleEditSubject = (e) => {
                         <div className={style.contentDiv}>
                              <div className={style.horizontal}>
                                 <h2>Class</h2>
-                                <button id={style.btnAdd} onClick={() => {
-                                    setisShowModal(true)
-                                    setAddChoose('class')
-                                }}>Add <FaPlus/></button>
                             </div>
                             <table class="table rounded table-bordered">
                             <thead className='table table-secondary'>
@@ -2591,7 +2589,6 @@ const handleEditSubject = (e) => {
                                     <th scope="col">Class Code</th>
                                     <th scope="col">Members ID</th>
                                     <th scope="col">Image ID</th>
-                                    <th scope="col">Hidden</th>
                                     <th scope="col" colSpan={2}>Action</th>
                                 </tr>
                             </thead>
@@ -2606,8 +2603,7 @@ const handleEditSubject = (e) => {
                                                 <td>{clss.classCode}</td>
                                                 <td>{clss.membersID}</td>
                                                 <td>{clss.imageID}</td>
-                                                <td>{clss.hidden}</td>
-                                                <td> <button type="button" class="btn btn-primary" onClick={() =>handleEdit(!isShowModalEdit, 'class', clss.classID )}>Edit</button></td>
+                                                <td> <button type="button" class="btn btn-primary" onClick={() =>handleEdit(clss, 'class')}>Edit</button></td>
                                                 <td> <button type="button" class="btn btn-danger" onClick={() => handleDelete(clss.classID, 'class')}>Delete</button></td>
                                             </tr>
                                         ))
@@ -2717,7 +2713,7 @@ const handleEditSubject = (e) => {
                                                 <td>{friend.acctID}</td>
                                                 <td>{friend.friendAcctID}</td>
                                                 <td>{friend.fullname}</td>
-                                                <td> <button type="button" class="btn btn-primary" onClick={() =>handleEdit(!isShowModalEdit, 'friends', friend.id)}>Edit</button></td>
+                                                <td> <button type="button" class="btn btn-primary" onClick={() =>handleEdit(friend, 'friends')}>Edit</button></td>
                                                 <td> <button type="button" class="btn btn-danger" onClick={() => handleDelete(friend.id, 'friends')}>Delete</button></td>
                                             </tr>
                                         ))
@@ -2786,7 +2782,6 @@ const handleEditSubject = (e) => {
                                     <th scope="col">Middlename</th>
                                     <th scope="col">Lastname</th>
                                     <th scope="col">Member Type</th>
-                                    <th scope="col">Hidden</th>
                                     <th scope="col" colSpan={2}>Action</th>
                                 </tr>
                             </thead>
@@ -2795,15 +2790,14 @@ const handleEditSubject = (e) => {
                                     membersSet && (
                                         membersSet.map((member) => (
                                             <tr>
-                                                <th scope="row">{member.ID}</th>
+                                                <th scope="row">{member.id}</th>
                                                 <td>{member.membersID}</td>
                                                 <td>{member.acctID}</td>
-                                                <td>{member.firstName}</td>
-                                                <td>{member.midleName}</td>
-                                                <td>{member.lastName}</td>
+                                                <td>{member.firstname}</td>
+                                                <td>{member.middlename}</td>
+                                                <td>{member.lastname}</td>
                                                 <td>{member.memberType}</td>
-                                                <td>{member.hidden}</td>
-                                                <td> <button type="button" class="btn btn-primary" onClick={() =>handleEdit(!isShowModalEdit, 'members', member.ID)}>Edit</button></td>
+                                                <td> <button type="button" class="btn btn-primary" onClick={() =>handleEdit(member, 'members')}>Edit</button></td>
                                                 <td> <button type="button" class="btn btn-danger" onClick={() => handleDelete(member.ID, 'members')}>Delete</button></td>
                                             </tr>
                                         ))
@@ -2914,7 +2908,7 @@ const handleEditSubject = (e) => {
                                                 <td>{post.quizID}</td>
                                                 <td>{post.schedID}</td>
                                                 <td>{post.duration}</td>
-                                                <td> <button type="button" class="btn btn-primary" onClick={() =>handleEdit(!isShowModalEdit, 'post', post.id)}>Edit</button></td>
+                                                <td> <button type="button" class="btn btn-primary" onClick={() =>handleEdit(post, 'post')}>Edit</button></td>
                                                 <td> <button type="button" class="btn btn-danger" onClick={() => handleDelete(post.id, 'post')}>Delete</button></td>
                                             </tr>
                                         ))
@@ -2996,7 +2990,6 @@ const handleEditSubject = (e) => {
                                     <th scope="col">Subject Name</th>
                                     <th scope="col">Total Points</th>
                                     <th scope="col">Total Questions</th>
-                                    <th scope="col">Creator</th>
                                     <th scope="col">Time</th>
                                     <th scope="col">Date</th>
                                 </tr>
@@ -3013,7 +3006,6 @@ const handleEditSubject = (e) => {
                                                 <td>{quiz.subjectName}</td>
                                                 <td>{quiz.totalPoints}</td>
                                                 <td>{quiz.totalQuestions}</td>
-                                                <td>{quiz.creator}</td>
                                                 <td>{quiz.time}</td>
                                                 <td>{quiz.date}</td>
                                             </tr>
@@ -3095,8 +3087,8 @@ const handleEditSubject = (e) => {
                                                 <th scope="row">{subject.id}</th>
                                                 <td>{subject.subjectName}</td>
                                                 <td>{subject.subjectCode}</td>
-                                                <td> <button type="button" class="btn btn-primary" onClick={() =>handleEdit(!isShowModalEdit, 'subject', subject.id)}>Edit</button></td>
-                                                <td> <button type="button" class="btn btn-danger" onClick={() => handleDelete(subject.id, 'subjects')}>Delete</button></td>
+                                                <td> <button type="button" class="btn btn-primary" onClick={() => handleEdit(subject, 'subject')}>Edit</button></td>
+                                                <td> <button type="button" class="btn btn-danger" onClick={() => handleDelete(subject.subjectCode, 'subjects')}>Delete</button></td>
                                             </tr>
                                     ))
                                     )

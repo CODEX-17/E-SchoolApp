@@ -111,8 +111,6 @@ const QuizTake = () => {
             setImage(images)
             setQuestions(questions)
 
-            
-
             for (let i = 0; i < questions.length; i++) {
                 
                 questions[i].questionNumber = i+1
@@ -122,6 +120,13 @@ const QuizTake = () => {
                 const answerText = questions[i].questionAnswerText
                 const choicesID = questions[i].choicesID
                 const fillLayoutID = questions[i].fillLayoutID
+
+                //Compute overAll 
+                setoverAll((oldData) => {
+                    let totalpoints = oldData
+                    totalpoints += points
+                    return totalpoints
+                })
 
                 if (type === "enumeration" || type === "True Or False") {
                     setanswers((oldData) => {
@@ -633,7 +638,7 @@ const QuizTake = () => {
     }
 
     const generatePicture = (data) => {
-        return 'http://localhost:1/'+ data
+        return 'http://localhost:5001/'+ data
     }
 
     const generateCloseTime = () => {

@@ -57,36 +57,55 @@ router.delete('/deletePostByPostID/:postID', (req, res) => {
     })
 })
 
+// Update post and remove the schedule
+router.post('/postNowTheSchedule', (req, res) => {
+    const { schedID, time, date } = req.body
+    const queryPost = "UPDATE post SET schedID='none', timePosted=?, datePosted=? WHERE schedID=?"
+    const querySchedule = "DELETE FROM schedule WHERE schedID=?"
+
+    db.query(queryPost, [time, date, schedID], (error, data, field) => {
+        if (error) {
+            console.log(error)
+            res.status(404).send(error)
+        } else {
+            console.log('Update post successfully.')
+
+            db.query(querySchedule, [schedID], (err, data, field) => {
+                if (err) {
+                    console.log(err)
+                    res.status(404).send(err)
+                } else {
+                    console.log('Delete schedule successfully.')
+                    res.status(200).json({ message: 'Successfully posted.' })
+                }
+            })
+        }
+    })
+})
+
 // Add post in database
 router.post('/addPost', (req, res) => {
     
-    const postID = req.body.postID
-    const acctID = req.body.acctID
-    const name = req.body.name
-    const timePosted = req.body.timePosted
-    const datePosted = req.body.datePosted
-    const postContent = req.body.postContent
-    const replyID = req.body.replyID
-    const imageID = req.body.imageID
-    const fileID = req.body.fileID
-    const heartCount = req.body.heartCount
-    const likeCount = req.body.likeCount
-    const classCode = req.body.classCode
-    const subjectName = req.body.subjectName
-    const postType = req.body.postType
-    const quizID = req.body.quizID
-    const schedID = req.body.schedID
-    const duration = req.body.duration
-    const random = req.body.random
+    const { postID, acctID, name, timePosted, datePosted, postContent, replyID, imageID, fileID, heartCount, likeCount, classCode, subjectName, postType, quizID, schedID, schedStatus, dueStatus, closeStatus, duration, random } = req.body
 
-    const postQuery = 'INSERT INTO post(postID, acctID, name, timePosted, datePosted, postContent, replyID, imageID, fileID, heartCount, likeCount, classCode, subjectName, postType, quizID, schedID, duration, random) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
-    
-    db.query(postQuery, [postID, acctID, name, timePosted, datePosted, postContent, replyID, imageID, fileID, heartCount, likeCount, classCode, subjectName, postType, quizID, schedID, duration, random], (error, data, field) => {
+    const postQuery = 'INSERT INTO post(postID, acctID, name, timePosted, datePosted, postContent, replyID, imageID, fileID, heartCount, likeCount, classCode, subjectName, postType, quizID, schedID, schedStatus, dueStatus, closeStatus, duration, random) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
+    const updateDraftQuizQuery = "UPDATE quiz SET postStatus='posted' WHERE quizID=?"
+
+
+    db.query(postQuery, [postID, acctID, name, timePosted, datePosted, postContent, replyID, imageID, fileID, heartCount, likeCount, classCode, subjectName, postType, quizID, schedID, schedStatus, dueStatus, closeStatus, duration, random], (error, data, field) => {
         if (error) {
             console.log(error)
             res.status(404).send(error)
         }else {
-            res.status(200).json({ message: 'Succefully add post.' })
+
+            db.query(updateDraftQuizQuery, [quizID], (err, data, field) => {
+                if (err) {
+                    console.log(err)
+                    res.status(404).send(err)
+                }
+
+                res.status(200).json({ message: 'Succefully add post.' })
+            })
         }
     })
 

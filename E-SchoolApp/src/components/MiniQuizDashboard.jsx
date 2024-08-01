@@ -6,6 +6,50 @@ const MiniQuizDashboard = ({ finalQuestionSet, quizTitle, quizDescription, subje
 
   const questions = finalQuestionSet
 
+  const handleOverAllPoints = () => {
+    let totalPoints = 0
+    if (questions) {
+        for (let i = 0; i < questions.length; i++) {
+           totalPoints += questions[i].points
+        }
+        return totalPoints
+    }
+    return totalPoints
+  }
+
+  const totalQuestionBasedOnType = (type) => {
+
+    if (questions) {
+       if (type === 'enumeration') {
+            let totalQuestions = 0
+            totalQuestions += questions.filter((data) => data.questionType === 'enumeration').length
+            return totalQuestions
+       } 
+
+       if (type === 'choices') {
+            let totalQuestions = 0
+            totalQuestions += questions.filter((data) => data.questionType === 'choices').length
+            return totalQuestions
+        } 
+
+        if (type === 'fill') {
+            let totalQuestions = 0
+            totalQuestions += questions.filter((data) => data.questionType === 'fill').length
+            return totalQuestions
+        } 
+
+        if (type === 'TOR') {
+            let totalQuestions = 0
+            totalQuestions += questions.filter((data) => data.questionType === 'TOR').length
+            return totalQuestions
+        } 
+
+    }
+
+    return 0
+    
+  }
+
   return (
     <div className={style.container}>
         <div className='d-flex flex-column'>
@@ -39,11 +83,11 @@ const MiniQuizDashboard = ({ finalQuestionSet, quizTitle, quizDescription, subje
         <div className='d-flex gap-2'>
             <div className={style.cardDash2}>
                 <h1 >Overall Points</h1>
-                <h1 style={{ fontSize: '20pt' }}>10</h1>
+                <h1 style={{ fontSize: '20pt' }}>{handleOverAllPoints()}</h1>
             </div>
             <div className={style.cardDash2}>
                 <h1>Current Question</h1>
-                <h1 style={{ fontSize: '20pt' }}>10</h1>
+                <h1 style={{ fontSize: '20pt' }}>{questions.length + 1}</h1>
             </div>
         </div>
         <div className='d-flex gap-2'>
@@ -53,7 +97,7 @@ const MiniQuizDashboard = ({ finalQuestionSet, quizTitle, quizDescription, subje
                     <h1>Enumeration</h1>
                 </div>
                 
-                <h1 style={{ fontSize: '20pt' }}>10</h1>
+                <h1 style={{ fontSize: '20pt' }}>{totalQuestionBasedOnType('enumeration')}</h1>
             </div>
             <div className={style.cardDash3}>
                 <div className='d-flex flex-column align-items-start'>
@@ -61,7 +105,7 @@ const MiniQuizDashboard = ({ finalQuestionSet, quizTitle, quizDescription, subje
                     <h1>Choices Quiz</h1>
                 </div>
                 
-                <h1 style={{ fontSize: '20pt' }}>10</h1>
+                <h1 style={{ fontSize: '20pt' }}>{totalQuestionBasedOnType('choices')}</h1>
             </div>
         </div>
         <div className='d-flex gap-2'>
@@ -71,7 +115,7 @@ const MiniQuizDashboard = ({ finalQuestionSet, quizTitle, quizDescription, subje
                     <h1>Fill in the Blank</h1>
                 </div>
                 
-                <h1 style={{ fontSize: '20pt' }}>10</h1>
+                <h1 style={{ fontSize: '20pt' }}>{totalQuestionBasedOnType('fill')}</h1>
             </div>
             <div className={style.cardDash3}>
                 <div className='d-flex flex-column align-items-start'>
@@ -79,7 +123,7 @@ const MiniQuizDashboard = ({ finalQuestionSet, quizTitle, quizDescription, subje
                     <h1>True or False</h1>
                 </div>
                 
-                <h1 style={{ fontSize: '20pt' }}>10</h1>
+                <h1 style={{ fontSize: '20pt' }}>{totalQuestionBasedOnType('TOR')}</h1>
             </div>
         </div>
     </div>

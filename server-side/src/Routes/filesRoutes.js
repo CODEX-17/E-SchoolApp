@@ -5,6 +5,22 @@ const multer = require('multer')
 const path = require('path')
 const fs = require('fs')
 
+//API get all files
+router.get('/getFiles', (req, res) => {
+    const query = "SELECT * FROM files"
+
+    db.query(query, (error, data, field) => {
+        if (error) {
+            console.log(error)
+            res.status(404).json(error)
+        } else {
+            console.log()
+            res.status(200).json(data)
+        }
+    })
+})
+
+
 //API delete files
 router.delete('/deleteFiles', (req, res) => {
     const fileID = req.body.fileID

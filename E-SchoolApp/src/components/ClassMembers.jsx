@@ -1,19 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import style from './ClassMembers.module.css'
-import { useMemberStore } from '../stores/useMemberStore'
 import axios from 'axios'
-import { BiExit } from "react-icons/bi"
-import sample from '../assets/sample.jpg'
 import { AiOutlineDelete } from "react-icons/ai"
-import { CgAddR } from "react-icons/cg";
 import { RiUserAddFill } from "react-icons/ri";
 import notifSound from '../assets/sound/notif.mp3';
 import erroSound from '../assets/sound/error.mp3';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ThreeDots } from  'react-loader-spinner';
-import { useImageStore } from '../stores/useImageStore'
-import { useAccountStore } from '../stores/useAccountsStore'
+
 
 const ClassMembers = ({ memberID, currentClassCode }) => {
 
@@ -38,82 +33,83 @@ const ClassMembers = ({ memberID, currentClassCode }) => {
   const [adminMember, setAdminMember] = useState(null)
 
   useEffect(() => {
-    getMembersAndAccounts()
+
+      axios.get('http://localhost:5001/members/getMembers')
+      .then((res) => {
+          const value = res.data
+
+          setMembersList(value)
+
+          //Find the member by memberID
+          const currentMembersFilter = value.filter((data) => data.membersID === currentMemberID)
+          setCurrentMembersList(currentMembersFilter)
+
+          //Find admin in currentMembers
+          const adminFilter = currentMembersFilter.filter((data) => data.memberType === 'admin')
+          setAdminMember(adminFilter[0])
+
+          //Fetch all accounts
+          axios.get('http://localhost:5001/accounts/getAccounts')
+          .then((res) => {
+                const result = res.data
+                setAccountsList(result)
+
+                //Find the suggested members
+                let suggestedMembers = []
+                let duplicate = false
+
+                if (currentMembersFilter) {
+
+                  //Loop the fetch accounts and check if they exist in membersList
+                  for (let i = 0; i < result.length; i++) {
+                    const acctID = result[i].acctID
+                
+                    //Loop of Current Members
+                    for (let x = 0; x < currentMembersFilter.length; x++) {
+                      const membersAcctID = currentMembersFilter[x].acctID
+                    
+                      //Check if they exist in membersList
+                      if (acctID === membersAcctID) {
+                        duplicate = true
+                      }
+
+                    }
+
+                    //If not it will push in variable
+                    if (!duplicate) {
+                      suggestedMembers.push({
+                        membersID: currentMemberID,
+                        acctID: result[i].acctID,
+                        firstname: result[i].firstname,
+                        middlename: result[i].middlename,
+                        lastname: result[i].lastname,
+                        memberType: 'member',
+                        imageID: result[i].imageID,
+                        data: result[i].data,
+                      })
+
+                      duplicate = false
+                    }else {
+                      duplicate = false
+                    }
+                    
+                  }
+                
+                }
+
+                //Set the final result in variable
+                setSuggestMembersList(suggestedMembers)
+            })
+            .catch((err) => console.log(err))
+          
+
+      })
+      .catch((err) => console.log(err))
+
 
   },[])
 
-  const getMembersAndAccounts = () => {
 
-    axios.get('http://localhost:5001/members/getMembers')
-    .then((res) => {
-        const value = res.data
-        setMembersList(value)
-
-        //Find the member by memberID
-        const currentMembersFilter = value.filter((data) => data.membersID === currentMemberID)
-        setCurrentMembersList(currentMembersFilter)
-
-        //Find admin in currentMembers
-        const adminFilter = currentMembersFilter.filter((data) => data.memberType === 'admin')
-        setAdminMember(adminFilter[0])
-
-        //Fetch all accounts
-        axios.get('http://localhost:5001/accounts/getAccounts')
-        .then((res) => {
-              const result = res.data
-              setAccountsList(result)
-
-              //Find the suggested members
-              let suggestedMembers = []
-              let duplicate = false
-
-              if (currentMembersFilter) {
-
-                //Loop the fetch accounts and check if they exist in membersList
-                for (let i = 0; i < result.length; i++) {
-                  const acctID = result[i].acctID
-               
-
-                  //Loop of Current Members
-                  for (let x = 0; x < currentMembersFilter.length; x++) {
-                    const membersAcctID = currentMembersFilter[x].acctID
-                  
-                    //Check if they exist in membersList
-                    if (acctID === membersAcctID) {
-                      duplicate = true
-                    }
-
-                  }
-
-                  //If not it will push in variable
-                  if (!duplicate) {
-                    suggestedMembers.push({
-                      membersID: currentMemberID,
-                      acctID: result[i].acctID,
-                      firstname: result[i].firstname,
-                      middlename: result[i].middlename,
-                      lastname: result[i].lastname,
-                      memberType: 'member',
-                      imageID: result[i].imageID,
-                      data: result[i].data,
-                    })
-
-                    duplicate = false
-                  }
-                  
-                }
-              
-              }
-
-              //Set the final result in variable
-              setSuggestMembersList(suggestedMembers)
-          })
-          .catch((err) => console.log(err))
-        
-
-    })
-    .catch((err) => console.log(err))
-  }
 
 
   const notify = (message, state) => {

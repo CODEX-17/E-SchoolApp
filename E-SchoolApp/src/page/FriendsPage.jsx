@@ -9,6 +9,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ThreeDots } from  'react-loader-spinner';
 import axios from 'axios';
+import io from 'socket.io-client'
+const socket = io.connect('http://localhost:5001')
 
 const CountdownTimer = () => {
 
@@ -22,6 +24,25 @@ const CountdownTimer = () => {
   //Variable for fetching data from database
   const [friendList, setfriendList] = useState(null)
   const [suggestedList, setSuggestedList] = useState(null)
+
+  let time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit'})
+  let date = new Date().toDateString('en-US', { 
+    year: 'numeric', 
+    month: 'short', 
+    day: 'numeric',
+    weekday: 'short' 
+ })
+
+ const generateUniqueId = () => {
+  const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+  const length = 8
+  let result = ''
+  for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * charset.length)
+      result += charset.charAt(randomIndex)
+  }
+  return result
+}
 
   useEffect(() => {
     setshowLoading(true)
@@ -39,7 +60,7 @@ const CountdownTimer = () => {
 
 
   const getDatas = () => {
-    axios.get('http://localhost:5001/friends/getFriends')
+    axios.get('http://localhost:5001/friends/getFriendsByAcctID/' + userAccount.acctID)
     .then((res) => {
        const friends = res.data
        console.log('friends:', friends)
@@ -53,6 +74,7 @@ const CountdownTimer = () => {
 
               let duplicate = false
               let suggetedFriends = []
+
             //Loop accounts
             for (let i = 0; i < accounts.length; i++) {
               const acctID = accounts[i].acctID
@@ -69,7 +91,7 @@ const CountdownTimer = () => {
               }
 
               //If acctID is unique it will store in suggested variable
-              if (!duplicate) {
+              if (!duplicate && acctID !== userAccount.acctID) {
 
                 suggetedFriends.push({
                   acctID: userAccount.acctID,
@@ -148,6 +170,8 @@ const CountdownTimer = () => {
     if (data) {
       const newFriendData = data
 
+      console.log("process data:", data)
+
       axios.post('http://localhost:5001/friends/addFriends', newFriendData)
       .then((res) => {
           const result = res.data
@@ -164,12 +188,33 @@ const CountdownTimer = () => {
           const filterResult = resultFriends.filter((data) => data.friendAcctID !== newFriendData.friendAcctID)
           setresultFriends(filterResult)
 
-
-
           //After all the process it will notify
           notify(message, 'success')
       })
       .then((err) => console.error(err))
+
+ 
+
+      const obj = {
+        notificationID: generateUniqueId(),
+        acctID: newFriendData.friendAcctID,
+        title: generateFullName(userAccount.firstname, userAccount.middlename, userAccount.lastname),
+        data: userAccount.data,
+        content: 'added you as a friend.',
+        date: date, 
+        time: time,
+        type: 'profile',
+      }
+
+      //API add notification
+      axios.post('http://localhost:5001/notification/addNotification', obj)
+      .then((res) => {
+        const result = res.data
+        console.log(result.message)
+
+        socket.emit('addNotification', newFriendData.friendAcctID, obj)
+      })
+      .catch((err) => console.log(err))
 
     }else {
       console.log('no data received')
