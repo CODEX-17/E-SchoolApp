@@ -15,10 +15,12 @@ import LeaderBoard from './LeaderBoard'
 import io from 'socket.io-client'
 import { useScoreStore } from '../stores/useScoreStore'
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom';
 const socket = io.connect('http://localhost:5001')
 
 
 const QuizTake = () => {
+    const navigate = useNavigate()
 
     const notif = new Howl({ src: [notifSound]})
     const errSound = new Howl({ src: [erroSound]})
@@ -71,7 +73,6 @@ const QuizTake = () => {
     }
 
     const expiryTimestamp = new Date()
-    const [filterPost, setFilterPost] = useState()
     const [time, setTime] = useState()
 
     expiryTimestamp.setMinutes(expiryTimestamp.getMinutes() + time);
@@ -87,145 +88,148 @@ const QuizTake = () => {
         },
     })
     
-    useEffect( async () =>  {
+    useEffect(() =>  {
 
-        try {
-           
-            // GET ALL CHOICES, FILL LAYOUT, IMAGES in parallel
-            const [choicesResponse, fillLayoutResponse, imagesResponse, quizResponse] = await Promise.all([
-                axios.get('http://localhost:5001/choices/getChoices'),
-                axios.get('http://localhost:5001/fillLayout/getFillLayout'),
-                axios.get('http://localhost:5001/images/getImages'),
-                axios.get(`http://localhost:5001/quiz/getQuizInnerJoinQuestion/${quizID}`),
-            ]);
+        const fetchData = async () => {
+            try {
+            
+                // GET ALL CHOICES, FILL LAYOUT, IMAGES in parallel
+                const [choicesResponse, fillLayoutResponse, imagesResponse, quizResponse] = await Promise.all([
+                    axios.get('http://localhost:5001/choices/getChoices'),
+                    axios.get('http://localhost:5001/fillLayout/getFillLayout'),
+                    axios.get('http://localhost:5001/images/getImages'),
+                    axios.get(`http://localhost:5001/quiz/getQuizInnerJoinQuestion/${quizID}`),
+                ]);
 
-            const choices = choicesResponse.data
-            const fillLayout = fillLayoutResponse.data
-            const images = imagesResponse.data
-            const questions = quizResponse.data
-            let finalQuestions = []
+                const choices = choicesResponse.data
+                const fillLayout = fillLayoutResponse.data
+                const images = imagesResponse.data
+                const questions = quizResponse.data
+                let finalQuestions = []
 
-            // Update the state with the fetched data
-            setChoices(choices)
-            setFillLayout(fillLayout)
-            setImage(images)
-            setQuestions(questions)
+                // Update the state with the fetched data
+                setChoices(choices)
+                setFillLayout(fillLayout)
+                setImage(images)
+                setQuestions(questions)
 
-            for (let i = 0; i < questions.length; i++) {
-                
-                questions[i].questionNumber = i+1
-                const type = questions[i].questionType
-                const points = questions[i].points
-                const keySensitive = questions[i].keySensitive
-                const answerText = questions[i].questionAnswerText
-                const choicesID = questions[i].choicesID
-                const fillLayoutID = questions[i].fillLayoutID
+                for (let i = 0; i < questions.length; i++) {
+                    
+                    questions[i].questionNumber = i+1
+                    const type = questions[i].questionType
+                    const points = questions[i].points
+                    const keySensitive = questions[i].keySensitive
+                    const answerText = questions[i].questionAnswerText
+                    const choicesID = questions[i].choicesID
+                    const fillLayoutID = questions[i].fillLayoutID
 
-                //Compute overAll 
-                setoverAll((oldData) => {
-                    let totalpoints = oldData
-                    totalpoints += points
-                    return totalpoints
-                })
-
-                if (type === "enumeration" || type === "True Or False") {
-                    setanswers((oldData) => {
-                        let newData = [...oldData]
-
-                        // Ensure the element at the specific index is an array
-                        if (!Array.isArray(newData[i]) || numberOfAns > 1) {
-                            newData[i] = [];
-                        }
-
-                        newData[i][0] = {
-                            type: type,
-                            answer: answerText,
-                            keySensitive: keySensitive,
-                            points: points,
-                        }
-
-                        return newData
+                    //Compute overAll 
+                    setoverAll((oldData) => {
+                        let totalpoints = oldData
+                        totalpoints += points
+                        return totalpoints
                     })
-                }
-                
-                if (type === "choices") {
 
-                    const resuit = choices
-                    .filter((data) => data.choicesID === choicesID && data.correct === 1)
-                    .map((data, index) => ({
-                        letter: data.letter,
-                        index: index,
-                    }))
+                    if (type === "enumeration" || type === "True Or False") {
+                        setanswers((oldData) => {
+                            let newData = [...oldData]
 
-                    setanswers((oldData) => {
-                        let newData = [...oldData]
+                            // Ensure the element at the specific index is an array
+                            if (!Array.isArray(newData[i]) || numberOfAns > 1) {
+                                newData[i] = [];
+                            }
 
-                        // Ensure the element at the specific index is an array
-                        if (!Array.isArray(newData[i]) || numberOfAns > 1) {
-                            newData[i] = [];
-                        }
-
-                       
-                        for (let x = 0; x < resuit.length; x++) {
-                            
-                            newData[i][resuit[x].index] = {
+                            newData[i][0] = {
                                 type: type,
-                                answer: resuit[x].letter,
+                                answer: answerText,
                                 keySensitive: keySensitive,
                                 points: points,
                             }
-                        }
 
-                        return newData
+                            return newData
+                        })
+                    }
+                    
+                    if (type === "choices") {
+
+                        const resuit = choices
+                        .filter((data) => data.choicesID === choicesID && data.correct === 1)
+                        .map((data, index) => ({
+                            letter: data.letter,
+                            index: index,
+                        }))
+
+                        setanswers((oldData) => {
+                            let newData = [...oldData]
+
+                            // Ensure the element at the specific index is an array
+                            if (!Array.isArray(newData[i]) || numberOfAns > 1) {
+                                newData[i] = [];
+                            }
+
                         
-                    })
-                }
-
-                if (type === "fill") {
-
-                    const result = fillLayout
-                    .filter((data) => data.fillLayoutID === fillLayoutID)
-                    .map((data, index) => ({ ...data, originalIndex: index }))
-                    .filter((data) => data.fillType === "blank")
-                    .map((data) => ({
-                        answer: data.fillContent,
-                        index: data.originalIndex,
-                    }))
-
-
-                    setanswers((oldData) => {
-                        let newData = [...oldData]
-
-                        // Ensure the element at the specific index is an array
-                        if (!Array.isArray(newData[i]) || numberOfAns > 1) {
-                            newData[i] = [];
-                        }
-
-                        for (let x = 0; x < result.length; x++) {
-                            const data = result[x]
-
-                            newData[i][data.index] = {
-                                type: type,
-                                answer: data.answer,
-                                keySensitive: keySensitive,
-                                points: points,
+                            for (let x = 0; x < resuit.length; x++) {
+                                
+                                newData[i][resuit[x].index] = {
+                                    type: type,
+                                    answer: resuit[x].letter,
+                                    keySensitive: keySensitive,
+                                    points: points,
+                                }
                             }
-                        }
 
-                        return newData
-                    })
+                            return newData
+                            
+                        })
+                    }
+
+                    if (type === "fill") {
+
+                        const result = fillLayout
+                        .filter((data) => data.fillLayoutID === fillLayoutID)
+                        .map((data, index) => ({ ...data, originalIndex: index }))
+                        .filter((data) => data.fillType === "blank")
+                        .map((data) => ({
+                            answer: data.fillContent,
+                            index: data.originalIndex,
+                        }))
+
+
+                        setanswers((oldData) => {
+                            let newData = [...oldData]
+
+                            // Ensure the element at the specific index is an array
+                            if (!Array.isArray(newData[i]) || numberOfAns > 1) {
+                                newData[i] = [];
+                            }
+
+                            for (let x = 0; x < result.length; x++) {
+                                const data = result[x]
+
+                                newData[i][data.index] = {
+                                    type: type,
+                                    answer: data.answer,
+                                    keySensitive: keySensitive,
+                                    points: points,
+                                }
+                            }
+
+                            return newData
+                        })
+                    }
+                    
+                    finalQuestions.push(questions[i])
                 }
-                
-                finalQuestions.push(questions[i])
+                setquestionSet(finalQuestions)
+
+
+            } catch (error) {
+                console.log(error)
             }
-            setquestionSet(finalQuestions)
-
-
-        } catch (error) {
-            console.log(error)
         }
 
-
+        fetchData()
+        
         //GET ALL POST
         axios.get('http://localhost:5001/post/getPost')
         .then((res) => {
@@ -337,6 +341,7 @@ const QuizTake = () => {
 
     const handleExit = () => {
         updateRouteChoose('class')
+        navigate('/')
     }
 
     const generateOverAllScore = () => {
