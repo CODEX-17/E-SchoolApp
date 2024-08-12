@@ -168,7 +168,7 @@ router.post('/updateAccount', uploadImage.single('image'), (req, res) => {
                                             console.log(err)
                                         }else {
                                             console.log(pathFile)
-                                            return res.status(200).json({ message: 'Successfully update the account.' })
+                                            return res.status(200).json({ imagePath: `${filename}` })
                                         }
                                     })
                                 }

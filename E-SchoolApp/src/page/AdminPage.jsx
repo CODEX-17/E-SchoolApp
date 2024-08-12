@@ -671,7 +671,6 @@ const handleAddAccounts = (e) => {
         notify(message, 'success')
     })
     .catch((err) => console.log(err))
-
 }
 
 const handleAddChoices = (e) => {
@@ -1107,8 +1106,9 @@ const handleEditSubject = (e) => {
                                             <div className="mb-3">
                                                 <label for="exampleInputEmail1" className="form-label">Account Type</label>
                                                 <select className="form-select" required onChange={(e) => setAccountType(e.target.value)}>
-                                                    <option value="member" selected>member</option>
-                                                    <option value="admin">admin</option>
+                                                    <option value="admin" selected>admin</option>
+                                                    <option value="student">student</option>
+                                                    <option value="faculty">faculty</option>
                                                 </select>
                                             </div>
                                         </div>

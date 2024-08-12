@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 09, 2024 at 08:03 AM
+-- Generation Time: Aug 12, 2024 at 02:41 AM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 8.1.6
 
@@ -44,7 +44,9 @@ CREATE TABLE `accounts` (
 --
 
 INSERT INTO `accounts` (`acctID`, `acctype`, `email`, `password`, `firstname`, `middlename`, `lastname`, `status`, `imageID`) VALUES
+('mcE0DAjl', 'student', 'ann@gmail.com', 'ann123', 'ann', 'pajares', 'reyes', 'offlin', 'mcE0DAjl'),
 ('Tk6Bxe8U', 'admin', 'mark@gmail.com', 'mark123', 'Mark', 'Langcay', 'Adduru', 'logout', 'Tk6Bxe8U'),
+('un2kt7p8', 'faculty', 'justin@gmail.com', 'justin12345', 'Justin', 'Capoquian', 'Pamparo', 'online', 'un2kt7p8'),
 ('un2kt7px', 'faculty', 'pamparor@gmail.com', 'rumar12345', 'Rumar', 'Capoquian', 'Pamparo', 'online', 'un2kt7px'),
 ('VHXQ6s6O', 'student', 'allan@gmail.com', 'allan123', 'Allan', 'Caranguioan', 'Caluigiran', 'logout', 'VHXQ6s6O');
 
@@ -304,7 +306,7 @@ INSERT INTO `image` (`id`, `name`, `type`, `data`, `dateUploaded`, `timeUploaded
 (2, 'papa.jpg', 'image/jpeg', 'image_1699451744436.png', 'Mon Jan 22 2024', '03:35 AM', 'un2kt7px', 'IT-ELECT2', 'YHXQ6s61'),
 (3, 'rumar.jpg', 'image/jpeg', 'image_1701691103989.jpg', 'Mon Jan 22 2024', '03:35 AM', 'un2kt7px', 'none', 'un2kt7px'),
 (4, 'mark.jpg', 'image/jpeg', 'image_1701691103982.jpg', 'Mon Jan 22 2024', '03:35 AM', 'un2kt7px', 'none', 'Tk6Bxe8U'),
-(5, 'allan.jpg', 'image/jpeg', 'image_1701668137802.png', 'Mon Jan 22 2024', '03:35 AM', 'un2kt7px', 'none', 'VHXQ6s6O'),
+(5, 'BONI.jpg', 'image/jpeg', 'image_1723343049128.jpg', 'Mon Jan 22 2024', '03:35 AM', 'un2kt7px', 'none', 'VHXQ6s6O'),
 (1922, 'MIRACLE LOTION PNG.png', 'image/png', 'image_1713096266041.png', 'Sun Apr 14 2024', '08:04 PM', 'un2kt7px', 'IT-CAP2', 'Bd4lkWFD'),
 (1923, 'lemon_rub-removebg-preview.png', 'image/png', 'image_1713096266037.png', 'Sun Apr 14 2024', '08:04 PM', 'un2kt7px', 'IT-CAP2', 'Bd4lkWFD'),
 (1924, 'FAKE STORE.jpg', 'image/jpeg', 'image_1713096266032.jpg', 'Sun Apr 14 2024', '08:04 PM', 'un2kt7px', 'IT-CAP2', 'Bd4lkWFD'),
@@ -349,7 +351,8 @@ INSERT INTO `image` (`id`, `name`, `type`, `data`, `dateUploaded`, `timeUploaded
 (2002, 'default', 'image/jpeg', 'none', '', '', '', '', 'default'),
 (2003, 'default', 'image/jpeg', 'none', '', '', '', '', 'default'),
 (2004, 'default', 'image/jpeg', 'none', '', '', '', '', 'default'),
-(2005, 'default', 'image/jpeg', 'none', '', '', '', '', 'default');
+(2005, 'default', 'image/jpeg', 'none', '', '', '', '', 'default'),
+(2006, 'avatar 1.png', 'image/png', 'image_1723186373892.png', 'Fri Aug 09 2024', '02:52 PM', 'mcE0DAjl', 'none', 'mcE0DAjl');
 
 -- --------------------------------------------------------
 
@@ -1097,7 +1100,7 @@ ALTER TABLE `friends`
 -- AUTO_INCREMENT for table `image`
 --
 ALTER TABLE `image`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2006;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2007;
 
 --
 -- AUTO_INCREMENT for table `members`

@@ -15,14 +15,11 @@ import sample from '../assets/sample.jpg'
 const ManageAccout = () => {
 
   const [image, setImage] = useState(null)
-  const [oldImage, setoldImage] = useState(null)
   const [showPassword, setShowPass] = useState(false)
   const [change, setChange] = useState(true)
   const [isShowErrorMessage, setIsShowErrorMessage] = useState(false)
-  const [accountCurrent, setaccountCurrent] = useState(JSON.parse(localStorage.getItem('user')))
+  const accountCurrent = JSON.parse(localStorage.getItem('user'))
   let fullname = accountCurrent.firstname + ' ' + accountCurrent.middlename.charAt(0) + '. ' + accountCurrent.lastname
-  const { getImagesById, images, updateImageById } = useImageStore()
-  const { updatePassword, getAccountById, currentAccount } = useAccountStore()
   const oldPassword = accountCurrent.password
   const [updatedPassword, setupdatedPassword] = useState(accountCurrent.password)
   const inputRef = useRef(null)
@@ -30,14 +27,7 @@ const ManageAccout = () => {
   const notif = new Howl({ src: [notifSound]})
   const errSound = new Howl({ src: [erroSound]})
 
-  useEffect(()=> {
-    getImagesById(accountCurrent.imageID)
-    if (images.length > 0) {
-      setoldImage('http://localhost:5001/'+images[0].data)
-    }
-   
-  },[])
-
+ 
   const notify = (message, state) => {
      if (state === 'err') {
         errSound.play()
@@ -139,11 +129,17 @@ const ManageAccout = () => {
         axios.post('http://localhost:5001/accounts/updateAccount', formData)
         .then(res => res.data)
         .then((data) => {
+
+          const image = data.imagePath
           let userData = JSON.parse(localStorage.getItem('user'))
+          
           userData.password = updatedPassword
+          userData.data = image
+
           localStorage.setItem('user', JSON.stringify(userData))
-          const message = data.message
-          notify(message, 'success')
+          
+          notify('Successfully update account.', 'success')
+          
         })
         .catch(err => console.log(err))
       }
@@ -191,7 +187,7 @@ const ManageAccout = () => {
                     onDragLeave={handleDragLeave}
                 >
                     { image ? (
-                      <img src={URL.createObjectURL(image.file)} alt="Uploaded" className={style.imgUploaded} />
+                      <img src={URL.createObjectURL(image.file)} alt="Uploaded" id={style.imgUploaded} />
                     ) : ( 
                       <p>Drag & drop an image here.</p>
                     )}
