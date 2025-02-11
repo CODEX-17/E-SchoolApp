@@ -2,63 +2,68 @@
     width: 100%;
     height: 100%;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    position: absolute;
+    overflow: auto;
+    color: #3E3F40;
+}
+
+.container h1 {
+    font-family: bold;
+    font-size: 2rem;
+    margin: 0;
+}
+.container p {
+    margin: 0;
+    font-size: 1rem;
+    font-family: normal;
 }
 
 .horizontal {
     display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
     padding: 10px;
-    width: auto;
+    width: 100%;
     height: auto;
-    gap: 5%;
+    gap: 20px;
 }
-
 
 .card {
     background-color: #D9D9D9;
-    width: 385px;
-    height: 315px;
+    width: 250px;
+    max-width: 250px;
+    height: 250px;
+    max-height: 385px;
     border-radius: 20px;
-    padding: 2%;
+    padding: 10px 10px 20px 10px;
     display: flex;
     position: relative;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: end;
     animation: pop 0.5s ease;
     box-shadow: 0 4px 8px rgba(171, 133, 133, 0.2);
     animation: fadeIn 0.5s ease;
 }
 
-#iconExit {
-    color: #3E3F40;
-    position: absolute;
-    top: 5%;
-    right: 5%;
-    cursor: pointer;
-}
-
-#iconExit:hover {
-    transform: scale(110%);
-}
-
 .card h2 {
-    font-size: 20px;
-    color: #3E3F40;
-    font-family: normal;
+    font-size: 1rem;
 }
 
-.card #joinText {
-    font-size: 15px;
+.card label {
+    font-size: .8rem;
     color: #3E3F40;
     font-family: normal;
+    margin: 0;
+    padding: 0;
 }
 
 .card button {
-    width: 205px;
-    height: 36px;
+    width: 100%;
+    height: 40px;
     border-radius: 18px;
     background-color: #3E3F40;
     color: white;
@@ -76,13 +81,24 @@
 .card input {
     outline: none;
     border: none;
-    width: 284px;
-    height: 32px;
+    width: 100%;
+    max-width: none;
+    height: 40px;
     border-radius: 7px;
-    margin-bottom: 10px;
-    margin-top: 10px;
     text-align: center;
     font-size: 15px;
+}
+
+#iconExit {
+    color: #3E3F40;
+    position: absolute;
+    top: 5%;
+    right: 5%;
+    cursor: pointer;
+}
+
+#iconExit:hover {
+    transform: scale(110%);
 }
 
 #importExcelFile {
@@ -98,4 +114,21 @@
     font-size: 17px;
     font-family: normal;
     color: #3E3F40;
+}
+
+@media (max-width: 425px) {
+    .container {
+        justify-content: flex-start;
+        height: 90%;
+        padding-bottom: 20px;
+    }
+
+    .container h1 {
+        font-size: 1.2rem;
+        text-align: center;
+    }
+
+    .container p {
+        font-size: 0.8rem;
+    }
 }

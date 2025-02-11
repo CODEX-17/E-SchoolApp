@@ -14,10 +14,12 @@
 }
 
 .container {
-    width: 95%;
-    height: 95%;
+    width: 100%;
+    height: 100%;
+    padding: 20px;
     font-family: normal;
     position: relative;
+    overflow: hidden;
 }
 
 .reminder {
@@ -38,8 +40,41 @@
 
 .header {
     display: flex;
-    position: relative;
+    width: 100%;
+    height: auto;
     align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.header h1 {
+    color: #3E3F40;
+    font-family: bold;
+    font-size: 2rem;
+    user-select: none;
+    margin: 0;
+}
+
+.header button {
+    background-color: #099AED;
+    border: none;
+    color: white;
+    width: 224px;
+    height: 39px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: bold;
+}
+
+.header button:hover {
+    background-color: #3E3F40;
+}
+
+.content {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
 }
 
 .exitTrapNotif {
@@ -59,33 +94,6 @@
     font-family: bold;
     color: #3E3F40;
   }
-
-.header h1 {
-    color: #3E3F40;
-    font-family: bold;
-    font-size: 40px;
-    user-select: none;
-}
-
-.header button {
-    position: absolute;
-    right: 10px;
-    background-color: #099AED;
-    border: none;
-    color: white;
-    width: 224px;
-    height: 39px;
-    border-radius: 6px;
-    font-size: 13px;
-    font-family: bold;
-}
-
-.header button:hover {
-    background-color: #3E3F40;
-}
-
-
-
 
 /*modal*/
 .modalContainer {
