@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import NavbarComponent from '../components/NavbarComponent'
 import style from './HomePage.module.css'
 import SidebarComponent from '../components/SidebarComponent'
@@ -12,10 +12,12 @@ import ManageAccout from './ManageAccout'
 import FilePage from './FilePage'
 import QuizTake from './QuizTake'
 import FriendsPage from './FriendsPage'
+import { ToastContainer } from 'react-toastify';
+import { NavigationContext } from '../context/NavigationContext'
 
 const HomePage = () => {
-  const { routeChoose } = useNavigateStore()
-  const navigate = useNavigate()
+
+  const { currentRoute } = useContext(NavigationContext)
   
   useEffect(() =>  {
     if (!localStorage.getItem('user')) {
@@ -26,6 +28,7 @@ const HomePage = () => {
   return (
     
       <div className={style.container}>
+        <ToastContainer/>
         <div className={style.nav}>
           <NavbarComponent/>
         </div>
@@ -34,14 +37,14 @@ const HomePage = () => {
               <SidebarComponent/>
           </div>
           <div className={style.right}>
-            {routeChoose === 'activity' && <ActivityPage/>}
-            {routeChoose === 'chat' && <ChatPage/>}
-            {routeChoose === 'quizDev' && <Quiz/>}
-            {routeChoose === 'class' && <ClassPage/>}
-            {routeChoose === 'quizTake' && <QuizTake/>}
-            {routeChoose === 'manageAccount' && <ManageAccout/>}
-            {routeChoose === 'file' && <FilePage/>}
-            {routeChoose === 'friends' && <FriendsPage/>}
+            {currentRoute === 'activity' && <ActivityPage/>}
+            {currentRoute === 'chat' && <ChatPage/>}
+            {currentRoute === 'quizDev' && <Quiz/>}
+            {currentRoute === 'class' && <ClassPage/>}
+            {currentRoute === 'quizTake' && <QuizTake/>}
+            {currentRoute === 'manageAccount' && <ManageAccout/>}
+            {currentRoute === 'file' && <FilePage/>}
+            {currentRoute === 'friends' && <FriendsPage/>}
             
           </div>
         </div>
