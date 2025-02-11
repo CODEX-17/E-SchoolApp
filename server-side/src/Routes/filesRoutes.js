@@ -20,6 +20,22 @@ router.get('/getFiles', (req, res) => {
     })
 })
 
+//API get all files by imageID
+router.get('/getFileByFileID/:fileID', (req, res) => {
+    const fileID =  req.params.fileID
+    const query = "SELECT * FROM files WHERE fileID=?"
+
+    db.query(query, [fileID], (error, data, field) => {
+        if (error) {
+            console.log('Error in getting file.', error)
+            res.status(404).json(error)
+        } else {
+            console.log('Successfully get file.')
+            res.status(200).json(data)
+        }
+    })
+})
+
 
 //API delete files
 router.delete('/deleteFiles', (req, res) => {
@@ -62,7 +78,7 @@ router.delete('/deleteFiles', (req, res) => {
     })
 })
 
-//API get all files and images by ClassCode
+//API get all files by imageID
 router.get('/getAllFilesAndImages/:classCode', (req, res) => {
     const classCode =  req.params.classCode
     const queryImages = "SELECT * FROM image WHERE classCode=?"
@@ -85,7 +101,6 @@ router.get('/getAllFilesAndImages/:classCode', (req, res) => {
         }
     })
 })
-
 
 //API get all files by ClassCode
 router.get('/getFilesByClassCode/:classCode', (req, res) => {

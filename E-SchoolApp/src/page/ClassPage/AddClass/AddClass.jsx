@@ -4,12 +4,12 @@ import logo from '../../../../public/assets/logo.png'
 import whiteLogo from '../../../../public/assets/logo-white.png'
 import excel from '../../../../public/assets/excel.png'
 import { NotificationContext } from '../../../context/NotificationContext'
-import CreateClass from './Modal/CreateClass'
+import CreateClass from './CreateClass/CreateClass'
 
 const AddClass = () => {
 
   const [showExcellInputCard, setshowExcellInputCard] = useState(false)
-  const [isShowCreateClass, setIsShowCreateClass] = useState(true)
+  const [isShowCreateClass, setIsShowCreateClass] = useState(false)
 
   const { notify } = useContext(NotificationContext)
   
@@ -39,7 +39,7 @@ const AddClass = () => {
         else{
             console.log('Please select your file');
         }
-    }
+  }
 
    const handleExcelFileSubmit = (e) => {
     e.preventDefault()

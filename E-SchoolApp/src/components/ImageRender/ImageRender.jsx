@@ -1,32 +1,31 @@
 import React, { useEffect, useState } from 'react'
 import defaultImage from '../../../public/assets/default.png'
-import { getImagesByImageID } from '../../services/imageServices'
+import { getFileByFileID } from '../../services/fileServices'
 
 const ImageRender = ({ image }) => {
-
 
   const [renderImage, setRenderImage] = useState(defaultImage)
 
   useEffect(() => {
 
-    if (typeof(image) === 'string') {
+    if (typeof(image) == 'string') {
         
         if (image === 'default') {
-            return setRenderImage(defaultImage)
+            setRenderImage(defaultImage)
         }else {
 
             const getImage = async () => {
                 try {
-                    const response = await getImagesByImageID(image)
-
+                    const response = await getFileByFileID(image)
+                  
                     if (response) {
-                        return setRenderImage(response)
+                        setRenderImage(response)
                     }else {
-                        return setRenderImage(defaultImage)
+                        setRenderImage(defaultImage)
                     }
 
                 } catch (error) {
-                    return setRenderImage(defaultImage)
+                    setRenderImage(defaultImage)
                 }
             }
 
@@ -38,6 +37,7 @@ const ImageRender = ({ image }) => {
         const convertedImage = URL.createObjectURL(image)
         return setRenderImage(convertedImage)
     }
+
   },[])
 
   return (

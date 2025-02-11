@@ -34,7 +34,7 @@ router.get('/getClassesByAccount/:acctID', (req, res) => {
         class.classID, 
         class.className, 
         class.classDesc, 
-        class.imageID
+        class.fileID
     FROM class_list
     JOIN class ON class_list.classCode = class.classCode
     WHERE class_list.acctID =? `
@@ -88,19 +88,19 @@ const storageImage = multer.diskStorage({
 
 const upload = multer({ storage: storageImage });
 
-router.post('/addClass', upload.single('image'), async (req, res) => {
+router.post('/addClass', upload.single('file'), async (req, res) => {
     const { className, classDesc, classCode, acctID } = req.body;
 
-    const imageID = req.file ? generateUniqueId() : 'default';
+    const fileID = req.file ? generateUniqueId() : 'default';
 
-    const classQuery = `INSERT INTO class(className, classDesc, classCode, imageID) VALUES(?, ?, ?, ?)`;
+    const classQuery = `INSERT INTO class(className, classDesc, classCode, fileID) VALUES(?, ?, ?, ?)`;
     const classListQuery = `INSERT INTO class_list(acctID, classCode, hidden, memberType) VALUES(?,?,?,'admin')`;
-    const fileQuery = `INSERT INTO image(name, type, data, dateUploaded, timeUploaded, imageID) VALUES(?, ?, ?, CURDATE(), CURTIME(), ?)`;
+    const fileQuery = `INSERT INTO files(name, type, data, dateUploaded, timeUploaded, acctID, fileID) VALUES(?, ?, ?, CURDATE(), CURTIME(), ?, ?)`;
 
     try {
         // Insert class
         await new Promise((resolve, reject) => {
-            db.query(classQuery, [className, classDesc, classCode, imageID], (error) => {
+            db.query(classQuery, [className, classDesc, classCode, fileID], (error) => {
                 if (error) {
                     console.error('Error inserting class:', error);
                     reject(error);
@@ -126,10 +126,10 @@ router.post('/addClass', upload.single('image'), async (req, res) => {
 
         // Insert file if it exists
         if (req.file) {
-            const imageData = [req.file.filename, req.file.mimetype, req.file.originalname, imageID];
+            const fileData = [req.file.filename, req.file.mimetype, req.file.originalname, acctID, fileID];
 
             await new Promise((resolve, reject) => {
-                db.query(fileQuery, imageData, (error) => {
+                db.query(fileQuery, fileData, (error) => {
                     if (error) {
                         console.error('Error inserting file:', error);
                         reject(error);

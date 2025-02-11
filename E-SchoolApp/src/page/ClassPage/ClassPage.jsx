@@ -63,7 +63,7 @@ useEffect(() => {
 
             if (response) {
                 setshowPreview('classPage')
-
+                console.log(response)
                 //Join room as acctID will becomes roomID for notifications
                 response.forEach(classes => socket.emit('joinRoom', classes.classCode))
 
@@ -154,53 +154,7 @@ const CreateClass = () => {
     setisModalShow(!isModalShow)    
 }
 
-const handleAddClass = (e) => { 
-    e.preventDefault()
 
-    const generatedID = generateUniqueId()
-    let imageFile = null
-
-    if (selectedImage) {
-        imageFile = selectedImage.file
-    }
-
-    const formData = new FormData
-
-    formData.append('className', className)
-    formData.append('classDesc', classDesc)
-    formData.append('classCode', classCode)
-    formData.append('membersID', generatedID)
-    formData.append('imageID', generatedID)
-    formData.append('hidden', 'false')
-    formData.append('acctID', userDetails.acctID)
-    formData.append('firstname', userDetails.firstname)
-    formData.append('middlename', userDetails.middlename)
-    formData.append('lastname', userDetails.lastname)
-    formData.append('memberType', 'admin')
-    formData.append('image', imageFile)
-
-    for (let [key, value] of formData.entries()) {
-        console.log(`${key}: ${value}`)
-    }
-
-    axios.post('http://localhost:5001/classes/addClass', formData, {
-        headers: {
-            'Content-Type':'multipart/form-data'
-        }
-    })
-    .then((res) => res.data)
-    .then((data) => {
-        const message = data.message
-        notify(message, 'success')
-        setisModalShow(false)
-        setshowCreateClass(false)
-        setisClassListShow(true)
-        setselectedImage(null)
-        setupdate(!update)
-    })
-    .catch((err) => console.log(err))
-
-}
 
 const backToHomePage = (choose) => {
     setshowPreview(choose)
@@ -357,7 +311,7 @@ const generateClassPicUpload = () => {
                                                                     onClick={() => setCurrentClass(data)}
                                                                 >
                                                                     <div id='roundedImage'  style={{ width: 50, height: 50, overflow: 'hidden',}}>
-                                                                        <ImageRender image={data.imageID}/>
+                                                                        <ImageRender image={data.fileID}/>
                                                                     </div>
                                                                     <div className='mt-2 text-center'>
                                                                         <h1>{data.className}</h1>
@@ -423,7 +377,7 @@ const generateClassPicUpload = () => {
                                                                                 onClick={() => setCurrentClass(data)}
                                                                             >
                                                                                 <div id='roundedImage'  style={{ width: 50, height: 50, overflow: 'hidden',}}>
-                                                                                    <ImageRender image={data.imageID}/>
+                                                                                    <ImageRender image={data.fileID}/>
                                                                                 </div>
                                                                                 <div className='mt-2 text-center'>
                                                                                     <h1>{data.className}</h1>

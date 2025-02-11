@@ -39,7 +39,6 @@ const CreateClass = ({ setIsShowCreateClass }) => {
   const { 
     handleSubmit, 
     reset, 
-    watch, 
     register, 
     formState: { errors } 
   } = useForm()
@@ -71,13 +70,14 @@ const CreateClass = ({ setIsShowCreateClass }) => {
         formData.append('classCode', data?.classCode)
         formData.append('acctID', userDetails?.acctID)
 
-        if (image) formData.append('image', image)
+        if (image) formData.append('file', image)
 
         const response = await addClass(formData)
 
         if (response) {
             notify(response.message, true)
             setIsShowCreateClass(false)
+            reset()
         }
 
     } catch (error) {
