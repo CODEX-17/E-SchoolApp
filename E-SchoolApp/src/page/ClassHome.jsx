@@ -1,10 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
 import style from './ClassHome.module.css'
-import { ToastContainer, toast } from 'react-toastify';
-import { Howl, Howler } from "howler";
-import notifSound from '../assets/sound/notif.mp3';
-import erroSound from '../assets/sound/error.mp3'; 
-import sample from '../assets/sample.jpg'
 import { GoHeart } from "react-icons/go"
 import { GoHeartFill } from "react-icons/go"
 import { AiOutlineLike, AiFillFilePpt, AiOutlineDelete } from "react-icons/ai"
@@ -16,9 +11,6 @@ import { FiDownload } from "react-icons/fi"
 import FilesClass from '../components/FilesClass'
 import { RiSendPlaneFill } from "react-icons/ri"
 import { BiExit } from "react-icons/bi"
-import { usePostStore } from '../stores/usePostStore';
-import { useImageStore } from '../stores/useImageStore';
-import { useAccountStore } from '../stores/useAccountsStore'
 import ClassMembers from '../components/ClassMembers';
 import { useNavigateStore } from '../stores/useNavigateStore';
 import { useNavigate } from 'react-router-dom';
@@ -29,7 +21,6 @@ import { GiNotebook } from "react-icons/gi";
 import { useFilesStore } from '../stores/useFilesStore';
 import { SiFiles } from "react-icons/si";
 import { ProgressBar } from  'react-loader-spinner';
-import { useClassStore } from '../stores/useClassStore';
 import { IoCloseCircle } from "react-icons/io5";
 import LeaderBoard from './LeaderBoard';
 import { BiSolidMessageDetail } from "react-icons/bi";
@@ -105,9 +96,6 @@ const ClassHome = ({ currentClassName, currentImageClass, classCodeCurrent, curr
  const inputImageFileRefComment = useRef(null)
  const inputFilesRefComment = useRef(null)
 
-
- const notif = new Howl({ src: [notifSound]})
- const errSound = new Howl({ src: [erroSound]})
 
  let time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit'})
  let date = new Date().toDateString('en-US', { 

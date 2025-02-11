@@ -1,12 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import style from './AdminPage.module.css'
-import sample from '../assets/sample.jpg'
+
 import titleLogo from '../assets/title.png'
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { Howl, Howler } from "howler";
-import notifSound from '../assets/sound/notif.mp3';
-import erroSound from '../assets/sound/error.mp3';
 import { MdSupervisorAccount } from "react-icons/md"
 import { useImageStore } from '../stores/useImageStore'
 import { useAccountStore } from '../stores/useAccountsStore'
@@ -71,8 +66,6 @@ const [subjectSet, setsubjectSet] = useState()
 
 const [selectedData, setSelectedData] = useState(null)
 
-const notif = new Howl({ src: [notifSound]})
-const errSound = new Howl({ src: [erroSound]})
 
 useEffect(() => {
 
@@ -1065,7 +1058,6 @@ const handleEditSubject = (e) => {
 
   return (
     <div className={style.container}>
-        <ToastContainer/>
         {
             showLoading && (
                 <div className={style.exitTrapNotif}>

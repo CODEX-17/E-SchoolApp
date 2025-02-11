@@ -1,25 +1,21 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import style from './ListPreviewQuiz.module.css'
 import { AiOutlineDelete } from 'react-icons/ai'
 import { FiEdit } from 'react-icons/fi'
 import { FaFileImage } from "react-icons/fa6"
 import { BiExit } from "react-icons/bi"
 import { MdPreview } from "react-icons/md"
-import sample from '../assets/sample.jpg'
+import sample from '../../public/assets/sample.png'
 import ContentLayoutEdit from '../components/ContentLayoutEdit'
 import ContentChoicesEdit from '../components/ContentChoicesEdit'
 import { FaCirclePlus } from "react-icons/fa6";
-import notifSound from '../assets/sound/notif.mp3';
-import erroSound from '../assets/sound/error.mp3';
-import { ToastContainer, toast } from 'react-toastify';
 import { InfinitySpin } from  'react-loader-spinner';
 import { MdDeleteForever } from "react-icons/md";
 import { RiDeleteBin5Fill } from "react-icons/ri";
+import { NotificationContext } from '../context/NotificationContext'
 
 const ListPreviewQuiz = ({ quizDescription, quizTitle, deleteAllData, subjectNameList, handleUpdatedQuestion, choices, finalQuestionSet, imageSetQuestion, previewShow, fillLayoutSet, handleNotificationFromChild }) => {
 
-const notif = new Howl({ src: [notifSound]})
-const errSound = new Howl({ src: [erroSound]})
 const [imageSet, setImageSet] = useState(imageSetQuestion)
 const [choicesSet, setchoicesSet] = useState(choices)
 const [questionSet, setQuestionSet] = useState(finalQuestionSet)
@@ -68,36 +64,7 @@ const [showLoading, setshowLoading] = useState(false)
 const [showDeleteAllmodal, setshowDeleteAllmodal] = useState(false)
 const [changes, setchanges] = useState(false)
 
-const notify = (message, state) => {
-    console.log(message);
-     if (state === 'err') {
-        errSound.play()
-        toast.error(message, {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-            });
-     }
-    else if (state ==='success') {
-        notif.play()
-        toast.success(message, {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-        });
-    }
-    
-}
+const { notify } = useContext(NotificationContext)
 
 const exitTrapNotif = () => {
     console.log(changes)
@@ -198,7 +165,7 @@ const handleDeleteQuestion = (data) => {
         setquestionSet(filter)
         setchanges(true)
         const message = 'Successfully question deleted.'
-        notify(message, 'success')
+        notify(message, true)
 }
 
 
@@ -366,7 +333,7 @@ const handleUpdateHeaderTitle = () => {
     setquestionSet(updatedData)
     setchanges(true)
     const message = 'Successfully saved.'
-    notify(message, 'success')
+    notify(message, true)
 }
 
 
@@ -782,7 +749,6 @@ const handleAddChoicesEditor = () => {
                                                 edittingLetter={edittingLetter}
                                                 handleEditedChoices={handleEditedChoices}
                                                 disableButton={disableButton}
-                                                notify={notify}
                                             />
                                         ) 
                                     }

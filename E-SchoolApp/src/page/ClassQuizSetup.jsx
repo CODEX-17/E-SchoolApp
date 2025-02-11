@@ -1,34 +1,21 @@
 import React, { useEffect, useState } from 'react'
 import style from './ClassQuizSetup.module.css'
 import { LuTimer } from "react-icons/lu";
-import { useBankStore } from '../stores/useBankStore';
 import { ProgressBar } from  'react-loader-spinner';
-import { Howl, Howler } from "howler";
-import notifSound from '../assets/sound/notif.mp3';
-import erroSound from '../assets/sound/error.mp3';
-import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { InfinitySpin } from  'react-loader-spinner';
-import { useQuizStore } from '../stores/useQuizStore';
-import { useQuestionsStore } from '../stores/useQuestionsStore';
 import { VscPreview } from "react-icons/vsc";
 import { MdDeleteOutline } from "react-icons/md";
 import { MdExitToApp } from "react-icons/md";
-import { SlNotebook } from "react-icons/sl";
 import { BsCalendar3 } from "react-icons/bs";
 import { IoTimeOutline } from "react-icons/io5";
 import { RiDraftLine } from "react-icons/ri";
-import { usePostStore } from '../stores/usePostStore';
-import { useScheduleStore } from '../stores/useScheduleStore';
 import io from 'socket.io-client'
 import axios from 'axios';
 const socket = io.connect('http://localhost:5001')
 
 
 const ClassQuizSetup = ({ subjectName, navigateClass, classCode, postType, refreshData }) => {
-
- const notif = new Howl({ src: [notifSound]})
- const errSound = new Howl({ src: [erroSound]})
 
  let currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit'})
  let currentDate = new Date().toDateString('en-US', { 

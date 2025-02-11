@@ -1,19 +1,15 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import style from './ClassMembers.module.css'
 import axios from 'axios'
 import { AiOutlineDelete } from "react-icons/ai"
 import { RiUserAddFill } from "react-icons/ri";
-import notifSound from '../assets/sound/notif.mp3';
-import erroSound from '../assets/sound/error.mp3';
-import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ThreeDots } from  'react-loader-spinner';
+import { NotificationContext } from '../context/NotificationContext';
 
 
 const ClassMembers = ({ memberID, currentClassCode }) => {
 
-  const notif = new Howl({ src: [notifSound]})
-  const errSound = new Howl({ src: [erroSound]})
 
   const currentAccount = JSON.parse(localStorage.getItem('user'))
 
@@ -109,39 +105,7 @@ const ClassMembers = ({ memberID, currentClassCode }) => {
 
   },[])
 
-
-
-
-  const notify = (message, state) => {
-    console.log(message);
-     if (state === 'err') {
-        errSound.play()
-        toast.error(message, {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-            });
-     }
-    else if (state ==='success') {
-        notif.play()
-        toast.success(message, {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-        });
-    }
-    
-  }
+  const { notify } = useContext(NotificationContext)
 
   const generateFullname = (firstName, middleName, lastName) => {
     if (firstName, middleName, lastName) {
@@ -185,7 +149,7 @@ const ClassMembers = ({ memberID, currentClassCode }) => {
 
 
         const message = result.message
-        notify(message, 'success')
+        notify(message, true)
 
       })
       .catch((err) => console.log(err)) 
@@ -225,7 +189,7 @@ const ClassMembers = ({ memberID, currentClassCode }) => {
           //Add in suggested members
           setSuggestMembersList((oldData) => [...oldData, member])
 
-          notify(message, 'success')
+          notify(message, true)
         })
         .catch((err) => console.log(err))
 

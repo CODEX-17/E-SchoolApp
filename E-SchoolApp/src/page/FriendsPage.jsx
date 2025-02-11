@@ -3,19 +3,12 @@ import style from './FriendsPage.module.css'
 import { IoPersonAdd } from "react-icons/io5";
 import { AiOutlineUserDelete } from "react-icons/ai";
 import { FaSearch } from "react-icons/fa";
-import notifSound from '../assets/sound/notif.mp3';
-import erroSound from '../assets/sound/error.mp3';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { ThreeDots } from  'react-loader-spinner';
 import axios from 'axios';
 import io from 'socket.io-client'
 const socket = io.connect('http://localhost:5001')
 
 const CountdownTimer = () => {
-
-  const notif = new Howl({ src: [notifSound]})
-  const errSound = new Howl({ src: [erroSound]})
 
   const [userAccount, setuserAccount] = useState(JSON.parse(localStorage.getItem('user')))
   const [resultFriends, setresultFriends] = useState([])

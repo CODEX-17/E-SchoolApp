@@ -1,22 +1,11 @@
 import React, {useEffect, useState} from 'react'
 import style from './Quiz.module.css'
-import { BiSolidRightArrowAlt } from "react-icons/bi"
-import { RiImageAddFill } from "react-icons/ri"
-import { MdDelete } from "react-icons/md"
-import { BsPlusCircleFill } from "react-icons/bs"
-import { AiOutlineCloseCircle, AiFillCheckCircle } from "react-icons/ai"
-import { Howl, Howler } from "howler";
-import notifSound from '../assets/sound/notif.mp3';
-import erroSound from '../assets/sound/error.mp3';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import PreviewQuiz from './PreviewQuiz'
 import axios from 'axios'
-import logo from '../assets/logo.png'
+import logo from '../../public/assets/logo.png'
 import ListPreviewQuiz from './ListPreviewQuiz'
 import PrintLayout from '../components/PrintLayout'
 import { InfinitySpin } from  'react-loader-spinner';
-import sample from '../assets/sample.jpg'
 import { FaInfoCircle } from "react-icons/fa";
 import { useBankStore } from '../stores/useBankStore'
 import { FaThList } from "react-icons/fa";
@@ -81,8 +70,6 @@ const [choices, setChoices] = useState([]) //obj
 const [questionObj, setQuestionObj] = useState([]) //obj;
 const [fillLayout, setFillLayout] = useState([]) //obj
 
-const notif = new Howl({ src: [notifSound]})
-const errSound = new Howl({ src: [erroSound]})
 
 let currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit'})
 let currentDate = new Date().toDateString('en-US', { 

@@ -3,9 +3,8 @@ import style from './PrintLayout.module.css'
 import html2pdf from 'html2pdf.js'
 import { BiExit } from "react-icons/bi"
 import { FiEdit } from 'react-icons/fi'
-import { SlPrinter } from "react-icons/sl"
-import csu from '../assets/csu.png'
-import cics from '../assets/cics.png'
+import csu from '../../public/assets/csu.png'
+import cics from '../../public/assets/cics.png'
 import { TiExport } from "react-icons/ti"
 import { IoSettingsOutline } from "react-icons/io5";
 

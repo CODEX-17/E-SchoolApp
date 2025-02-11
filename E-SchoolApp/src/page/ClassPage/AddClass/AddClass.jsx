@@ -4,10 +4,12 @@ import logo from '../../../../public/assets/logo.png'
 import whiteLogo from '../../../../public/assets/logo-white.png'
 import excel from '../../../../public/assets/excel.png'
 import { NotificationContext } from '../../../context/NotificationContext'
+import CreateClass from './Modal/CreateClass'
 
 const AddClass = () => {
 
   const [showExcellInputCard, setshowExcellInputCard] = useState(false)
+  const [isShowCreateClass, setIsShowCreateClass] = useState(true)
 
   const { notify } = useContext(NotificationContext)
   
@@ -154,6 +156,12 @@ const AddClass = () => {
 
   return (
     <div className={style.container}>
+
+        {
+            isShowCreateClass &&
+            <CreateClass/>
+        }
+
         <div className='d-flex flex-column text-center mb-4'>
             <h1>Join, Import or Create a Class</h1>
             <p>Collaborate, Learn, and Grow – Choose Your Path to the Classroom</p>

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import style from './PreviewQuiz.module.css'
 import { BiExit } from "react-icons/bi"
 import { FiEdit } from 'react-icons/fi'
-import sample from '../assets/sample.jpg'
 import { SlPrinter } from "react-icons/sl";
 
 
@@ -291,10 +290,7 @@ useEffect(() => {
             <div className='w-100 d-flex justify-content-end'>
                 <button className={style.btnSubmit}>Submit</button>
             </div>
-            
 
-
-            
         </div>
     </div>
   )

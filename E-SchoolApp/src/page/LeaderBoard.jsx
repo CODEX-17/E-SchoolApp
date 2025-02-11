@@ -1,19 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import style from './LeaderBoard.module.css'
 import { GiTrophy } from "react-icons/gi"
-import sample from '../assets/sample.jpg'
-import { BiExit } from "react-icons/bi"
-import { useNavigateStore } from '../stores/useNavigateStore'
 import io from 'socket.io-client'
 import { BsAwardFill } from "react-icons/bs";
-import { useScoreStore } from '../stores/useScoreStore'
-import { useQuizStore } from '../stores/useQuizStore'
 import axios from 'axios'
 const socket = io.connect('http://localhost:5001')
 
 const LeaderBoard = () => {
-
-  const  { updateRouteChoose } = useNavigateStore()
   
   const [currentSubject, setcurrentSubject] = useState()
   const [currentQuizID, setcurrentQuizID] = useState()
@@ -22,14 +15,8 @@ const LeaderBoard = () => {
   const [scores, setscores] = useState()
   const [quiz, setquiz] = useState()
 
-  const accounts = JSON.parse(localStorage.getItem('accounts'))
-  const currentUser = JSON.parse(localStorage.getItem('user'))
   const [subjects, setSubject] = useState([])
-
-  const { getScore } = useScoreStore()
-  const { getQuiz } = useQuizStore()
  
-
   useEffect(() => {
 
     //GET ALL QUIZ

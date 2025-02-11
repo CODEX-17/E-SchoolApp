@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
 import style from './ChatPage.module.css'
-import sample from '../assets/sample.jpg'
 import { MdCircle } from "react-icons/md"
 import { FaCirclePlus } from "react-icons/fa6"
 import { FaMessage } from "react-icons/fa6"

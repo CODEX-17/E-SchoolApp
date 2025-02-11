@@ -1,15 +1,8 @@
-import React,{ useEffect, useRef, useState } from 'react'
+import React,{ useContext, useEffect, useRef, useState } from 'react'
 import style from './ManageAccout.module.css'
-import { Howl, Howler } from "howler";
 import { BiSolidShow } from 'react-icons/bi'
 import axios from 'axios'
-import logo from '../assets/logo.png'
-import notifSound from '../assets/sound/notif.mp3';
-import erroSound from '../assets/sound/error.mp3';
-import { ToastContainer, toast } from 'react-toastify';
-import { useImageStore } from '../stores/useImageStore';
-import { useAccountStore } from '../stores/useAccountsStore';
-import sample from '../assets/sample.jpg'
+import { NotificationContext } from '../context/NotificationContext';
 
 
 const ManageAccout = () => {
@@ -24,39 +17,7 @@ const ManageAccout = () => {
   const [updatedPassword, setupdatedPassword] = useState(accountCurrent.password)
   const inputRef = useRef(null)
 
-  const notif = new Howl({ src: [notifSound]})
-  const errSound = new Howl({ src: [erroSound]})
-
- 
-  const notify = (message, state) => {
-     if (state === 'err') {
-        errSound.play()
-        toast.error(message, {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-            });
-     }
-    else if (state ==='success') {
-        notif.play()
-        toast.success(message, {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-        });
-    }
-    
-} 
+  const { notify } = useContext(NotificationContext)
 
   const isImageType = (file) => {
     const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif']
@@ -77,7 +38,7 @@ const ManageAccout = () => {
       handleFile(file)
     }else {
       const message = 'Only images are allowed'
-      notify(message, 'err')
+      notify(message, false)
     }
   };
 
@@ -138,7 +99,7 @@ const ManageAccout = () => {
 
           localStorage.setItem('user', JSON.stringify(userData))
           
-          notify('Successfully update account.', 'success')
+          notify('Successfully update account.', true)
           
         })
         .catch(err => console.log(err))

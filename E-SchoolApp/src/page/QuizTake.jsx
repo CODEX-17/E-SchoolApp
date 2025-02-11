@@ -1,15 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react'
 import style from './QuizTake.module.css'
 import { BiExit } from "react-icons/bi"
-import { FiEdit } from 'react-icons/fi'
-import sample from '../assets/sample.jpg'
-import { SlPrinter } from "react-icons/sl";
 import { useNavigateStore } from '../stores/useNavigateStore'
 import { useTimer } from 'react-timer-hook'
-import notifSound from '../assets/sound/notif.mp3';
-import erroSound from '../assets/sound/error.mp3';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import TimerComponent from '../components/TimerComponent'
 import LeaderBoard from './LeaderBoard'
 import io from 'socket.io-client'
@@ -22,8 +15,6 @@ const socket = io.connect('http://localhost:5001')
 const QuizTake = () => {
     const navigate = useNavigate()
 
-    const notif = new Howl({ src: [notifSound]})
-    const errSound = new Howl({ src: [erroSound]})
     const quizTakeID = JSON.parse(localStorage.getItem('quizTakeID'))
     const { quizID, postID } = quizTakeID
     const currentUser = JSON.parse(localStorage.getItem('user'))

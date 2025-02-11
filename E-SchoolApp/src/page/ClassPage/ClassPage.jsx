@@ -309,52 +309,7 @@ const generateClassPicUpload = () => {
         {
             showPreview === 'classPage' && (
                 <div className={style.container}>
-                    {
-                        isModalShow && (
-                            <div className={style.modalContainer}>
-                                <form style={{ marginTop: '0px' }} action="" onSubmit={handleAddClass}>
-                                    <div className={style.modalContent}>
-                                        <div className={style.horizontalDiv}>
-                                            <div className={style.leftCon}>
-                                                <h1 id={style.createClassTitle}>Create you Class</h1>
-                                                <p id={style.createDiscription}>Teachers have ownership of the class, while students actively engage as members. Within each class, you have the ability to generate quizzes, document student feedback, and share announcements.</p>
-                                                <label id={style.labelDescription}>Class Name:</label>
-                                                <input type="text" onChange={(e) => setclassName(e.target.value)} required/>
-                                                <label id={style.labelDescription}>Class Code:</label>
-                                                <input type="text" onChange={handleInputClassCode} required ref={inputRef}/>
-                                                {errorMessage && <p id={style.errorMessage}>Class code is already use.</p> }
-                                            </div>
-                                            <div className={style.rightCon} 
-                                                onDrop={handleDrop}
-                                                onDragOver={preventDefault}
-                                            > 
-                                                {
-                                                    selectedImage ? (
-                                                        <img src={generateClassPicUpload()} alt="profile" id={style.classProfile}/>
-                                                    ) : (
-                                                        <div className={style.dragPhoto}>Drag image here.</div>
-                                                    )
-                                                    
-                                                }
-                                                
-                                                <input type="file" id={style.uploadPic}a ccept="image/*" onChange={handleFile} style={{ display: 'none' }}/>
-                                            </div>
-                                        </div>
-                                        <label id={style.labelDescription} style={{ marginTop: '20px' }}>Description ( optional ):</label>
-                                        <textarea id={style.desInput} type="text" onChange={(e) => setclassDesc(e.target.value)}></textarea>
-                                        <div className={style.horMenu}>
-                                            <button id={style.btnCancel} onClick={CreateClass}>Cancel</button>
-                                            <button type='submit' disabled={classCode ? false : true}>Next</button>
-                                        </div>
-
-                                    </div>
-                                </form>
-                            </div>
-                        )
-                    }
-
-                    
-
+                
                     <div className={style.header}>
                         <h1>Class</h1>
                         
