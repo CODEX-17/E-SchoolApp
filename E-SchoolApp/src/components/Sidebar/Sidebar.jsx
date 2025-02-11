@@ -1,10 +1,10 @@
-import React, { useContext, useState } from 'react'
-import style from './SidebarComponent.module.css'
+import React, { useContext } from 'react'
+import style from './Sidebar.module.css'
 import { BsFillChatDotsFill } from "react-icons/bs"; 
 import { RiTeamFill } from "react-icons/ri";
 import { PiNotebookFill } from "react-icons/pi";
 import { FaUserFriends } from "react-icons/fa";
-import { NavigationContext } from '../context/NavigationContext';
+import { NavigationContext } from '../../context/NavigationContext';
 
 
 const SidebarComponent = () => {

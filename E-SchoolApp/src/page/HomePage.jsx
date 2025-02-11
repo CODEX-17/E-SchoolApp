@@ -1,9 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import NavbarComponent from '../components/NavbarComponent'
 import style from './HomePage.module.css'
-import SidebarComponent from '../components/SidebarComponent'
-import { useNavigateStore } from '../stores/useNavigateStore'
-import { useNavigate } from 'react-router-dom';
+import Sidebar from '../components/Sidebar/Sidebar'
 import { Quiz } from './Quiz'
 import ClassPage from './ClassPage'
 import ChatPage from './ChatPage'
@@ -34,13 +32,13 @@ const HomePage = () => {
         </div>
         <div className={style.horizontal}>
           <div className={style.left}>
-              <SidebarComponent/>
+              <Sidebar/>
           </div>
           <div className={style.right}>
+            {currentRoute === 'class' && <ClassPage/>}
             {currentRoute === 'activity' && <ActivityPage/>}
             {currentRoute === 'chat' && <ChatPage/>}
-            {currentRoute === 'quizDev' && <Quiz/>}
-            {currentRoute === 'class' && <ClassPage/>}
+            {currentRoute === 'quizDev' && <Quiz/>} 
             {currentRoute === 'quizTake' && <QuizTake/>}
             {currentRoute === 'manageAccount' && <ManageAccout/>}
             {currentRoute === 'file' && <FilePage/>}
