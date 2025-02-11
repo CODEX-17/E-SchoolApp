@@ -1,14 +1,9 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import style from './ClassPage.module.css'
-import logo from '../../assets/logo.png'
-import sample from '../../assets/sample.jpg'
-import whiteLogo from '../../assets/logo-white.png'
-import excel from '../../assets/excel.png'
-import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai"
+import { AiFillEyeInvisible } from "react-icons/ai"
 import { VscTriangleUp, VscTriangleDown } from "react-icons/vsc"
 import axios from 'axios'
 import ClassHome from '../ClassHome'
-import { BiExit } from "react-icons/bi";
 import 'react-toastify/dist/ReactToastify.css';
 import * as XLSX from 'xlsx'
 import { ProgressBar } from  'react-loader-spinner';
@@ -18,6 +13,8 @@ import { NotificationContext } from '../../context/NotificationContext'
 import { UserDetailContext } from '../../context/UserDetailContext'
 import { getClassesByAccount, updateClassVisibility } from '../../services/classServices'
 import ImageRender from '../../components/ImageRender/ImageRender'
+import AddClass from './AddClass/AddClass'
+import { ClassContext } from '../../context/ClassContext'
 
 
 const ClassPage = () => {
@@ -49,7 +46,7 @@ const { userDetails } = useContext(UserDetailContext)
 const [classesList, setClassesList] = useState([])
 
 const { notify } = useContext(NotificationContext)
-
+const { setCurrentClass } = useContext(ClassContext)
 
 useEffect(() => {
 
@@ -66,6 +63,7 @@ useEffect(() => {
 
             if (response) {
                 setshowPreview('classPage')
+
                 //Join room as acctID will becomes roomID for notifications
                 response.forEach(classes => socket.emit('joinRoom', classes.classCode))
 
@@ -139,27 +137,6 @@ const handleClassVisibility = async (id, status) => {
     
 }
 
-const handleUnHideClass = (id) => {
-
-    setClassesList((prevClassList) => {
-       return prevClassList.map((classes) => {
-            if (classes.id === id) {
-                return {...classes, hidden: 'false'}
-            }
-            return classes
-       })
-    })
-
-    axios.put('http://localhost:5001/classes/unhideClass/' + id)
-    .then((res) => res.data)
-    .then((data) => console.log(data.message))
-    .catch((err) => console.error(err))
-}
-
-const dropDownHiddenClass = () => {
-   
-}
-
 const handleCreateClass = () => {
     setisClassListShow(false)
 
@@ -224,17 +201,6 @@ const handleAddClass = (e) => {
     })
     .catch((err) => console.log(err))
 
-}
-
-const handleOpenClass = (className, classCode, membersID, imageID, id, classDesc) => {
-    setcurrentMemberID(membersID)
-    setcurrentClassCode(classCode)
-    setcurrentClassName(className)
-    setclassDesc(classDesc)
-    setshowPreview('classHome')
-    setcurrentclassID(id)
-    const image = generatePic(imageID)
-    setcurrentImageClass(image)
 }
 
 const backToHomePage = (choose) => {
@@ -525,39 +491,7 @@ const handleExcelFileSubmit = (e) => {
 
                     {
                         showCreateClass && (
-                            <div className={style.content}>
-                                <h1 id={style.mainTitle}>Join or Create a Class</h1>
-                                <div className={style.horizontal}>
-                                    <div className={style.card}>
-                                        <img src={logo} width={144} alt="logo" />
-                                        <h2>Create Class</h2>
-                                        <button onClick={CreateClass}>Create</button>
-                                    </div>
-                                    {
-                                        !showExcellInputCard ? (
-                                            <div className={style.card}>
-                                                <img src={excel} width={200} alt="logo" />
-                                                <h2>Import Excel</h2>
-                                                <button onClick={() => selectExcellInputCard(true)}>Import</button>
-                                            </div>
-                                        ) : (
-                                            <div className={style.card} style={{ backgroundColor: '#D0E7D2'}}>
-                                                <BiExit size={20} id={style.iconExit} onClick={() => selectExcellInputCard(false)}/>
-                                                <input type="file" id={style.importExcelFile} accept='.xlsx' onChange={handleFileImport}/>
-                                                <button onClick={handleExcelFileSubmit} style={{ backgroundColor: '#099AED'}}>Upload</button>
-                                            </div>
-                                        )
-                                    }
-                                    
-                                    <div className={style.card}>
-                                        <img src={whiteLogo} width={144} alt="Whitelogo" />
-                                        <h2 id={style.joinText}>Join in Class with ClassCode</h2>
-                                        <input type="text" />
-                                        <button>Create</button>
-                                    </div>
-                                    
-                                </div>
-                            </div>
+                           <AddClass/>
                         )
                     }
                     
@@ -599,7 +533,7 @@ const handleExcelFileSubmit = (e) => {
                                                                 </div>
                                                                 <div 
                                                                     className='w-100 h-100 d-flex flex-column align-items-center justify-content-center'
-                                                                    onClick={() => handleOpenClass(data.className, data.classCode, data.membersID, data.imageID, data.id, data.classDesc)}
+                                                                    onClick={() => setCurrentClass(data)}
                                                                 >
                                                                     <div id='roundedImage'  style={{ width: 50, height: 50, overflow: 'hidden',}}>
                                                                         <ImageRender image={data.imageID}/>
@@ -665,7 +599,7 @@ const handleExcelFileSubmit = (e) => {
                                                                             </div>
                                                                             <div 
                                                                                 className='w-100 h-100 d-flex flex-column align-items-center justify-content-center'
-                                                                                onClick={() => handleOpenClass(data.className, data.classCode, data.membersID, data.imageID, data.id, data.classDesc)}
+                                                                                onClick={() => setCurrentClass(data)}
                                                                             >
                                                                                 <div id='roundedImage'  style={{ width: 50, height: 50, overflow: 'hidden',}}>
                                                                                     <ImageRender image={data.imageID}/>

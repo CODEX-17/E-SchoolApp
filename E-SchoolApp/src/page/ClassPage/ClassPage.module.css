@@ -46,17 +46,13 @@
     animation: pop 0.5s ease;
     background-color: #ffffff;
     position: absolute;
-    width: 20%;
-    height: 30%;
+    width: 250px;
+    height: auto;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
     align-items: center;
-    padding: 2%;
-    border-radius: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    z-index: 3;
   }
 
   .exitTrapNotif p {
@@ -86,109 +82,6 @@
 
 .header button:hover {
     background-color: #3E3F40;
-}
-
-.content {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: absolute;
-}
-
-
-
-.horizontal {
-    display: flex;
-    padding: 10px;
-    width: auto;
-    height: auto;
-    gap: 5%;
-}
-
-.card {
-    background-color: #D9D9D9;
-    width: 385px;
-    height: 315px;
-    border-radius: 20px;
-    padding: 2%;
-    display: flex;
-    position: relative;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    animation: pop 0.5s ease;
-    box-shadow: 0 4px 8px rgba(171, 133, 133, 0.2);
-    animation: fadeIn 0.5s ease;
-}
-
-#iconExit {
-    color: #3E3F40;
-    position: absolute;
-    top: 5%;
-    right: 5%;
-    cursor: pointer;
-}
-
-#iconExit:hover {
-    transform: scale(110%);
-}
-
-.card h2 {
-    font-size: 20px;
-    color: #3E3F40;
-    font-family: normal;
-}
-
-.card #joinText {
-    font-size: 15px;
-    color: #3E3F40;
-    font-family: normal;
-}
-
-.card button {
-    width: 205px;
-    height: 36px;
-    border-radius: 18px;
-    background-color: #3E3F40;
-    color: white;
-    border: none;
-    font-family: normal;
-    font-size: 14px;
-}
-
-.card button:hover {
-    background-color: transparent;
-    border: 2px solid #3E3F40;
-    color: #3E3F40;
-}
-
-.card input {
-    outline: none;
-    border: none;
-    width: 284px;
-    height: 32px;
-    border-radius: 7px;
-    margin-bottom: 10px;
-    margin-top: 10px;
-    text-align: center;
-    font-size: 15px;
-}
-
-#importExcelFile {
-    margin: 0;
-    padding-left: 10%;
-    margin-bottom: 5%;
-}
-
-#mainTitle {
-    position: absolute;
-    left: 0.5%;
-    top: 10%;
-    font-size: 17px;
-    font-family: normal;
-    color: #3E3F40;
 }
 
 

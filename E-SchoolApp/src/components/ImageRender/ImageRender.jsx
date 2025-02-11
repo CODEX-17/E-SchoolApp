@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import defaultImage from '../../../public/default.png'
+import defaultImage from '../../../public/assets/default.png'
 import { getImagesByImageID } from '../../services/imageServices'
 
 const ImageRender = ({ image }) => {

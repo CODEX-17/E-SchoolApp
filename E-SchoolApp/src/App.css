@@ -1,10 +1,10 @@
 @font-face {
   font-family: bold;
-  src: url('../assets/fonts/Montserrat-Bold.ttf');
+  src: url('../public/assets/fonts/Montserrat-Bold.ttf');
 }
 @font-face {
   font-family: normal;
-  src: url('../assets/fonts/Montserrat-Regular.ttf');
+  src: url('../public/assets/fonts/Montserrat-Regular.ttf');
 }
 
 .App {

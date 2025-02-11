@@ -5,6 +5,7 @@ import '../node_modules/bootstrap/dist/css/bootstrap.min.css'
 import { NotificationProvider } from './context/NotificationContext.jsx'
 import { NavigationProvider } from './context/NavigationContext.jsx'
 import { UserDetailContextProvider } from './context/UserDetailContext.jsx'
+import { ClassContextProvider } from './context/ClassContext.jsx'
 
 
 
@@ -16,7 +17,9 @@ root.render(
       <UserDetailContextProvider>
         <NavigationProvider>
           <NotificationProvider>
+            <ClassContextProvider>
               <App />
+            </ClassContextProvider>
           </NotificationProvider>
         </NavigationProvider>
       </UserDetailContextProvider>

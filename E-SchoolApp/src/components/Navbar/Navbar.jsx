@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import style from './Navbar.module.css';
-import logo from '../../assets/logo-white.png'
-import titleLogo from '../../assets/title.png'
+import logo from '../../../public/assets/logo-white.png'
+import titleLogo from '../../../public/assets/title.png'
 import { useNavigate } from 'react-router-dom';
 import { useNavigateStore } from '../../stores/useNavigateStore';
 import { IoNotifications } from "react-icons/io5";
