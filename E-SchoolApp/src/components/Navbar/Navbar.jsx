@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import style from './NavBarComponent.module.css';
-import logo from '../assets/logo-white.png'
-import titleLogo from '../assets/title.png'
+import style from './Navbar.module.css';
+import logo from '../../assets/logo-white.png'
+import titleLogo from '../../assets/title.png'
 import { useNavigate } from 'react-router-dom';
-import sample from '../assets/sample.jpg'
-import { useNavigateStore } from '../stores/useNavigateStore';
+import { useNavigateStore } from '../../stores/useNavigateStore';
 import { IoNotifications } from "react-icons/io5";
-import generateFullname from '../utils/generateFullname';
+import generateFullname from '../../utils/generateFullname';
 import { BsFilePost } from "react-icons/bs";
 import { GiNotebook } from "react-icons/gi";
 import { AiOutlineDelete } from "react-icons/ai"
@@ -14,7 +13,7 @@ import axios from 'axios';
 import io from 'socket.io-client'
 const socket = io.connect('http://localhost:5001')
 
-const NavbarComponent = () => {
+const Navbar = () => {
   const navigate = useNavigate()
 
   const { updateRouteChoose } = useNavigateStore()
@@ -62,7 +61,6 @@ const NavbarComponent = () => {
       return url + data
     }
   }
-
 
   const handleLogout = () => { 
     updateRouteChoose('class')
@@ -226,7 +224,7 @@ const NavbarComponent = () => {
   )
 }
 
-export default NavbarComponent
+export default Navbar
 
 
 

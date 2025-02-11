@@ -1,13 +1,20 @@
+@font-face {
+  font-family: bold;
+  src: url('../assets/fonts/Montserrat-Bold.ttf');
+}
+@font-face {
+  font-family: normal;
+  src: url('../assets/fonts/Montserrat-Regular.ttf');
+}
+
 .App {
   width: 100vw;
   height: 100vh;
-
 }
 
-body {
+html, body, * {
   margin: 0;
   padding: 0;
- 
 }
 
 ::-webkit-scrollbar {

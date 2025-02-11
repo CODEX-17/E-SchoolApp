@@ -1,21 +1,11 @@
-@font-face {
-    font-family: bold;
-    src: url('../assets/fonts/Montserrat-Bold.ttf');
-}
-@font-face {
-    font-family: normal;
-    src: url('../assets/fonts/Montserrat-Regular.ttf');
-}
-
 
 .sidebar {
-    width: 60px;
-    height: 100vh;
-    margin: 0;
-    padding: 0;
-    background-color: #3e3f40;
+    width: 100%;
+    height: 100%;
+    padding-top: 10px;
     display: flex;
     flex-direction: column;
+    background-color: #3e3f40;
 }
 
 .list{
