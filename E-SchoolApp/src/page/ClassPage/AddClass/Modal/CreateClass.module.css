@@ -1,0 +1,126 @@
+
+/*modal*/
+.container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+}
+
+.card {
+    background-color: white;
+    position: relative;
+    animation: pop 0.5s ease;
+    width: 800px;
+    height: auto;
+    display: flex;
+    padding: 50px;
+    flex-direction: column;
+    border-radius: 10px;
+    -webkit-box-shadow: 4px 3px 18px 0px rgba(0,0,0,0.24);
+    -moz-box-shadow: 4px 3px 18px 0px rgba(0,0,0,0.24);
+    box-shadow: 4px 3px 18px 0px rgba(0,0,0,0.24);
+    animation: pop 0.5s ease-in-out;
+}
+
+#form {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.card h1 {
+    font-family: bold;
+    font-size: 20px;
+    color: #3E3F40;
+    user-select: none;
+}
+
+.card p {
+    font-family: normal;
+    font-size: 13px;
+    color: #3E3F40;
+    user-select: none;
+    margin-bottom: 5%;
+}
+
+.card label {
+    font-size: .8rem;
+    font-family: bold;
+}
+
+.card input {
+    background-color: #EFECEC;
+    border: none;
+    outline: none;
+    height: 40px;
+    padding: 10px;
+    font-size: 1rem;
+    color: #3E3F40;
+    border-radius: 5px;
+}
+
+.card textarea {
+    background-color: #EFECEC;
+    border: none;
+    outline: none;
+    min-height: 50px;
+    padding: 10px;
+    font-size: 1rem;
+    color: #3E3F40;
+    border-radius: 5px;
+}
+
+.card input::placeholder,
+.card textarea::placeholder {
+    opacity: 0.5;
+}
+
+.card button {
+    width: 200px;
+    background-color: #0c9cec;
+    color: white;
+    height: 40px;
+    font-size: .8rem;
+    font-family: bold;
+    border-radius: 5px;
+    outline: none;
+    border: none;
+}
+
+.card button:hover {
+    opacity: 0.5;
+}
+
+#errorMessage {
+    font-size: .7rem;
+    color: red;
+    margin: 0;
+}
+
+.imageInputCircle {
+    border: 2px dashed #3E3F40;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    overflow: hidden;
+}
+
+@keyframes pop {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.1);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }

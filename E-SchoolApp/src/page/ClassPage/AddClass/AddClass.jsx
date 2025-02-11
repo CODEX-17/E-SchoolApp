@@ -150,16 +150,18 @@ const AddClass = () => {
 
    }
 
-  const handleCreateClass = () => {
-
-  }
-
   return (
     <div className={style.container}>
 
         {
             isShowCreateClass &&
-            <CreateClass/>
+            <div 
+                className='position-absolute w-100 h-100' 
+                style={{ zIndex: 5, height: '100%', }}
+            >
+                <CreateClass setIsShowCreateClass={setIsShowCreateClass}/>
+            </div>
+            
         }
 
         <div className='d-flex flex-column text-center mb-4'>
@@ -172,7 +174,7 @@ const AddClass = () => {
             <div className={style.card}>
                 <img src={logo} width={144} alt="logo" />
                 <h2>Create Class</h2>
-                <button onClick={handleCreateClass}>Create</button>
+                <button onClick={() =>setIsShowCreateClass(true)}>Create</button>
             </div>
             {
                 !showExcellInputCard ? (

@@ -4,6 +4,12 @@ const db = require('../db')
 const multer = require('multer')
 const path = require('path')
 const fs = require('fs')
+const { v4: uuidv4 } = require('uuid');
+
+//generates a unique identifier
+const generateUniqueId = () => {
+    return uuidv4();
+};
 
 
 router.get('/getClasses', (req, res) => {
@@ -83,79 +89,62 @@ const storageImage = multer.diskStorage({
 const upload = multer({ storage: storageImage });
 
 router.post('/addClass', upload.single('image'), async (req, res) => {
-    const {
-        className,
-        classDesc,
-        classCode,
-        membersID,
-        imageID,
-        hidden,
-        acctID,
-        firstname,
-        middlename,
-        lastname,
-        memberType,
-    } = req.body;
+    const { className, classDesc, classCode, acctID } = req.body;
 
-    const classQuery = `INSERT INTO class(className,classDesc,classCode,membersID,imageID) VALUES(?,?,?,?,?)`;
-    const imageQuery = 'INSERT INTO image(name, type, data, imageID) VALUES(?,?,?,?)';
-    const memberQuery = 'INSERT INTO members(membersID, acctID, firstname, middlename, lastname, memberType) VALUES(?,?,?,?,?,?)';
-    const classListQuery = 'INSERT INTO class_list(acctID, classCode, hidden, imageID) VALUES(?,?,?,?)';
+    const imageID = req.file ? generateUniqueId() : 'default';
+
+    const classQuery = `INSERT INTO class(className, classDesc, classCode, imageID) VALUES(?, ?, ?, ?)`;
+    const classListQuery = `INSERT INTO class_list(acctID, classCode, hidden, memberType) VALUES(?,?,?,'admin')`;
+    const fileQuery = `INSERT INTO image(name, type, data, dateUploaded, timeUploaded, imageID) VALUES(?, ?, ?, CURDATE(), CURTIME(), ?)`;
 
     try {
-        const addClass = new Promise((resolve, reject) => {
-            db.query(classQuery, [className, classDesc, classCode, membersID, imageID], (error, data) => {
+        // Insert class
+        await new Promise((resolve, reject) => {
+            db.query(classQuery, [className, classDesc, classCode, imageID], (error) => {
                 if (error) {
-                    console.log(error)
+                    console.error('Error inserting class:', error);
                     reject(error);
                 } else {
-                    resolve(data);
+                    console.log('Class inserted successfully.');
+                    resolve();
                 }
             });
         });
 
-        const addMember = new Promise((resolve, reject) => {
-            db.query(memberQuery, [membersID, acctID, firstname, middlename, lastname, memberType, imageID], (error, data) => {
+        // Insert class list
+        await new Promise((resolve, reject) => {
+            db.query(classListQuery, [acctID, classCode, false], (error) => {
                 if (error) {
-                    console.log(error)
+                    console.error('Error inserting class list:', error);
                     reject(error);
                 } else {
-                    resolve(data);
+                    console.log('Class list inserted successfully.');
+                    resolve();
                 }
             });
         });
 
-        const addClassList = new Promise((resolve, reject) => {
-            db.query(classListQuery, [acctID, classCode, hidden, imageID], (error, data) => {
-                if (error) {
-                    console.log(error)
-                    reject(error);
-                } else {
-                    resolve(data);
-                }
-            });
-        });
+        // Insert file if it exists
+        if (req.file) {
+            const imageData = [req.file.filename, req.file.mimetype, req.file.originalname, imageID];
 
-        const imageData = req.file 
-            ? [req.file.filename, req.file.mimetype, req.file.originalname, imageID]
-            : ['default', 'image/jpeg', 'none', imageID];
-            
-        const addImage = new Promise((resolve, reject) => {
-            db.query(imageQuery, imageData, (error, data) => {
-                if (error) {
-                    console.log(error)
-                    reject(error);
-                } else {
-                    resolve(data);
-                }
+            await new Promise((resolve, reject) => {
+                db.query(fileQuery, imageData, (error) => {
+                    if (error) {
+                        console.error('Error inserting file:', error);
+                        reject(error);
+                    } else {
+                        console.log('File inserted successfully.');
+                        resolve();
+                    }
+                });
             });
-        });
-
-        await Promise.all([addClass, addMember, addClassList, addImage]);
+        }
 
         res.status(200).json({ message: 'Successfully added class.' });
+
     } catch (error) {
-        console.error('Error: ', error);
+        console.error('Error:', error);
         res.status(500).json({ message: 'Failed to add the class.' });
     }
 });

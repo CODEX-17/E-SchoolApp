@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import style from './AdminPage.module.css'
 
-import titleLogo from '../assets/title.png'
+import titleLogo from '../../public/assets/title.png'
 import { MdSupervisorAccount } from "react-icons/md"
 import { useImageStore } from '../stores/useImageStore'
 import { useAccountStore } from '../stores/useAccountsStore'

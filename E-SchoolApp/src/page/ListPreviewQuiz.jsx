@@ -5,7 +5,7 @@ import { FiEdit } from 'react-icons/fi'
 import { FaFileImage } from "react-icons/fa6"
 import { BiExit } from "react-icons/bi"
 import { MdPreview } from "react-icons/md"
-import sample from '../../public/assets/sample.png'
+import sample from '../../public/assets/sample.jpg'
 import ContentLayoutEdit from '../components/ContentLayoutEdit'
 import ContentChoicesEdit from '../components/ContentChoicesEdit'
 import { FaCirclePlus } from "react-icons/fa6";
