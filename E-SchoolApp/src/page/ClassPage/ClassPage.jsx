@@ -1,23 +1,21 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import style from './ClassPage.module.css'
-import logo from '../assets/logo.png'
-import sample from '../assets/sample.jpg'
-import whiteLogo from '../assets/logo-white.png'
+import logo from '../../assets/logo.png'
+import sample from '../../assets/sample.jpg'
+import whiteLogo from '../../assets/logo-white.png'
+import excel from '../../assets/excel.png'
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai"
 import { VscTriangleUp, VscTriangleDown } from "react-icons/vsc"
 import axios from 'axios'
-import ClassHome from './ClassHome'
-import excel from '../assets/excel.png'
+import ClassHome from '../ClassHome'
 import { BiExit } from "react-icons/bi";
-import { Howl } from "howler";
-import notifSound from '../assets/sound/notif.mp3';
-import erroSound from '../assets/sound/error.mp3';
-import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import * as XLSX from 'xlsx'
 import { ProgressBar } from  'react-loader-spinner';
 import io from 'socket.io-client'
 const socket = io.connect('http://localhost:5001')
+import { NotificationContext } from '../../context/NotificationContext'
+import { UserDetailContext } from '../../context/UserDetailContext'
 
 
 const ClassPage = () => {
@@ -45,16 +43,15 @@ const [excelFile, setExcelFile] = useState(null)
 const [update, setupdate] = useState(false)
 const inputRef = useRef(null)
 
-const [userAccount, setuserAccount] = useState(JSON.parse(localStorage.getItem('user')))
-
+const { userDetails } = useContext(UserDetailContext)
 const [classesList, setClassesList] = useState([])
 
-const notif = new Howl({ src: [notifSound]})
-const errSound = new Howl({ src: [erroSound]})
+const { notify } = useContext(NotificationContext)
+
 
 useEffect(() => {
 
-    const acctID = userAccount.acctID
+    const acctID = userDetails.acctID
 
     //Socket for account Online
     socket.emit('addOnlineList', acctID)
@@ -124,36 +121,6 @@ const handleInputClassCode = (e) => {
     }
 }
 
-const notify = (message, state) => {
-
-     if (state === 'err') {
-        errSound.play()
-        toast.error(message, {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-            });
-     }
-    else if (state ==='success') {
-        notif.play()
-        toast.success(message, {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-        });
-    }
-    
-}
 
 const handleHideClass = (id) => {
     
@@ -229,10 +196,10 @@ const handleAddClass = (e) => {
     formData.append('membersID', generatedID)
     formData.append('imageID', generatedID)
     formData.append('hidden', 'false')
-    formData.append('acctID', userAccount.acctID)
-    formData.append('firstname', userAccount.firstname)
-    formData.append('middlename', userAccount.middlename)
-    formData.append('lastname', userAccount.lastname)
+    formData.append('acctID', userDetails.acctID)
+    formData.append('firstname', userDetails.firstname)
+    formData.append('middlename', userDetails.middlename)
+    formData.append('lastname', userDetails.lastname)
     formData.append('memberType', 'admin')
     formData.append('image', imageFile)
 
@@ -409,10 +376,10 @@ const handleExcelFileSubmit = (e) => {
                         formData.append('membersID', generatedID)
                         formData.append('imageID', 'default')
                         formData.append('hidden', 'false')
-                        formData.append('acctID', userAccount.acctID)
-                        formData.append('firstname', userAccount.firstname)
-                        formData.append('middlename', userAccount.middlename)
-                        formData.append('lastname', userAccount.lastname)
+                        formData.append('acctID', userDetails.acctID)
+                        formData.append('firstname', userDetails.firstname)
+                        formData.append('middlename', userDetails.middlename)
+                        formData.append('lastname', userDetails.lastname)
                         formData.append('memberType', 'admin')
                         formData.append('image', null)
 
@@ -512,7 +479,6 @@ const handleExcelFileSubmit = (e) => {
         {
             showPreview === 'classPage' && (
                 <div className={style.container}>
-                    <ToastContainer/>
                     {
                         isModalShow && (
                             <div className={style.modalContainer}>
@@ -600,8 +566,8 @@ const handleExcelFileSubmit = (e) => {
                         <h1>Class</h1>
                         
                         {
-                            userAccount &&
-                            userAccount.acctype === 'faculty' && (
+                            userDetails &&
+                            userDetails.acctype === 'faculty' && (
                                 <button onClick={handleCreateClass}>{textButton}</button>
                             )   
                         }
