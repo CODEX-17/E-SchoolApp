@@ -1,7 +1,7 @@
 import axios from "axios"
 const BASE_URL = 'http://localhost:5001'
 
-export const getClassesByAccount = async () => {
+export const getClassesByAccount = async (acctID) => {
     try {
         
         const response = await axios.get(`${BASE_URL}/classes/getClassesByAccount/${acctID}`)
@@ -12,6 +12,28 @@ export const getClassesByAccount = async () => {
         
         if (response) {
             console.log('Successfully get all classes by accountID.')
+            return response.data
+        }
+
+    } catch (error) {
+        console.log('Server error', error)
+        return null
+    }
+}
+
+export const updateClassVisibility = async (id, status) => {
+    try {
+        
+        const response = await axios.patch(`${BASE_URL}/classes/updateClassVisibility/`, {id, status})
+
+        if (!response || response.length === 0) {
+            return null
+        }
+        
+        if (response) {
+            const classStatus = status ? 'hide' : 'unhide'
+
+            console.log(`Successfully ${classStatus} class.`)
             return response.data
         }
 

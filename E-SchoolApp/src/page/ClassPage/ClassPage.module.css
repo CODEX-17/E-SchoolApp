@@ -13,14 +13,12 @@
     --light: #D9D9D9;
 }
 
-
 .container {
     width: 95%;
     height: 95%;
     font-family: normal;
     position: relative;
 }
-
 
 .reminder {
     width: 100%;
@@ -383,10 +381,11 @@ form .modalContent input {
 .classCard {
     background-color: #D9D9D9;
     width: calc(15% - 10px);
+    min-width: 200px;
     height: 150px;
-    margin: calc(1% - 5px);
+    margin: calc(1.5% - 5px);
     border-radius: 14px;
-    padding: 1%;
+    padding: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -405,8 +404,9 @@ form .modalContent input {
     right: 5%;
     top: 5%;
     color: #9b9999;
-    z-index: 1;
+    z-index: 5;
     cursor: pointer;
+
 }
 
 .btnVisible:hover {
@@ -414,60 +414,18 @@ form .modalContent input {
     transform: scale(110%);
 }
 
-#imageContainer {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    text-align: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-#defaultClassPic {
-    width: 80px;
-    height: 80px;
-    color: white;
-    display: flex;
-    font-family: bold;
-    font-size: 20pt;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    background-color: #099AED;
-}
-
 .classCard h1 {
-    font-size: 15px;
+    font-size: .7rem;
     font-family: bold;
-    margin-top: 5%;
-    margin-bottom: 0;
     user-select: none;
+    margin: 0;
 }
 
 .classCard p {
-    font-size: 10px;
+    font-size: .6rem;
     margin: 0;
     user-select: none;
 }
-
-.mainPoint {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-}
-
-.mainPoint h1 {
-    text-align: center;
-    font-size: 10pt;
-}
-
-.mainPoint p {
-    text-align: center;
-    font-size: 8pt;
-}
-
 
 
 @keyframes pop {

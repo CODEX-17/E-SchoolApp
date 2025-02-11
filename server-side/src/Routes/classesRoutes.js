@@ -23,10 +23,14 @@ router.get('/getClassesByAccount/:acctID', (req, res) => {
 
     const acctID = req.params.acctID
     const query = `
-    SELECT class_list.*, class.*, image.data
-    FROM class
-    JOIN class_list ON class_list.classCode = class.classCode
-    JOIN image ON class.imageID = image.imageID
+    SELECT 
+        class_list.*, 
+        class.classID, 
+        class.className, 
+        class.classDesc, 
+        class.imageID
+    FROM class_list
+    JOIN class ON class_list.classCode = class.classCode
     WHERE class_list.acctID =? `
 
     db.query(query,[acctID], (error, data, fields) => {
@@ -53,31 +57,17 @@ router.get('/getClassByClassCode/:classCode', (req, res) => {
     })
 })
 
-router.put('/hideClass/:id', (req, res) => {
-    const id = req.params.id
-    const hide = 'true'
+router.patch('/updateClassVisibility', (req, res) => {
+   
+    const { id, status } = req.body
+
     const query = 'UPDATE class_list SET hidden =? WHERE id =?'
 
-    db.query(query, [hide, id], (error, data, fields) => {
+    db.query(query, [status, id], (error, data, fields) => {
         if (error) {
             return res.status(404).send(error)
         }else {
-            return res.status(200).json({ message: 'Successfully hide the class.' })
-        }
-    })
-
-})
-
-router.put('/unhideClass/:id', (req, res) => {
-    const id = req.params.id
-    const hide = 'false'
-    const query = 'UPDATE class_list SET hidden =? WHERE id =?'
-
-    db.query(query, [hide, id], (error, data, fields) => {
-        if (error) {
-            return res.status(404).send(error)
-        }else {
-            return res.status(200).json({ message: 'Successfully hide the class.' })
+            return res.status(200).json({ message: `Successfully ${status ? 'hide' : 'unhide'} the class.` })
         }
     })
 

@@ -63,7 +63,7 @@ router.get('/getImages', (req, res)=> {
 //Get images by imageID
 router.get('/getImagesByImageID/:imageID', (req, res)=> {
     const imageID = req.params.imageID
-    const query = 'SELECT * FROM image WHERE imageID =?'
+    const query = 'SELECT * FROM image WHERE imageID=?'
 
     db.query(query, [imageID], (error, data, fields) => {
         if (error) {

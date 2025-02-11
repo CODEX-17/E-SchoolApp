@@ -16,6 +16,8 @@ import io from 'socket.io-client'
 const socket = io.connect('http://localhost:5001')
 import { NotificationContext } from '../../context/NotificationContext'
 import { UserDetailContext } from '../../context/UserDetailContext'
+import { getClassesByAccount, updateClassVisibility } from '../../services/classServices'
+import ImageRender from '../../components/ImageRender/ImageRender'
 
 
 const ClassPage = () => {
@@ -56,38 +58,28 @@ useEffect(() => {
     //Socket for account Online
     socket.emit('addOnlineList', acctID)
 
-    axios.get('http://localhost:5001/classes/getClassesByAccount/' + acctID)
-    .then((res) => {
-        setshowPreview('classPage')
-        const result = res.data
-        console.log("result:", result)
+    try {
+        
+        const fetchData = async () => {
 
-        if (result) {
+            const response = await getClassesByAccount(acctID)
 
-            let classCodeList = [acctID]
-
-            classCodeList = result.map((data) => data.classCode)
-
-            for (let i = 0; i < classCodeList.length; i++) {
+            if (response) {
+                setshowPreview('classPage')
                 //Join room as acctID will becomes roomID for notifications
-                socket.emit('joinRoom', classCodeList[i])
+                response.forEach(classes => socket.emit('joinRoom', classes.classCode))
+
+                setClassesList(response)
+                
             }
-            
+
         }
 
-        const newValue = result.reduce((cls, current) => {
-
-            if (!cls.some(item => item.id === current.id)) {
-                cls.push(current);
-            }
-
-            console.log(cls)
-            return cls;
-        }, [])
+        fetchData()
         
-        setClassesList(newValue)
-    })
-    .catch((err) => console.error(err))
+    } catch (error) {
+        console.log(error)
+    }
 
 },[])
 
@@ -122,21 +114,29 @@ const handleInputClassCode = (e) => {
 }
 
 
-const handleHideClass = (id) => {
+const handleClassVisibility = async (id, status) => {
     
-    setClassesList((prevClassList) => {
-       return prevClassList.map((classes) => {
-            if (classes.id === id) {
-                return {...classes, hidden: 'true'}
-            }
-            return classes
-       })
-    })
+    try {
 
-    axios.put('http://localhost:5001/classes/hideClass/' + id)
-    .then((res) => res.data)
-    .then((data) => console.log(data.message))
-    .catch((err) => console.error(err))
+        const response = await updateClassVisibility(id, status)
+
+        if (response) {
+            setClassesList((data) => {
+                return data.map((classes) => {
+                    if (classes.id === id) {
+                        return {...classes, hidden: status}
+                    }
+                    return classes
+                })
+            })
+        }
+        
+    } catch (error) {
+        console.log(error)
+    }
+
+    
+    
 }
 
 const handleUnHideClass = (id) => {
@@ -157,7 +157,7 @@ const handleUnHideClass = (id) => {
 }
 
 const dropDownHiddenClass = () => {
-    setdropHideList(!dropHideList)
+   
 }
 
 const handleCreateClass = () => {
@@ -582,70 +582,109 @@ const handleExcelFileSubmit = (e) => {
                                         <div className={style.horizontalList}>
                                                 {
                                                     classesList.length > 0 ? (
-                                                        classesList.filter((data) => data.hidden === 'false' || data.hidden === false).map((data, index) => (   
-                                                            <div className={style.classCard} key={index}>
-                                                                <AiFillEyeInvisible size={20} className={style.btnVisible} title='Hide class' onClick={() => handleHideClass(data.id)}/>
-                                                                <div className={style.mainPoint} onClick={() => handleOpenClass(data.className, data.classCode, data.membersID, data.imageID, data.id, data.classDesc)}>
-                                                                    {
-                                                                        data.name !== 'default' ? (
-                                                                            <img src={generatePic(data.data)} alt='class photo' id={style.imageContainer}/>
-                                                                        ):(
-                                                                           <div id={style.defaultClassPic}>{data.className.substring(0, 1).toUpperCase()}</div> 
-                                                                        )
-                                                                    }
-                                                                    <h1>{data.className}</h1>
-                                                                    <p>{data.classDesc}</p>
+                                                        classesList
+                                                        .filter((data) => !data.hidden)
+                                                        .map((data, index) => (   
+                                                            <div 
+                                                                className={style.classCard} 
+                                                                key={index}
+                                                            >
+                                                                <div style={{ width: '100%', height: '20%', }}>
+                                                                    <AiFillEyeInvisible 
+                                                                        size={20} 
+                                                                        className={style.btnVisible} 
+                                                                        title='Hide class' 
+                                                                        onClick={() => handleClassVisibility(data.id, true)}
+                                                                    />
                                                                 </div>
+                                                                <div 
+                                                                    className='w-100 h-100 d-flex flex-column align-items-center justify-content-center'
+                                                                    onClick={() => handleOpenClass(data.className, data.classCode, data.membersID, data.imageID, data.id, data.classDesc)}
+                                                                >
+                                                                    <div id='roundedImage'  style={{ width: 50, height: 50, overflow: 'hidden',}}>
+                                                                        <ImageRender image={data.imageID}/>
+                                                                    </div>
+                                                                    <div className='mt-2 text-center'>
+                                                                        <h1>{data.className}</h1>
+                                                                        <p>{data.classDesc}</p>
+                                                                    </div>
+                                                                </div>
+                                                                
+                                                            
                                                             </div>
                                                         ))
                                                     ) : (
-                                        
-                                                            <div className={style.reminder}>
-                                                                <h2>NO ADDED CLASSES.</h2>
-                                                            </div>
-                                                        )
+                                                        <div className={style.reminder}>
+                                                            <h2>NO ADDED CLASSES.</h2>
+                                                        </div>
+                                                    )
                                                 }
                                         </div>
                                     </div>
 
                                     <div className={style.classHidden}>
-                                        <h2 id={style.classListLabel}>Hidden Class &nbsp;
-                                            {
-                                                dropHideList ? (
-                                                    <VscTriangleUp size={15} title='Show hidden class' cursor={'pointer'} onClick={dropDownHiddenClass}/>
-                                    
-                                                ) : (
-                                                    <VscTriangleDown size={15} title='Show hidden class' cursor={'pointer'} onClick={dropDownHiddenClass}/>
-                                    
-                                                )
-                                            }
+                                            <h2 id={style.classListLabel}>Hidden Class &nbsp;
+                                                {
+                                                    dropHideList ? (
+                                                        <VscTriangleUp 
+                                                            size={15} 
+                                                            title='Show hidden class' 
+                                                            cursor={'pointer'} 
+                                                            onClick={() => setdropHideList(!dropHideList)}
+                                                        />
+                                                    ) : (
+                                                        <VscTriangleDown 
+                                                            size={15} 
+                                                            title='Show hidden class' 
+                                                            cursor={'pointer'} 
+                                                            onClick={() => setdropHideList(!dropHideList)}
+                                                        />
+                                                    )
+                                                }
                                             </h2>
+
                                             {
                                                 dropHideList && (
                                                     <div className={style.horizontalList}>
                                                         {
                                                             classesList.length > 0 ? (
-                                                                console.log(classesList),
-                                                                classesList.filter((data) => data.hidden === 'true' || data.hidden === true).map((data, index) => (
-                                                                    <div className={style.classCard} key={index}>
-                                                                        <AiFillEye size={20} className={style.btnVisible} title='Unhide class' onClick={() => handleUnHideClass(data.id)}/>
-                                                                        {
-                                                                            data.name !== 'default' ? (
-                                                                                <img src={generatePic(data.data)} alt='class photo' id={style.imageContainer}/>
-                                                                            ):(
-                                                                                <div id={style.defaultClassPic}>{data.className.substring(0, 1).toUpperCase()}</div> 
-                                                                            )
-                                                                        }
-                                                                        <h1>{data.className}</h1>
-                                                                        <p>{data.classDesc}</p>
-                                                                    </div>
-                                                                ))
+                                                                classesList
+                                                                    .filter((data) => data.hidden)
+                                                                    .map((data, index) => (   
+                                                                        <div 
+                                                                            className={style.classCard} 
+                                                                            key={index}
+                                                                        >
+                                                                            <div style={{ width: '100%', height: '20%', }}>
+                                                                                <AiFillEyeInvisible 
+                                                                                    size={20} 
+                                                                                    className={style.btnVisible} 
+                                                                                    title='Hide class' 
+                                                                                    onClick={() => handleClassVisibility(data.id, false)}
+                                                                                />
+                                                                            </div>
+                                                                            <div 
+                                                                                className='w-100 h-100 d-flex flex-column align-items-center justify-content-center'
+                                                                                onClick={() => handleOpenClass(data.className, data.classCode, data.membersID, data.imageID, data.id, data.classDesc)}
+                                                                            >
+                                                                                <div id='roundedImage'  style={{ width: 50, height: 50, overflow: 'hidden',}}>
+                                                                                    <ImageRender image={data.imageID}/>
+                                                                                </div>
+                                                                                <div className='mt-2 text-center'>
+                                                                                    <h1>{data.className}</h1>
+                                                                                    <p>{data.classDesc}</p>
+                                                                                </div>
+                                                                            </div>
+                                                                            
+                                                                        
+                                                                        </div>
+                                                                    ))
                                                             ) : (
                                                                 <div className={style.reminder}>
                                                                     <h2>NO HIDDEN CLASS.</h2>
                                                                 </div>
                                                             )
-                                                            
+                                                        
                                                         }
                                                     </div>
                                                 )

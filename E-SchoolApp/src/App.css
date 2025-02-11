@@ -17,6 +17,12 @@ html, body, * {
   padding: 0;
 }
 
+#roundedImage {
+  border-radius: 50%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  overflow: 'hidden'
+}
+
 ::-webkit-scrollbar {
   width: 10px;
 }
