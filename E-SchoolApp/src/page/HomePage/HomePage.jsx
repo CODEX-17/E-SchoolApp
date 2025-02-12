@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import Navbar from '../../components/Navbar/Navbar'
 import style from './HomePage.module.css'
 import Sidebar from '../../components/Sidebar/Sidebar'
-import { Quiz } from '../Quiz'
+import Quiz from '../Instructor/Quiz/Quiz'
 import ClassPage from '../ClassPage/ClassPage'
 import ChatPage from '../ChatPage'
 import ActivityPage from '../ActivityPage'
@@ -12,6 +12,7 @@ import QuizTake from '../QuizTake'
 import FriendsPage from '../FriendsPage'
 import { ToastContainer } from 'react-toastify';
 import { NavigationContext } from '../../context/NavigationContext'
+import QuizMenu from '../Instructor/Quiz/QuizMenu/QuizMenu'
 
 const HomePage = () => {
 
@@ -38,7 +39,8 @@ const HomePage = () => {
             {currentRoute === 'class' && <ClassPage/>}
             {currentRoute === 'activity' && <ActivityPage/>}
             {currentRoute === 'chat' && <ChatPage/>}
-            {currentRoute === 'quizDev' && <Quiz/>} 
+            {currentRoute === 'quizMenu' && <QuizMenu/>}
+            {currentRoute === 'quizGenerator' && <Quiz/>} 
             {currentRoute === 'quizTake' && <QuizTake/>}
             {currentRoute === 'manageAccount' && <ManageAccout/>}
             {currentRoute === 'file' && <FilePage/>}

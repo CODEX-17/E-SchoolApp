@@ -1,23 +1,23 @@
 import React, {useEffect, useState} from 'react'
 import style from './Quiz.module.css'
-import PreviewQuiz from './PreviewQuiz'
+import PreviewQuiz from '../../PreviewQuiz'
 import axios from 'axios'
-import logo from '../../public/assets/logo.png'
-import ListPreviewQuiz from './ListPreviewQuiz'
-import PrintLayout from '../components/PrintLayout'
+import logo from '../../../../public/assets/logo.png'
+import ListPreviewQuiz from '../../ListPreviewQuiz'
+import PrintLayout from '../../../components/PrintLayout'
 import { InfinitySpin } from  'react-loader-spinner';
 import { FaInfoCircle } from "react-icons/fa";
-import { useBankStore } from '../stores/useBankStore'
+import { useBankStore } from '../../../stores/useBankStore'
 import { FaThList } from "react-icons/fa";
 import { MdOutlinePreview } from "react-icons/md";
-import MiniQuizDashboard from '../components/MiniQuizDashboard'
-import QuestionEnumeration from '../components/QuestionEnumeration'
-import QuestionFillintheBlank from '../components/QuestionFillintheBlank'
-import QuestionChoicesQuiz from '../components/QuestionChoicesQuiz'
-import QuestionTrueOrFalse from '../components/QuestionTrueOrFalse'
+import MiniQuizDashboard from '../../../components/MiniQuizDashboard'
+import QuestionEnumeration from '../../../components/QuestionEnumeration'
+import QuestionFillintheBlank from '../../../components/QuestionFillintheBlank'
+import QuestionChoicesQuiz from '../../../components/QuestionChoicesQuiz'
+import QuestionTrueOrFalse from '../../../components/QuestionTrueOrFalse'
 
 
-export const Quiz = () => {
+const Quiz = () => {
 
 const [isShowChoices, setisShowChoices] = useState(false)
 const [selectedQuestionType, setselectedQuestionType] = useState('enumeration')
@@ -1110,7 +1110,7 @@ const resetQuestionsVariables = () => {
                     </div>
                     
                     <div className={style.content}>
-                        <ToastContainer/>   
+                        
                         {
                             isShowImageModal && (
                                 <div className={style.imageModal}>
@@ -1256,3 +1256,5 @@ const resetQuestionsVariables = () => {
     </>
   )
 }
+
+export default Quiz

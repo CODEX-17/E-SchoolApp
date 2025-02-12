@@ -23,9 +23,9 @@ const SidebarComponent = () => {
         {
           currentAccount &&
           currentAccount.acctype === 'faculty' && (
-            <div className={ currentRoute === 'quizDev' ? style.activedGroup : style.iconGroup} onClick={() => setCurrentRoute('quizDev')}>
-              <PiNotebookFill className={ currentRoute === 'quizDev' ? style.activedIcon : style.icon} size={20}/>
-              <p className={ currentRoute === 'quizDev' ? style.activedText : style.text}>Quiz</p>
+            <div className={ currentRoute === 'quizMenu' ? style.activedGroup : style.iconGroup} onClick={() => setCurrentRoute('quizMenu')}>
+              <PiNotebookFill className={ currentRoute === 'quizMenu' ? style.activedIcon : style.icon} size={20}/>
+              <p className={ currentRoute === 'quizMenu' ? style.activedText : style.text}>Quiz</p>
           </div>
           )
         }

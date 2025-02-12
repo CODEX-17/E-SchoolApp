@@ -2,10 +2,8 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import style from './ClassPage.module.css'
 import { AiFillEyeInvisible } from "react-icons/ai"
 import { VscTriangleUp, VscTriangleDown } from "react-icons/vsc"
-import axios from 'axios'
 import ClassHome from '../ClassHome'
 import 'react-toastify/dist/ReactToastify.css';
-import * as XLSX from 'xlsx'
 import { ProgressBar } from  'react-loader-spinner';
 import io from 'socket.io-client'
 const socket = io.connect('http://localhost:5001')
@@ -93,24 +91,6 @@ const duplicateClassCodeCheck = (classCode) => {
     return false
 }
 
-const handleInputClassCode = (e) => {
-    e.preventDefault()
-    const classCode = e.target.value
-    
-    if (duplicateClassCodeCheck(classCode)) {
-        inputRef.current.style.outline = '1px solid red'
-        inputRef.current.style.color = 'red'
-        setclassCode(null)
-        setErrorMessage(true)
-    }else {
-        inputRef.current.style.outline = 'none'
-        inputRef.current.style.color = '#3E3F40'
-        setErrorMessage(false)
-        setclassCode(classCode)
-    }
-}
-
-
 const handleClassVisibility = async (id, status) => {
     
     try {
@@ -150,76 +130,9 @@ const handleCreateClass = () => {
     }
 }
 
-const CreateClass = () => {
-    setisModalShow(!isModalShow)    
-}
-
-
 
 const backToHomePage = (choose) => {
     setshowPreview(choose)
-}
-
-const generatePic = (filename) => {
-
-    if (filename) {
-        return 'http://localhost:5001/' + filename
-    }else {
-        return '/banner.jpg'
-    }
-}
-
-const generateUniqueId = () => {
-    const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-    const length = 8
-    let result = ''
-    for (let i = 0; i < length; i++) {
-        const randomIndex = Math.floor(Math.random() * charset.length)
-        result += charset.charAt(randomIndex)
-    }
-    return result
-}
-
-const handleFile = (e) => {
-    e.preventDefault()
-    const file = e.target.files[0]
-
-    if (file) {
-        setselectedImage({
-            file,
-            uniqueID: generateUniqueId()
-        })
-        const message = 'Image uploaded.'
-        notify(message, 'success')
-    }else {
-        const message = 'Image failed to upload.'
-        notify(message, 'err')
-    }
-    
-    
-}
-
-const handleDrop = (e) => {
-    e.preventDefault()
-    const value = e.dataTransfer.files[0]
-    setselectedImage({
-        file: value,
-        uniqueID: generateUniqueId()
-    })
- }
-
-const preventDefault = (e) => {
-    e.preventDefault()
-}
-
-const generateClassPicUpload = () => {
-    if (selectedImage) {
-        const { file } = selectedImage
-        return URL.createObjectURL(file)
-    }else {
-        return sample
-    }
-
 }
 
 
