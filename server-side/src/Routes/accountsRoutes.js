@@ -66,14 +66,19 @@ router.post('/UpdateAccounts', (req, res) => {
 })
 
 router.post('/verifyAccount', (req, res) => {
-    const email = req.body.email
-    const password = req.body.password
-    const query = 'SELECT accounts.*, image.data FROM accounts INNER JOIN image ON accounts.imageID = image.imageID WHERE accounts.email=? && accounts.password=?'
+
+    const { email, password } = req.body
+
+    console.log(req.body)
+
+    const query = 'SELECT accounts.*, files.name FROM accounts INNER JOIN files ON accounts.fileID = files.fileID WHERE accounts.email=? && accounts.password=?'
 
     db.query(query, [email, password], (error, data, fields) => {
         if (error) {
+            console.log('Error in getting the account info:', error)
             return res.status(404).send(error)
         }else {
+            console.log('Successfully in getting the account info.')
             return res.status(200).json(data)
         }
     })

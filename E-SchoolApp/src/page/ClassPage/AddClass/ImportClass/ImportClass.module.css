@@ -1,0 +1,130 @@
+.container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+}
+
+.card {
+    padding: 20px;
+    width: 500px;
+    max-width: 500px;
+    height: auto;
+    max-height: 100%;
+    overflow: hidden;
+    border-radius: 10px;
+    color: #3e3f40;
+    font-family: normal;
+    background-color: white;
+    animation: pop 0.5s ease;
+    -webkit-box-shadow: 4px 3px 18px 0px rgba(0,0,0,0.24);
+    -moz-box-shadow: 4px 3px 18px 0px rgba(0,0,0,0.24);
+    box-shadow: 4px 3px 18px 0px rgba(0,0,0,0.24);
+    animation: pop 0.5s ease-in-out;
+}
+
+.card h1 {
+    font-size: 1.3rem;
+}
+
+.card p {
+    font-size: .8rem;
+}
+
+.card button {
+    background-color: #0c9cec;
+    color: white;
+    border-radius: 5px;
+    border: none;
+    height: 40px;
+    width: 100%;
+    font-family: bold;
+    font-size: 1rem;
+}
+
+.card button:hover {
+    opacity: 0.5;
+}
+
+.importBox {
+    border: 2px dashed #0c9cec;
+    padding: 10px;
+    border-radius: 5px;
+    color: #0c9cec;
+    font-family: bold;
+    text-align: center;
+    cursor: pointer;
+}
+
+.fileBox {
+    padding: 10px;
+    border-radius: 5px;
+    color: white;
+    font-family: bold;
+    text-align: center;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    font-size: .7rem;
+    justify-content: space-between;
+    background-color: #3A7D44;
+    -webkit-box-shadow: 4px 3px 18px 0px rgba(0,0,0,0.24);
+    -moz-box-shadow: 4px 3px 18px 0px rgba(0,0,0,0.24);
+    box-shadow: 4px 3px 18px 0px rgba(0,0,0,0.24);
+    animation: pop 0.5s ease-in-out;
+}
+
+.log {
+    border: 1px solid #3e3f40;
+    margin-top: 20px;
+    overflow-y: hidden;
+    border-radius: 5px;
+    height: 100%;
+}
+
+.logList {
+    padding: 10px;
+    width: 100%;
+    height: 500px;
+    overflow-y: auto;
+    border-radius: 5px;
+    box-shadow: 1px -10px 19px -6px rgba(0,0,0,0.5) inset;
+-webkit-box-shadow: 1px -10px 19px -6px rgba(0,0,0,0.5) inset;
+-moz-box-shadow: 1px -10px 19px -6px rgba(0,0,0,0.5) inset;
+}
+
+.logCard {
+    border: 1px solid gray;
+    padding: 10px;
+    border-radius: 5px;
+    display: flex;
+    margin-bottom: 10px;
+    justify-content: space-between;
+}
+
+.logCard label {
+    font-size: .8rem;
+    margin: 0;
+}
+
+.logCard p {
+    font-size: 1rem;
+    font-family: bold;
+}
+
+
+
+
+@keyframes pop {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.1);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }

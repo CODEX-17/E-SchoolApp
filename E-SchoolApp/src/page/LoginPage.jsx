@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import style from './LoginPage.module.css'
 import { useAccountStore } from '../stores/useAccountsStore'
 import axios from 'axios'
-import generateImageByImageID from '../utils/generateImageByImageID'
+import bg from '../../public/assets/sign-in-text.png'
 
 const LoginPage = () => {
 
@@ -80,7 +80,7 @@ const handleEmail = (e) => {
             <div className={style.left}>
             </div>
             <div className={style.right}>
-                <img src='/sign-in-text.png' alt='sign in text' />
+                <img src={bg} alt='sign in text' />
             
                     <form action="" className='form' onSubmit={handleSubmit}>
                         <div className={style.inputDiv}>

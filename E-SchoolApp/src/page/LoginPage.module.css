@@ -31,7 +31,7 @@
 .left {
     flex: 50%;
     display: flex;
-    background-image: url('../../public/banner.jpg');
+    background-image: url('../../public/assets/banner.jpg');
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;

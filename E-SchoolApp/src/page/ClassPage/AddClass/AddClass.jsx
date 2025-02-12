@@ -5,11 +5,12 @@ import whiteLogo from '../../../../public/assets/logo-white.png'
 import excel from '../../../../public/assets/excel.png'
 import { NotificationContext } from '../../../context/NotificationContext'
 import CreateClass from './CreateClass/CreateClass'
+import ImportClass from './ImportClass/ImportClass'
 
 const AddClass = () => {
 
-  const [showExcellInputCard, setshowExcellInputCard] = useState(false)
   const [isShowCreateClass, setIsShowCreateClass] = useState(false)
+  const [isShowImportClass, setIsShowImportClass] = useState(true)
 
   const { notify } = useContext(NotificationContext)
   
@@ -41,7 +42,7 @@ const AddClass = () => {
         }
   }
 
-   const handleExcelFileSubmit = (e) => {
+  const handleExcelFileSubmit = (e) => {
     e.preventDefault()
 
     if (excelFile) {
@@ -148,7 +149,7 @@ const AddClass = () => {
         notify(message, 'err')
     }
 
-   }
+  }
 
   return (
     <div className={style.container}>
@@ -164,6 +165,16 @@ const AddClass = () => {
             
         }
 
+        {
+            isShowImportClass && 
+            <div 
+                className='position-absolute w-100 h-100' 
+                style={{ zIndex: 5, height: '100%', }}
+            >
+                <ImportClass setIsShowImportClass={setIsShowImportClass}/>
+            </div>
+        }
+
         <div className='d-flex flex-column text-center mb-4'>
             <h1>Join, Import or Create a Class</h1>
             <p>Collaborate, Learn, and Grow – Choose Your Path to the Classroom</p>
@@ -176,22 +187,13 @@ const AddClass = () => {
                 <h2>Create Class</h2>
                 <button onClick={() =>setIsShowCreateClass(true)}>Create</button>
             </div>
-            {
-                !showExcellInputCard ? (
-                    <div className={style.card}>
-                        <img src={excel} width={200} alt="logo" />
-                        <h2>Import Excel</h2>
-                        <button onClick={() => selectExcellInputCard(true)}>Import</button>
-                    </div>
-                ) : (
-                    <div className={style.card} style={{ backgroundColor: '#D0E7D2'}}>
-                        <BiExit size={20} id={style.iconExit} onClick={() => selectExcellInputCard(false)}/>
-                        <input type="file" id={style.importExcelFile} accept='.xlsx' onChange={handleFileImport}/>
-                        <button onClick={handleExcelFileSubmit} style={{ backgroundColor: '#099AED'}}>Upload</button>
-                    </div>
-                )
-            }
-            
+
+            <div className={style.card}>
+                <img src={excel} width={200} alt="logo" />
+                <h2>Import Excel</h2>
+                <button onClick={() => setIsShowImportClass(true)}>Import</button>
+            </div>
+                
             <div className={style.card}>
                 <img src={whiteLogo} width={90} alt="Whitelogo" />
                 <div className='d-flex flex-column mb-2'>

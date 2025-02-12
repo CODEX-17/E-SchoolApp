@@ -50,7 +50,7 @@ const { setCurrentClass } = useContext(ClassContext)
 
 useEffect(() => {
 
-    const acctID = userDetails.acctID
+    const acctID = userDetails?.acctID
 
     //Socket for account Online
     socket.emit('addOnlineList', acctID)
@@ -315,7 +315,7 @@ const generateClassPicUpload = () => {
                                                                     </div>
                                                                     <div className='mt-2 text-center'>
                                                                         <h1>{data.className}</h1>
-                                                                        <p>{data.classDesc}</p>
+                                                                        <p>{data.classCode}</p>
                                                                     </div>
                                                                 </div>
                                                                 
@@ -381,7 +381,7 @@ const generateClassPicUpload = () => {
                                                                                 </div>
                                                                                 <div className='mt-2 text-center'>
                                                                                     <h1>{data.className}</h1>
-                                                                                    <p>{data.classDesc}</p>
+                                                                                    <p>{data.classCode}</p>
                                                                                 </div>
                                                                             </div>
                                                                             

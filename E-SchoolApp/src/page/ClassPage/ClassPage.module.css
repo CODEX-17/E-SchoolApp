@@ -275,6 +275,7 @@
 .classCard p {
     font-size: .6rem;
     margin: 0;
+    font-family: normal;
     user-select: none;
 }
 

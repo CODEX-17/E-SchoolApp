@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import style from './Navbar.module.css';
 import logo from '../../../public/assets/logo-white.png'
 import titleLogo from '../../../public/assets/title.png'
@@ -11,6 +11,8 @@ import { GiNotebook } from "react-icons/gi";
 import { AiOutlineDelete } from "react-icons/ai"
 import axios from 'axios';
 import io from 'socket.io-client'
+import ImageRender from '../ImageRender/ImageRender';
+import { UserDetailContext } from '../../context/UserDetailContext';
 const socket = io.connect('http://localhost:5001')
 
 const Navbar = () => {
@@ -54,6 +56,8 @@ const Navbar = () => {
 
     
   },[])
+
+  const { userDetails } = useContext(UserDetailContext)
 
   const generateImages = (data) => {
     if (data) {
@@ -123,25 +127,28 @@ const Navbar = () => {
 
   return (
     <div className={style.navbar}>
-        <div className={style.left}>
+
+        <div className='d-flex gap-2 p-2 align-items-center'>
           <img src={logo} alt="logo" width={40}/>
           <img src={titleLogo} className={style.titleLogo} alt="titleLogo" width={150} />
         </div>
-        <div className={style.right}>
-          <div className={style.menuTop}>
-            <div className='position-relative'>
-              { isShowRedDots && <div id={style.circle}>.</div> }
-              <IoNotifications id={style.notif} onClick={() => {setIsShowNotification(!isShowNotification), setIsShowRedDots(false)}}/>
-            </div>
-            
-            <img src={userImage}  alt="profile" id={style.profile} onClick={handleProfile}/>
+        <div className='d-flex gap-2 p-2 align-items-center'>
+          <div className='position-relative'>
+            { isShowRedDots && <div id={style.circle}>.</div> }
+            <IoNotifications id={style.notif} onClick={() => {setIsShowNotification(!isShowNotification), setIsShowRedDots(false)}}/>
           </div>
+          <div id={style.profile} onClick={handleProfile}>
+            <ImageRender image={userDetails?.fileID} alt="profile"/>
+          </div>
+          
+        </div>
+
           {
             isShowProfile && (
               <div id={style.dropDown}>
                 <div className={style.horizontal}>
                     <span className={style.profileIcon}>
-                      <img src={userImage} id={style.profilePic} alt=""/>
+                      <ImageRender image={userDetails?.fileID} alt="profile"/>
                     </span>
                     <div className={style.vertical}>
                       <p>Name:</p>
@@ -218,7 +225,6 @@ const Navbar = () => {
             )
           }
           
-        </div>
         
     </div>
   )

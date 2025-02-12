@@ -96,7 +96,7 @@ const CreateClass = ({ setIsShowCreateClass }) => {
                 <div className={style.card}>
 
                     <div className='w-100 d-flex justify-content-between mb-2'>
-                        <h1>Create you Class</h1>
+                        <h1>Create Your Class</h1>
                         <IoCloseSharp 
                             size={25} 
                             title='close'
