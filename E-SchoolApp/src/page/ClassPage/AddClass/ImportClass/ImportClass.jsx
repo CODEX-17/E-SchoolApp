@@ -12,7 +12,6 @@ import { UserDetailContext } from '../../../../context/UserDetailContext';
 
 const ImportClass = ({ setIsShowImportClass }) => {
 
-
   const inputFileRef = useRef(null)   
   const [excel, setExcel] = useState(null)
   const [excelPreview, setExcelPreview] = useState(null)
@@ -21,8 +20,6 @@ const ImportClass = ({ setIsShowImportClass }) => {
   const { notify } = useContext(NotificationContext)
   const { userDetails } = useContext(UserDetailContext) 
  
-
-
   useEffect(() => {
     
     const fetchData = async () => {
@@ -30,7 +27,6 @@ const ImportClass = ({ setIsShowImportClass }) => {
         const response = await getAllClasses()
 
         if (response) {
-            console.log('response', response)
             setClassesList(response)
         }
     }

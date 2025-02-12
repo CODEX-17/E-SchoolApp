@@ -221,6 +221,25 @@ router.post('/updateClass', upload.single('image'), async (req, res) => {
     }
 });
 
+router.post('/joinClassByClassCode', (req, res) => {
+
+    const { classCode, acctID } = req.body
+
+    const queryClassList = `INSERT INTO class_list(acctID, classCode, hidden, memberType) VALUES(?,?,?,?)`
+
+    db.query(queryClassList, [acctID, classCode, false, 'member'], (error, data) => {
+        if (error) {
+            console.error('Error inserting  class_list: ', error);
+            res.status(500).json({ message: 'Failed to join in the class.'})
+        } else {
+            console.log('Successfully join in the class.');
+            res.status(200).json({ message: 'Successfully join in the class.'})
+        }
+    })
+
+    
+})
+
 
 
 

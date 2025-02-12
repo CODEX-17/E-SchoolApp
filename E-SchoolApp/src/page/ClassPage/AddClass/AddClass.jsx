@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import style from './AddClass.module.css'
 import logo from '../../../../public/assets/logo.png'
 import whiteLogo from '../../../../public/assets/logo-white.png'
@@ -6,150 +6,93 @@ import excel from '../../../../public/assets/excel.png'
 import { NotificationContext } from '../../../context/NotificationContext'
 import CreateClass from './CreateClass/CreateClass'
 import ImportClass from './ImportClass/ImportClass'
+import { getAllClasses, joinClassByClassCode } from '../../../services/classServices'
+import { UserDetailContext } from '../../../context/UserDetailContext'
+
 
 const AddClass = () => {
 
   const [isShowCreateClass, setIsShowCreateClass] = useState(false)
-  const [isShowImportClass, setIsShowImportClass] = useState(true)
+  const [isShowImportClass, setIsShowImportClass] = useState(false)
+  const [classesList, setClassesList] = useState([])
+  const [inputClassCode, setInputClassCode] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
 
   const { notify } = useContext(NotificationContext)
+  const { userDetails } = useContext(UserDetailContext)
+
+   useEffect(() => {
+      
+      const fetchData = async () => {
   
-  const handleFileImport = (e) => {
-    e.preventDefault()
+          const response = await getAllClasses()
+  
+          if (response) {
+              setClassesList(response)
+          }
+      }
+  
+      fetchData()
+  
+    },[])
 
-    let fileTypes = ['application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet','text/csv'];
-    let selectedFile = e.target.files[0];
-    
-    if (selectedFile){
-        if (selectedFile && fileTypes.includes(selectedFile.type)) {
-            //setTypeError(null);
-            let reader = new FileReader();
-            reader.readAsArrayBuffer(selectedFile);
-            reader.onload=(e) => {
-                const data = e.target.result
-                setExcelFile(data)
-                console.log(data)
-            }
-        }
+    const handleReset = () => {
+        setErrorMessage(null)
+        setInputClassCode(null)
+    }
 
-        else{
-            //setTypeError('Please select only excel file types');
-            setExcelFile(null);
+    const handleCheckClassCode = (data) => {
+
+        if (!data) return false
+
+        if (classesList.some((cls) => cls.classCode.trim().toUpperCase() === data.trim().toUpperCase())) {
+            return true
         }
     }
-        else{
-            console.log('Please select your file');
-        }
-  }
 
-  const handleExcelFileSubmit = (e) => {
-    e.preventDefault()
+    const handleJoinClass = () => {
 
-    if (excelFile) {
+        if (inputClassCode) {
+            
+            if (!handleCheckClassCode(inputClassCode)) {
 
-        const workbook = XLSX.read(excelFile, {type: 'buffer'})
-        const worksheetName = workbook.SheetNames[0]
-        const worksheet = workbook.Sheets[worksheetName]
-        const data = XLSX.utils.sheet_to_json(worksheet)
+                setErrorMessage('Class Code not exist!')
 
-        if (data) {
-            let done = 0
-            let fail = 0
-            let exist = 0
-            let success = false
-
-            for (let i = 0; i < data.length; i++) {
-
-                const newClassName = data[i].className
-                const newClassCode = data[i].classCode
-                const newClassDesc = data[i].classDesc
-
-                if (newClassName && newClassCode && newClassDesc) {
-
-                for (let x = 0; x < classesList.length; x++) {
-
-                        const existingClassCode = classesList[x].classCode
-                        
-                        if (newClassCode === existingClassCode) {
-                            exist = exist + 1
-                            console.log(newClassCode + 'is exist')
-                        }
-                                        
-                }
-
-                if (exist === 0) {
-                        const generatedID = generateUniqueId()
-
-                        const formData = new FormData
-                        formData.append('className', newClassName)
-                        formData.append('classDesc', newClassCode)
-                        formData.append('classCode', newClassCode)
-                        formData.append('membersID', generatedID)
-                        formData.append('imageID', 'default')
-                        formData.append('hidden', 'false')
-                        formData.append('acctID', userDetails.acctID)
-                        formData.append('firstname', userDetails.firstname)
-                        formData.append('middlename', userDetails.middlename)
-                        formData.append('lastname', userDetails.lastname)
-                        formData.append('memberType', 'admin')
-                        formData.append('image', null)
-
-                        axios.post('http://localhost:5001/classes/addClass', formData, {
-                            headers: {
-                                'Content-Type':'multipart/form-data'
-                            }
-                        })
-                        .then((res) => res.data)
-                        .then((data) => {
-                            done = done + 1
-                            success = true
-                            const message = data.message
-                            console.log(message)
-                        })
-                        .catch((err) => console.log(err))
-
-                        done = done + 1
-                        exist = 0
-                }else {
-                        fail = fail + 1
-                }
-
-                }else {
-                    fail = fail + 1
-                }
-            }
-
-            if (fail) {
-                if (done) {
-                    const message = `${done} Class imported succefully. ${fail} Failed to import`
-                    notify(message, 'success')
-                }else{
-                    const message = `${fail} Failed to import`
-                    notify(message, 'err')
-                }
+                setTimeout(() => {
+                    setErrorMessage(null)
+                }, 3000)
                 
             }else {
-                console.log('done',done)
-                const message = `${done} Class imported succefully.`
-                notify(message, 'success')
-                setisClassListShow(true)
-                setselectedImage(null)
-                setupdate(!update)
+                
+                const query = async () => {
+                    try {
+
+                        const data = {
+                            classCode: inputClassCode,
+                            acctID: userDetails?.acctID
+                        }
+
+                        const response = await joinClassByClassCode(data)
+
+                        if (response) {
+                            notify(response.message, true)
+                            handleReset()
+                        }
+
+                    } catch (error) {
+                        notify(error, false)
+                        handleReset()
+                    }
+                }
+
+                query()
+
             }
 
-            exist = 0
-            done = 0
-            fail = 0
         }else {
-            const message = 'Invalid format.'
-            notify(message, 'err')
+            notify('Please input Class Code!')
         }
-    }else {
-        const message = `no file uploaded`
-        notify(message, 'err')
     }
-
-  }
 
   return (
     <div className={style.container}>
@@ -198,10 +141,17 @@ const AddClass = () => {
                 <img src={whiteLogo} width={90} alt="Whitelogo" />
                 <div className='d-flex flex-column mb-2'>
                     <label>Join in Class with ClassCode</label>
-                    <input type="text" />
-                </div>
-                
-                <button style={{ width: 180, }}>Join</button>
+                    <input 
+                        type="text" 
+                        onChange={(e) => setInputClassCode(e.target.value)}
+                    />
+                    {errorMessage && <p className='text-danger' style={{ fontSize: '.8rem' }}>{errorMessage}</p>}
+                </div>                
+                <button 
+                    style={{ width: 180, }}
+                    value={inputClassCode}
+                    onClick={handleJoinClass}
+                >Join</button>
             </div>
             
         </div>

@@ -82,3 +82,24 @@ export const getAllClasses = async () => {
         return null
     }
 }
+
+export const joinClassByClassCode = async (data) => {
+
+    try {
+        
+        const response = await axios.post(`${BASE_URL}/classes/joinClassByClassCode`, data)
+
+        if (!response || response.length === 0) {
+            return null
+        }
+        
+        if (response) {
+            console.log('Successfully join class.')
+            return response.data
+        }
+
+    } catch (error) {
+        console.log('Server error', error)
+        return null
+    }
+}
