@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import style from './QuestionGenerator.module.css'
-import Enumeration from '../Enumeration/Enumeration'
+import Enumeration from '../Generator/Enumeration/Enumeration'
 
 const QuestionGenerator = () => {
     
@@ -84,7 +84,7 @@ const QuestionGenerator = () => {
             <h1 className='m-0'>{questionType}</h1>
             <p>{handleTitleRender(questionType)}</p>
         </div>
-        <div className='w-100 overflow-hidden h-100'>
+        <div className='w-100 h-100 overflow-hidden'>
             {renderContent(questionType)}
         </div>
       </div>

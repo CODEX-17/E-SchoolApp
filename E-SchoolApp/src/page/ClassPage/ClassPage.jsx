@@ -3,42 +3,34 @@ import style from './ClassPage.module.css'
 import { AiFillEyeInvisible } from "react-icons/ai"
 import { VscTriangleUp, VscTriangleDown } from "react-icons/vsc"
 import ClassHome from '../ClassHome'
-import 'react-toastify/dist/ReactToastify.css';
 import { ProgressBar } from  'react-loader-spinner';
-import io from 'socket.io-client'
-const socket = io.connect('http://localhost:5001')
 import { NotificationContext } from '../../context/NotificationContext'
 import { UserDetailContext } from '../../context/UserDetailContext'
 import { getClassesByAccount, updateClassVisibility } from '../../services/classServices'
 import ImageRender from '../../components/ImageRender/ImageRender'
 import AddClass from './AddClass/AddClass'
 import { ClassContext } from '../../context/ClassContext'
-
+import io from 'socket.io-client'
+const socket = io.connect('http://localhost:5001')
 
 const ClassPage = () => {
 
 const [isClassListShow, setisClassListShow] = useState(true)
-const [isModalShow, setisModalShow] = useState(false)
-const [showExcellInputCard, selectExcellInputCard] = useState(false)
 const [textButton, settextButton] = useState('Create Class')
-const [className, setclassName] = useState()
-const [classCode, setclassCode] = useState(null)
 const [classDesc, setclassDesc] = useState('none')
 const [showCreateClass, setshowCreateClass] = useState(false)
 const [classesObj, setclassesObj] = useState([])
 const [currentImageClass, setcurrentImageClass] = useState('')
-const [errorMessage, setErrorMessage] = useState(false)
+
 
 const [dropHideList, setdropHideList] = useState(false)
+const [dropVisibleList, setdropVisibleList] = useState(true)
+
 const [showPreview, setshowPreview] = useState('loading')
 const [currentClassName, setcurrentClassName] = useState()
 const [currentClassCode, setcurrentClassCode] = useState()
 const [currentclassID, setcurrentclassID] =useState()
 const [currentMemberID, setcurrentMemberID] = useState()
-const [selectedImage, setselectedImage] = useState(null)
-const [excelFile, setExcelFile] = useState(null)
-const [update, setupdate] = useState(false)
-const inputRef = useRef(null)
 
 const { userDetails } = useContext(UserDetailContext)
 const [classesList, setClassesList] = useState([])
@@ -79,18 +71,6 @@ useEffect(() => {
 
 },[])
 
-const duplicateClassCodeCheck = (classCode) => {
-    const classCodeList = classesList.map((data) => data.classCode)
-
-    for (let i = 0; i < classCodeList.length; i++) {
-        if (classCode === classCodeList[i]) {
-            return true
-        }
-    }
-    
-    return false
-}
-
 const handleClassVisibility = async (id, status) => {
     
     try {
@@ -130,12 +110,9 @@ const handleCreateClass = () => {
     }
 }
 
-
 const backToHomePage = (choose) => {
     setshowPreview(choose)
 }
-
-
 
   return (
     <>
@@ -199,53 +176,76 @@ const backToHomePage = (choose) => {
                         {
                             isClassListShow && (
                                 <div className={style.listContainer}>
+                                    <h2>Class List &nbsp;
+                                        {
+                                            !dropVisibleList ? (
+                                                <VscTriangleUp 
+                                                    size={15} 
+                                                    title='Show show class' 
+                                                    cursor={'pointer'} 
+                                                    onClick={() => setdropVisibleList(!dropVisibleList)}
+                                                />
+                                            ) : (
+                                                <VscTriangleDown 
+                                                    size={15} 
+                                                    title='Show hidden class' 
+                                                    cursor={'pointer'} 
+                                                    onClick={() => setdropVisibleList(!dropVisibleList)}
+                                                />
+                                            )
+                                        }
+                                    </h2>
+
                                     <div className={style.classVisible}>
-                                        <h2 id={style.classListLabel}>Class List</h2>
-                                        <div className={style.horizontalList}>
-                                                {
-                                                    classesList.length > 0 ? (
-                                                        classesList
-                                                        .filter((data) => !data.hidden)
-                                                        .map((data, index) => (   
-                                                            <div 
-                                                                className={style.classCard} 
-                                                                key={index}
-                                                            >
-                                                                <div style={{ width: '100%', height: '20%', }}>
-                                                                    <AiFillEyeInvisible 
-                                                                        size={20} 
-                                                                        className={style.btnVisible} 
-                                                                        title='Hide class' 
-                                                                        onClick={() => handleClassVisibility(data.id, true)}
-                                                                    />
-                                                                </div>
+                                        {
+                                            dropVisibleList &&
+                                            <div className={style.classList}>
+                                                    {
+                                                        classesList.length > 0 ? (
+                                                            classesList
+                                                            .filter((data) => !data.hidden)
+                                                            .map((data, index) => (   
                                                                 <div 
-                                                                    className='w-100 h-100 d-flex flex-column align-items-center justify-content-center'
-                                                                    onClick={() => setCurrentClass(data)}
+                                                                    className={style.classCard} 
+                                                                    key={index}
                                                                 >
-                                                                    <div id='roundedImage'  style={{ width: 50, height: 50, overflow: 'hidden',}}>
-                                                                        <ImageRender image={data.fileID}/>
+                                                                    <div style={{ width: '100%', height: '20%', }}>
+                                                                        <AiFillEyeInvisible 
+                                                                            size={20} 
+                                                                            className={style.btnVisible} 
+                                                                            title='Hide class' 
+                                                                            onClick={() => handleClassVisibility(data.id, true)}
+                                                                        />
                                                                     </div>
-                                                                    <div className='mt-2 text-center'>
-                                                                        <h1>{data.className}</h1>
-                                                                        <p>{data.classCode}</p>
+                                                                    <div 
+                                                                        className='w-100 h-100 d-flex flex-column align-items-center justify-content-center'
+                                                                        onClick={() => setCurrentClass(data)}
+                                                                    >
+                                                                        <div id='roundedImage'  style={{ width: 50, height: 50, overflow: 'hidden',}}>
+                                                                            <ImageRender image={data.fileID}/>
+                                                                        </div>
+                                                                        <div className='mt-2 text-center'>
+                                                                            <h1>{data.className}</h1>
+                                                                            <p>{data.classCode}</p>
+                                                                        </div>
                                                                     </div>
-                                                                </div>
+                                                                    
                                                                 
-                                                            
+                                                                </div>
+                                                            ))
+                                                        ) : (
+                                                            <div className={style.reminder}>
+                                                                <h2>NO ADDED CLASSES.</h2>
                                                             </div>
-                                                        ))
-                                                    ) : (
-                                                        <div className={style.reminder}>
-                                                            <h2>NO ADDED CLASSES.</h2>
-                                                        </div>
-                                                    )
-                                                }
-                                        </div>
+                                                        )
+                                                    }
+                                            </div>
+                                        }
+
                                     </div>
 
                                     <div className={style.classHidden}>
-                                            <h2 id={style.classListLabel}>Hidden Class &nbsp;
+                                            <h2>Hidden Class &nbsp;
                                                 {
                                                     dropHideList ? (
                                                         <VscTriangleUp 
@@ -267,7 +267,7 @@ const backToHomePage = (choose) => {
 
                                             {
                                                 dropHideList && (
-                                                    <div className={style.horizontalList}>
+                                                    <div className={style.classList}>
                                                         {
                                                             classesList.length > 0 ? (
                                                                 classesList

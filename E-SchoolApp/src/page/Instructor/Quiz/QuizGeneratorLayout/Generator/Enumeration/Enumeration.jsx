@@ -24,9 +24,8 @@ const Enumeration = () => {
             <input type='checkbox'/>
             <label className='fs-lg-6'>Key Sensitive</label>
         </div>
-      </div>
-      
-      <div className='d-flex flex-column mt-4'>
+      </div>      
+      <div className='d-flex w-100 mt-4 justify-content-center'>
         <button>Add Question</button>
       </div>
     </div>
