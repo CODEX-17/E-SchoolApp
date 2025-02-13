@@ -1,0 +1,45 @@
+.container {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    font-family: normal;
+}
+
+.sidebar {
+    width: fit-content;
+    height: 100%;
+}
+
+.content {
+    width: 100%;
+    height: 100%;
+}
+
+.navbar {
+    height: 50px;
+    width: 100%;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    color: white;
+    font-family: bold;
+    background-color: rgb(82, 82, 82);
+}
+
+.navbar h1 {
+    font-size: 1.3rem;
+    margin: 0;
+}
+
+@media (max-width: 425px) {
+    .container {
+        flex-wrap: wrap;
+    }
+
+    .sidebar {
+        height: 50px;
+        width: 100%;
+    }
+}
+
