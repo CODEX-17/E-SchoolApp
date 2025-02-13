@@ -67,11 +67,13 @@
         width: fit-content;
         padding: 20px;
         font-size: .7rem;
+        width: 200px;
     }
 
     .menuBtnActive {
         width: fit-content;
         padding: 20px;
+        width: 200px;
         font-size: .7rem;
     }
 }
