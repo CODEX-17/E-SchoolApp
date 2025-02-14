@@ -17,6 +17,61 @@ html, body, * {
   padding: 0;
 }
 
+label {
+  font-size: 1rem;
+  font-family: bold;
+  margin: 0;
+}
+
+button {
+  color: white;
+  background-color: #3498db;
+  height: 40px;
+  width: 100%;
+  border: none;
+  outline: none;
+  padding: 0px 10px 0px 10px;
+}
+
+button:hover {
+  opacity: 0.5;
+}
+
+
+input {
+  width: 100%;
+  padding-left: 10px;
+  border: none;
+  border-radius: 5px;
+  height: 40px;
+  font-size: 1rem;
+  outline: none;
+  background-color: rgba(128, 128, 128, 0.106);
+}
+
+input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+}
+
+textarea {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  height: 100px;
+  font-size: 1rem;
+  outline: none;
+  background-color: rgba(128, 128, 128, 0.106);
+}
+
+textarea::placeholder,
+input::placeholder {
+  font-size: 1rem;
+  color: rgba(128, 128, 128, 0.448);
+}
+
 #roundedImage {
   border-radius: 50%;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);

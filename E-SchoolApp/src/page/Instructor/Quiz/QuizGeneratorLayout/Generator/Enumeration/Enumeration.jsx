@@ -16,11 +16,11 @@ const Enumeration = () => {
         <p id={style.errorMessage}>Error message</p>
       </div>
       <div className='d-flex w-100 justify-content-around align-items-center'>
-        <div className='d-flex gap-1'>
+        <div className='d-flex  gap-1 align-items-center'>
             <input type='checkbox'/>
             <label className='fs-ls-6'>Required</label>
         </div>
-        <div className='d-flex gap-1'>
+        <div className='d-flex  gap-1 align-items-center'>
             <input type='checkbox'/>
             <label className='fs-lg-6'>Key Sensitive</label>
         </div>

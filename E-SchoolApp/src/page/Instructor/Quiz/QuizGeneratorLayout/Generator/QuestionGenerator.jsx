@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import style from './QuestionGenerator.module.css'
 import Enumeration from '../Generator/Enumeration/Enumeration'
+import MultipleChoice from './MultipleChoice/MultipleChoice'
 
 const QuestionGenerator = () => {
     
@@ -51,7 +52,7 @@ const QuestionGenerator = () => {
         return <Enumeration/>
 
         case 'Multiple Choice':
-        return 'Presents a question with several answer options, where only one or more are correct.'
+        return <MultipleChoice/>
 
         case 'Fill in the blank':
         return 'Provides statements with missing words that participants must accurately complete.'
