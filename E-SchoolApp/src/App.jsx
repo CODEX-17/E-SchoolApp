@@ -17,7 +17,7 @@ function App() {
   },[])
 
   return (
-    <>
+
       <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Routes>
           <Route path="/" element={<LoginPage/>} />
@@ -26,7 +26,7 @@ function App() {
           <Route path="/adminPage" element={<AdminPage/>} />
         </Routes>
       </BrowserRouter>
-    </>
+  
   )
 }
 

@@ -52,12 +52,15 @@ useEffect(() => {
             const response = await getClassesByAccount(acctID)
 
             if (response) {
-                setshowPreview('classPage')
-                console.log(response)
-                //Join room as acctID will becomes roomID for notifications
-                response.forEach(classes => socket.emit('joinRoom', classes.classCode))
+                
+                setTimeout(() => {
+                    setshowPreview('classPage')
 
-                setClassesList(response)
+                    //Join room as acctID will becomes roomID for notifications
+                    response.forEach(classes => socket.emit('joinRoom', classes.classCode))
+
+                    setClassesList(response)
+                }, 3000)
                 
             }
 
@@ -132,7 +135,7 @@ const backToHomePage = (choose) => {
 
         {
             showPreview === 'loading' && (
-                <div className={style.exitTrapNotif}>
+                <div className={style.loadingContainer}>
                     <ProgressBar
                         id={style.progressBar}
                         visible={true}
