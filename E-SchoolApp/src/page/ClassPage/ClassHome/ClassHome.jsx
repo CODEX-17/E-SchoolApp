@@ -1,41 +1,118 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import style from './ClassHome.module.css'
 import { GoHeart } from "react-icons/go"
 import { GoHeartFill } from "react-icons/go"
-import { AiOutlineLike, AiFillFilePpt, AiOutlineDelete } from "react-icons/ai"
+
 import { AiFillLike } from "react-icons/ai"
 import { FaFileImage, FaRegImages } from "react-icons/fa6"
 import { MdSend, MdOutlineAttachment } from "react-icons/md"
 import { FaFilePdf, FaFileWord, FaFileExcel } from "react-icons/fa"
 import { FiDownload } from "react-icons/fi"
-import FilesClass from '../components/FilesClass'
+import FilesClass from '../../../components/FilesClass'
 import { RiSendPlaneFill } from "react-icons/ri"
 import { BiExit } from "react-icons/bi"
-import ClassMembers from '../components/ClassMembers';
-import { useNavigateStore } from '../stores/useNavigateStore';
+import ClassMembers from '../../../components/ClassMembers';
+import { useNavigateStore } from '../../../stores/useNavigateStore';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios'
 import { IoMdSettings } from "react-icons/io";
-import ClassQuizSetup from './ClassQuizSetup';
+import ClassQuizSetup from '../../ClassQuizSetup';
 import { GiNotebook } from "react-icons/gi";
-import { useFilesStore } from '../stores/useFilesStore';
+import { useFilesStore } from '../../../stores/useFilesStore';
 import { SiFiles } from "react-icons/si";
 import { ProgressBar } from  'react-loader-spinner';
 import { IoCloseCircle } from "react-icons/io5";
-import LeaderBoard from './LeaderBoard';
+import LeaderBoard from '../../LeaderBoard';
 import { BiSolidMessageDetail } from "react-icons/bi";
-import { IoDocumentText } from "react-icons/io5";
+
 import { FaFolderOpen } from "react-icons/fa";
+
+import { 
+    House,
+    NotebookPen,
+    Users,
+    AlignStartVertical,
+    FolderClosed,
+    LogOut,
+    SquareChartGantt,
+    PanelRightOpen,
+    PanelLeftOpen,
+} from 'lucide-react';
+
+
+
 import io from 'socket.io-client'
+import { UserDetailContext } from '../../../context/UserDetailContext'
+import { NavigationContext } from '../../../context/NavigationContext'
+import { getFileByFileID } from '../../../services/fileServices'
+import ImageRender from '../../../components/ImageRender/ImageRender'
+import Feed from './Feed/Feed'
+import { ClassContext } from '../../../context/ClassContext'
 const socket = io.connect('http://localhost:5001')
 
 
-const ClassHome = ({ currentClassName, currentImageClass, classCodeCurrent, currentMemberID, backToHomePage, classDesc, currentclassID }) => {
+const ClassHome = () => {
+
+  
+ const sideBarMenuList = [
+    { name: 'Home', icon: <House color='#fff' size={20}/>, type: 'all' },
+    { name: 'Create Quiz', icon: <NotebookPen color='#fff' size={20}/>, type: 'faculty' },
+    { name: 'Class Members', icon: <Users color='#fff' size={20}/>, type: 'all' },
+    { name: 'Manage Class', icon: <SquareChartGantt color='#fff' size={20}/>, type: 'faculty' },
+    { name: 'Leaderboard', icon: <AlignStartVertical color='#fff' size={20}/>, type: 'faculty' },
+    { name: 'Files', icon: <FolderClosed color='#fff' size={20}/>, type: 'faculty' },
+    { name: 'Exit', icon: <LogOut color='#fff' size={20}/>, type: 'all' },
+ ]
+
+ const { userDetails } = useContext(UserDetailContext)
+ const { setCurrentRoute } = useContext(NavigationContext)
+ const { currentClass } = useContext(ClassContext)
+
+ const [isHideSideBar, setIsHideSideBar] = useState(false)
+
+ //size of screen
+ const [screenSize, setScreenSize] = useState(window.innerWidth)
+
+ useEffect(() => {
+    const handleResize = () => {
+      setScreenSize(window.innerWidth)
+    }
+  
+    window.addEventListener('resize', handleResize)
+  
+    // Set initial width
+    handleResize()
+  
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
 
+ 
+
+
+ const renderArea = () => {
+
+    switch(choose) {
+        case 'Home': 
+            return <Feed/>
+        case 'Create Quiz': 
+            return <ClassQuizSetup subjectName={subjectName} navigateClass={navigateClass} postType={postType} classCode={classCode}/>
+        case 'Class Members': 
+            return <ClassMembers memberID={memberID} currentClassCode={currentClassCode}/>
+        case 'Manage Class': 
+            return <Feed/>
+        case 'Leaderboard': 
+            return <LeaderBoard/>
+        case 'Files': 
+            return <FilesClass classCode={classCode}/>
+    }  
+    
+ }
+
+ 
  const [uniqueId, setuniqueId] = useState('')
  const [likeReact, setlikeReact] = useState(false)
- const [choose, setChoose] = useState('home')
+ const [choose, setChoose] = useState('Home')
  const [postContent, setPostContent] = useState('')
  const [postSet, setpostSet] =useState([])
  const [name, setName] = useState('Rumar C. Pamparo')
@@ -46,8 +123,8 @@ const ClassHome = ({ currentClassName, currentImageClass, classCodeCurrent, curr
  const [heartCount, setheart] = useState(0)
  const [likeCount, setlike] = useState(0)
  const [subjectName, setsubjectName] = useState(null)
- const [classCode, setclassCode] =useState(classCodeCurrent)
- const [classDescription, setclassDescription] = useState(classDesc)
+ const [classCode, setclassCode] =useState()
+ const [classDescription, setclassDescription] = useState()
  const [imageFile, setimageFile] = useState(null)
  const [docxFileUploaded, setdocxFileUploaded] = useState(null)
  const [file, setFile] = useState(null)
@@ -105,14 +182,19 @@ const ClassHome = ({ currentClassName, currentImageClass, classCodeCurrent, curr
     weekday: 'short' 
  })
 
+
+ useEffect(() => {
+    setshowLoading(false)
+  }, [choose])
+
  //Props variables
- const [currentClass, setCurrentClass] = useState(null)
- const [currentClassCode, setCurrentClassCode] = useState(classCodeCurrent)
- const [memberID, setmemberID] = useState(currentMemberID)
  
- const [updatedClassCode, setupdatedClassCode] = useState(classCodeCurrent)
- const [updatedClassName, setupdatedClassName] = useState(currentClassName)
- const [updatedClassDesc, setupdatedClassDesc] = useState(classDesc)
+ const [currentClassCode, setCurrentClassCode] = useState()
+ const [memberID, setmemberID] = useState()
+ 
+ const [updatedClassCode, setupdatedClassCode] = useState()
+ const [updatedClassName, setupdatedClassName] = useState()
+ const [updatedClassDesc, setupdatedClassDesc] = useState()
  const [currentClassImageID, setcurrentClassImageID] = useState()
 
 
@@ -163,137 +245,145 @@ const ClassHome = ({ currentClassName, currentImageClass, classCodeCurrent, curr
     }
   
     return new Date(year, monthIndex, day, hours24, minutes);
-  };
+ }
 
- useEffect(() => {
+//  useEffect(() => {
 
-    if (currentClassCode) {
+//     if (currentClassCode) {
 
-        socket.emit('joinRoom', currentClassCode)
+//         //socket.emit('joinRoom', currentClassCode)
 
-        axios.get('http://localhost:5001/classes/getClasses')
-        .then((res) => {
-            const value = res.data
-            setclassesList(value)
+//         axios.get('http://localhost:5001/classes/getClasses')
+//         .then((res) => {
+//             const value = res.data
+//             setclassesList(value)
 
-            const filter = value.filter((data) => data.classCode === currentClassCode)
-            if (filter) {
-                generateClassImageByImageID(filter[0].imageID)
-                setsubjectName(filter[0].className)
-                setCurrentClass(filter[0])
-                setcurrentClassImageID(filter[0].imageID)
-            }
+//             const filter = value.filter((data) => data.classCode === currentClassCode)
+//             if (filter) {
+//                 generateClassImageByImageID(filter[0].imageID)
+//                 setsubjectName(filter[0].className)
+//                 setCurrentClass(filter[0])
+//                 setcurrentClassImageID(filter[0].imageID)
+//             }
             
-        })
-        .catch((err) => {
-            console.log(err)
-        })
+//         })
+//         .catch((err) => {
+//             console.log(err)
+//         })
 
 
-        //GET POST BY CLASSCODE
-        axios.get('http://localhost:5001/post/getPostByClassCode/' + currentClassCode)
-        .then((res) => {
-            const value = res.data
-            const noSchedPosts = value.filter((data) => data.schedStatus === 'no').sort((a, b) => {
-                const dateTimeA = parseDateTime(a.datePosted, a.timePosted);
-                const dateTimeB = parseDateTime(b.datePosted, b.timePosted);
-                return dateTimeA - dateTimeB;
-            }) 
-            setCurrentPost(noSchedPosts)
+//         //GET POST BY CLASSCODE
+//         axios.get('http://localhost:5001/post/getPostByClassCode/' + currentClassCode)
+//         .then((res) => {
+//             const value = res.data
+//             const noSchedPosts = value.filter((data) => data.schedStatus === 'no').sort((a, b) => {
+//                 const dateTimeA = parseDateTime(a.datePosted, a.timePosted);
+//                 const dateTimeB = parseDateTime(b.datePosted, b.timePosted);
+//                 return dateTimeA - dateTimeB;
+//             }) 
+//             setCurrentPost(noSchedPosts)
 
-            const schedPosts = value.filter((data) => data.schedStatus === 'yes')
-            setschedulePostList(schedPosts)
-        })
-        .catch((err) => {
-            console.log(err)
-        })
+//             const schedPosts = value.filter((data) => data.schedStatus === 'yes')
+//             setschedulePostList(schedPosts)
+//         })
+//         .catch((err) => {
+//             console.log(err)
+//         })
 
-        //GET REACTIONS BY POST ID
-        axios.get('http://localhost:5001/reacts/getReactsByPostID/' + currentClassCode)
-        .then((res) => {
-            const value = res.data
-            setreactionsList(value)
-        })
-        .catch((err) => {
-            console.log(err)
-        })
+//         //GET REACTIONS BY POST ID
+//         axios.get('http://localhost:5001/reacts/getReactsByPostID/' + currentClassCode)
+//         .then((res) => {
+//             const value = res.data
+//             setreactionsList(value)
+//         })
+//         .catch((err) => {
+//             console.log(err)
+//         })
 
-        //GET ALL ACCOUNT IMAGES
-        axios.get('http://localhost:5001/images/getAccountImages')
-        .then((res) => setacctImagesList(res.data))
-        .catch((err) => console.log(err))
+//         //GET ALL ACCOUNT IMAGES
+//         axios.get('http://localhost:5001/images/getAccountImages')
+//         .then((res) => setacctImagesList(res.data))
+//         .catch((err) => console.log(err))
 
-        //GET ALL QUIZ
-        axios.get('http://localhost:5001/quiz/getQuiz')
-        .then((res) => setquiz(res.data))
-        .catch((err) => console.log(err))
+//         //GET ALL QUIZ
+//         axios.get('http://localhost:5001/quiz/getQuiz')
+//         .then((res) => setquiz(res.data))
+//         .catch((err) => console.log(err))
 
-        //GET ALL SCORE
-        axios.get('http://localhost:5001/scores/getScores')
-        .then((res) => setscores(res.data))
-        .catch((err) => console.log(err))
+//         //GET ALL SCORE
+//         axios.get('http://localhost:5001/scores/getScores')
+//         .then((res) => setscores(res.data))
+//         .catch((err) => console.log(err))
 
-        //GET COMMENTS BY CLASSCODE
-        getCommentsByClassCode()
+//         //GET COMMENTS BY CLASSCODE
+//         getCommentsByClassCode()
 
-        //GET FILES BY CLASSCODE
-        getFilesByClassCode()
+//         //GET FILES BY CLASSCODE
+//         getFilesByClassCode()
 
-        //GET IMAGES BY CLASSCODE
-        getImagesByClassCode()
+//         //GET IMAGES BY CLASSCODE
+//         getImagesByClassCode()
         
+//     }
+
+//     socket.on('receivedSchedPost', (messageNotif) => {
+
+//         //GET FILES BY CLASSCODE
+//         axios.get('http://localhost:5001/files/getFilesByClassCode/' + currentClassCode)
+//         .then((res) => {
+//             const value = res.data
+//             console.log('files', value)
+//             setfilesLists(value)
+//         })
+//         .catch((err) => {
+//             console.log(err)
+//         })
+ 
+//         //GET IMAGES BY CLASSCODE
+//         axios.get('http://localhost:5001/images/getImagesByClassCode/' + currentClassCode)
+//         .then((res) => {
+//             const value = res.data
+//             console.log('images', value)
+//             setimageList(value)
+//             setshowLoading(false)
+//         })
+//         .catch((err) => {
+//             console.log(err)
+//         })
+
+//          //GET POST BY CLASSCODE
+//          axios.get('http://localhost:5001/post/getPostByClassCode/' + currentClassCode)
+//          .then((res) => {
+//              const value = res.data
+//              const noSchedPosts = value.filter((data) => data.schedStatus === 'no').sort((a, b) => {
+//                  const dateTimeA = parseDateTime(a.datePosted, a.timePosted);
+//                  const dateTimeB = parseDateTime(b.datePosted, b.timePosted);
+//                  return dateTimeA - dateTimeB;
+//              }) 
+//              setCurrentPost(noSchedPosts)
+
+//              console.log(messageNotif)
+ 
+//              const schedPosts = value.filter((data) => data.schedStatus === 'yes')
+//              setschedulePostList(schedPosts)
+//          })
+//          .catch((err) => {
+//              console.log(err)
+//          })
+         
+//     });
+
+//  },[])
+
+ 
+ const handleSelectMenu = (item) => {
+    if (item === 'Exit') {
+        setCurrentRoute('class')
+        return
     }
 
-    socket.on('receivedSchedPost', (messageNotif) => {
-
-        //GET FILES BY CLASSCODE
-        axios.get('http://localhost:5001/files/getFilesByClassCode/' + currentClassCode)
-        .then((res) => {
-            const value = res.data
-            console.log('files', value)
-            setfilesLists(value)
-        })
-        .catch((err) => {
-            console.log(err)
-        })
- 
-        //GET IMAGES BY CLASSCODE
-        axios.get('http://localhost:5001/images/getImagesByClassCode/' + currentClassCode)
-        .then((res) => {
-            const value = res.data
-            console.log('images', value)
-            setimageList(value)
-            setshowLoading(false)
-        })
-        .catch((err) => {
-            console.log(err)
-        })
-
-         //GET POST BY CLASSCODE
-         axios.get('http://localhost:5001/post/getPostByClassCode/' + currentClassCode)
-         .then((res) => {
-             const value = res.data
-             const noSchedPosts = value.filter((data) => data.schedStatus === 'no').sort((a, b) => {
-                 const dateTimeA = parseDateTime(a.datePosted, a.timePosted);
-                 const dateTimeB = parseDateTime(b.datePosted, b.timePosted);
-                 return dateTimeA - dateTimeB;
-             }) 
-             setCurrentPost(noSchedPosts)
-
-             console.log(messageNotif)
- 
-             const schedPosts = value.filter((data) => data.schedStatus === 'yes')
-             setschedulePostList(schedPosts)
-         })
-         .catch((err) => {
-             console.log(err)
-         })
-         
-    });
-
- },[])
-
- 
+    setChoose(item)
+ }
 
  const getCommentsByClassCode = () => (
 
@@ -367,25 +457,9 @@ const ClassHome = ({ currentClassName, currentImageClass, classCodeCurrent, curr
     })
  )
 
-// socket.on('postNow', (data) => {
-        //     let oldData = [...currentPost]
-        //     oldData.push(data)
-        //     console.log('oldData',oldData)
-        //     setCurrentPost(oldData)
-        //     uploadPost(data)
-        //     const message = 'Successfully posted.'
-        //     notify(message, 'success')
-        // })
-        
 
 
-const handleUploadImageClick = () => {
-    inputImageFileRef.current.click()
-}
 
-const handleUploadFilesClick = () => {
-    inputFilesRef.current.click()
-}
 
 const closePostModal = () => {
     setPostContent('')
@@ -598,7 +672,6 @@ const generateID = () => {
     return result
  }
 
-
  const generateQuizname = (quizID) => {
     if (quiz) {
         const filter = quiz.filter((q) => q.quizID === quizID)
@@ -706,144 +779,9 @@ const handleUploadFiles = () => {
 }
 
 
-// Delete post icon show if the user are poster
-const deleteShow = (acctID) => {
-    if (acctID === userAccount.acctID) {
-        return true
-    }
-
-    return false
-}
 
 
-// Submit new post
-const handlePost = () => {
 
-        // insert current post in variable
-        let updated = [...currentPost]
-        
-        let updatedPost = {
-            postID: generateID(),
-            acctID: userAccount.acctID,
-            name: generateFullname(),
-            timePosted: time,
-            datePosted: date,
-            postContent,
-            replyID: generateID(),
-            image: file,
-            file: docxFiles,
-            heartCount,
-            likeCount,
-            classCode: currentClassCode,
-            subjectName,
-            postType: 'normal',
-            quizID: 'none',
-            schedID: 'none',
-            schedStatus: 'no',
-            dueStatus: 'no',
-            closeStatus: 'no',
-            duration: 0,
-            random: 'none',
-        }
-
-        // if image is not null it return unique id
-        if (updatedPost.image) {
-            updatedPost.imageID = generateID()
-        }else {
-            updatedPost.imageID = 'none'
-        }
-
-        // if file is not null it return unique id
-        if (updatedPost.file) {
-            updatedPost.fileID = generateID()
-        }else {
-            updatedPost.fileID = 'none'
-        }
-
-        // add post in variable
-        updated.push(updatedPost)
-        // setCurrentPost(updated)
-
-        console.log('updatedPost', updatedPost)
-
-        // API for adding post
-        axios.post('http://localhost:5001/post/addPost', updatedPost )
-        .then((res) => {
-            const data = res.data
-            console.log(data.message)
-
-            //API for adding image of post
-            if (updatedPost.image) {
-                
-                const images = updatedPost.image
-                const formData = new FormData
-                formData.append('imageID', updatedPost.imageID)
-                formData.append('dateUploaded', updatedPost.datePosted)
-                formData.append('timeUploaded', updatedPost.timePosted)
-                formData.append('acctID', updatedPost.acctID)
-                formData.append('classCode', updatedPost.classCode)
-
-                for (let i = 0; i < images.length; i++) {
-                    formData.append('image', images[i])
-                }
-                
-                axios.post('http://localhost:5001/images/addImage', formData )
-                .then((res) => {
-                    const data = res.data
-                    setshowLoading(true)
-                    getImagesByClassCode()
-                    console.log(data.message)
-                })
-                .catch((err) => {
-                    console.log(err)
-                })
-
-            }
-
-            //API for adding docs of post
-            if (updatedPost.file) {
-                
-                const files = updatedPost.file
-                const formData = new FormData
-                formData.append('fileID', updatedPost.fileID)
-                formData.append('dateUploaded', updatedPost.datePosted)
-                formData.append('timeUploaded', updatedPost.timePosted)
-                formData.append('acctID', updatedPost.acctID)
-                formData.append('classCode', updatedPost.classCode)
-                
-                for (let i = 0; i < files.length; i++) {
-                    formData.append('file', files[i])
-                }
-
-                axios.post('http://localhost:5001/files/addFiles', formData)
-                .then((res) => {
-                    const data = res.data
-                    getFilesByClassCode()
-                    console.log(data.message)
-                })
-                .catch((err) => {
-                     console.log(err)
-                 })
-
-            }
-
-            // reset variables
-            setPostContent('')
-            setFile(null)
-            setdocxFiles(null)
-            setshowPostModal(false)
-
-            //Update post
-            socket.emit('UpdatePost', currentClassCode)
-
-            // notification for success
-            const message = 'posted successfully'
-            notify(message, 'success')
-            
-        })
-        .catch((err) => console.log(err))
-
-}
 
 const handleCalculateReact = (postID, type) => {
     if (reactionsList) {
@@ -858,18 +796,7 @@ const handleCalculateReact = (postID, type) => {
     }
 }
 
-const handleIfalreadyClicked = (postID, type) => {
-    if (reactionsList) {
-        const filter = reactionsList.filter((data) => data.postID === postID && data.reactType === type && data.acctID === userAccount.acctID)
-        if (filter.length > 0) {
-            return true
-        }else {
-            return false
-        }
-    }
-    
-    
-}
+
 
 const clickReact = (postID, type) => {
 
@@ -990,9 +917,6 @@ const shortenFileName = (fileName) => {
     return fileName
 }
 
-const handleExit = () => {
-    backToHomePage('classPage')
-}
 
 const handleTakeQuiz = (quizID, postID) => {
     const obj = {
@@ -1114,11 +1038,6 @@ const handleViewScore = (quizID) => {
     setcurrentScore(filter[0])
 }
 
-const handleChooseHome = () => {
-    setChoose('home')
-}
-
-
 //Handle function when click the comment icon
 const handleShowComments = (postID) => {
 
@@ -1142,38 +1061,11 @@ const handleShowComments = (postID) => {
 }
 
 
-const getImageUrlsByImageID = (imageID) => {
-    if (imageID && imageList) {
-        const url = 'http://localhost:5001/'       
-        const filter = imageList.filter((data) => data.imageID === imageID).map((data) => url + data.data)
-        return filter
-    }
-    
-}
+
 
   return (
     <div className={style.container}>
-        <ToastContainer/>
 
-        {
-            showLoading && (
-                <div className={style.exitTrapNotif}>
-                    <ProgressBar
-                        id={style.progressBar}
-                        visible={true}
-                        height="80"
-                        width="80"
-                        color="green"
-                        barColor= '#3E3F40'
-                        borderColor= '#099AED'
-                        ariaLabel="progress-bar-loading"
-                        wrapperStyle={{}}
-                        wrapperClass=""
-                    />
-                    <p>Loading...</p>
-                </div>
-            )
-        }
 
         {
             showComments && selectedPost && (
@@ -1321,81 +1213,7 @@ const getImageUrlsByImageID = (imageID) => {
             )
         }
 
-        {
-            showPostModal && (
-                <div className={style.postModalBackgroundDIV}>
-                    <div className={style.postModalContainer}>
-                        <div className={style.headerPostModal}>
-                            <div className='d-flex gap-2 align-items-center'>
-                                <img src={imageUserPost(userAccount.acctID)} alt='profile picture' id={style.imgDp}/>
-                                <p id={style.nameInPostModal}>{generateFullname()}</p>
-                            </div>
-                            <BiExit size={20} title='closed' cursor={'pointer'} onClick={closePostModal}/>
-                        </div>
-                        <div className={style.bodyPostModal}>
-                        {
-                            file && 
-                            <div className={style.fileListPost}>
-                                {
-                                    file.map((data, index) => (
-                                    <div className={style.imageDivPreview} key={index}>
-                                        <IoCloseCircle id={style.deleteImagePreview} size={25} onClick={() => deleteImageInPostModal(index)}/>
-                                        <img src={URL.createObjectURL(data)}></img>
-                                    </div>
-                                    ))
-                                }
-                            </div>
-                        }
-
-                        {
-                            docxFiles && 
-                            <div className={style.fileListPost}>
-                                {
-                                    docxFiles.map((data, index) => (
-                                    <div className={style.fileDivPreview} key={index}>
-                                        <IoCloseCircle id={style.deleteImagePreview} size={25} onClick={() => deleteFilesInPostModal(index)}/>
-                                        <IoDocumentText size={25} color='white'/>
-                                        <p>{data.name}</p>
-                                    </div>
-                                    ))
-                                }
-                            </div>
-                        }
-                            
-                            <textarea placeholder='Share your thoughts here...' onChange={(e) => setPostContent(e.target.value)}></textarea>
-                            <div className='d-flex w-100 mt-2 mb-5 gap-2'>
-                                <div id={style.addImageUploadLayout} onClick={handleUploadImageClick}>
-                                    <input 
-                                        type="file"
-                                        ref={inputImageFileRef}
-                                        accept='image/*'
-                                        onChange={handleGetImage}
-                                        style={{ display:'none'}}
-                                        multiple
-                                    />
-                                    <FaRegImages color='#099AED' size={23} />
-                                    <h2>Add Image</h2>
-                                </div>
-                                <div id={style.addImageUploadLayout} onClick={handleUploadFilesClick}>
-                                    <input 
-                                        type="file"
-                                        ref={inputFilesRef}
-                                        accept=".doc, .docx, .pdf, .txt, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-                                        onChange={handleGetFiles}
-                                        style={{ display:'none'}}
-                                        multiple
-                                    />
-                                    <MdOutlineAttachment color='#099AED' size={23} />
-                                    <h2>Add File</h2>
-                                </div>
-                            </div>
-                            
-                            <button className={style.btnPostModal} onClick={handlePost}>Post</button>
-                        </div>
-                    </div>
-                </div>
-            )
-        }
+        
 
         {
             showSchedPost && (
@@ -1434,19 +1252,19 @@ const getImageUrlsByImageID = (imageID) => {
         }
 
         {
-                showChangeFileModal && (
-                    <div className={style.changeFileContainer}>
-                        <div className={style.headerImagePic}>
-                            <div className='d-flex gap-2 align-items-center'>
-                                <p>Upload File</p>
-                            </div>
-                             
-                            <BiExit size={20} title='closed' cursor={'pointer'} onClick={() => setshowChangeFileModal(false)}/>
+            showChangeFileModal && (
+                <div className={style.changeFileContainer}>
+                    <div className={style.headerImagePic}>
+                        <div className='d-flex gap-2 align-items-center'>
+                            <p>Upload File</p>
                         </div>
-                        <input type="file" accept='.doc, .docx, .ppt, .pptx, .pdf, .txt, .rtf, .odt, .odp, .ods, .xls, .xlsx, .csv' id={style.imgUpload} onChange={handleGetFiles}/>
-                        <button className={style.btnChangeImage} onClick={handleUploadFiles}>Upload</button>
+                            
+                        <BiExit size={20} title='closed' cursor={'pointer'} onClick={() => setshowChangeFileModal(false)}/>
                     </div>
-                )
+                    <input type="file" accept='.doc, .docx, .ppt, .pptx, .pdf, .txt, .rtf, .odt, .odp, .ods, .xls, .xlsx, .csv' id={style.imgUpload} onChange={handleGetFiles}/>
+                    <button className={style.btnChangeImage} onClick={handleUploadFiles}>Upload</button>
+                </div>
+            )
         }
 
         {
@@ -1467,222 +1285,114 @@ const getImageUrlsByImageID = (imageID) => {
                 )
         }
 
-        <div className={style.leftContent}>
+        <div 
+            className={style.sideBarContainer}
+            style={{ 
+                maxWidth: isHideSideBar? 70 : 400,
+                width: isHideSideBar? 70 : 400, 
+                padding: isHideSideBar? 2 : 20,  
+                position: isHideSideBar? 'relative' : 'absolute'
+            }}
+        >
+           
             {
-                isShowSettings ? (
+                screenSize <= 1024 &&
+                <div 
+                    className='d-flex w-100 pb-4'
+                    style={{ justifyContent: isHideSideBar? 'center' : 'end', paddingTop: isHideSideBar? 20 : 0}}
+                >
+                    {
+                        
+                        isHideSideBar ?
+                            <PanelLeftOpen 
+                                size={20} 
+                                title='Show Sidebar'
+                                cursor={'pointer'}
+                                onClick={() => setIsHideSideBar(!isHideSideBar)}
+                            />
+                        : 
+                            <PanelRightOpen 
+                                size={20} 
+                                title='Hide Sidebar'
+                                cursor={'pointer'}
+                                onClick={() => setIsHideSideBar(!isHideSideBar)}
+                            /> 
+                    }
+                    
+                </div>
+            }
+            
+            <div className='w-100 h-auto h-100 d-flex flex-column align-items-center justify-content-center mt-3'>
+               
+                <div 
+                    className={style.imageContainer}
+                    style={{ width: isHideSideBar? 50 : 200, height: isHideSideBar? 50 : 200, backgroundColor: 'red'}}
+                >
+                    <ImageRender image={currentClass?.fileID} />
+                </div>
+                {
+                    !isHideSideBar && 
                     <>
-                        <IoMdSettings size={25} title='setting class' id={style.settings} onClick={() => setisShowSettings(false)}/>
-                        <img src={classImage} alt="pic" id={style.imgClass} />
                         <h2>{currentClass?.className}</h2>
-                        <p>{currentClassCode}</p>
-                        <button className={choose === 'home' ? style.btnNavActive : style.btnNav} onClick={handleChooseHome}>Home</button>
-                        {
-                            userAccount?.acctype === 'faculty' && (
-                                <>
-                                    <button className={choose === 'quizSetup' ? style.btnNavActive : style.btnNav} onClick={() => setChoose('quizSetup')}>Create Quiz</button>
-                                    <button className={choose === 'leaderboard' ? style.btnNavActive : style.btnNav} onClick={() => setChoose('leaderboard')}>Leaderboard</button>
-                                    <button className={choose === 'files' ? style.btnNavActive : style.btnNav} onClick={() => setChoose('files')}>Files</button>
-                                </>
-                            )
-                        }
-                        <button className={choose === 'members' ? style.btnNavActive : style.btnNav} onClick={() => setChoose('members')}>Class Members</button>
-                        <button className={choose === 'exit' ? style.btnNavActive : style.btnNav} onClick={() => handleExit()}>Exit</button>                   
-                    </>
-                ) : (
-                    <div className={style.settingDiv}>
-                        <div
-                            className={style.circleUpload}
-                            onDrop={handleDrop}
-                            onDragOver={preventDefault}
-                            onDragEnter={handleDragEnter}
-                            onDragLeave={handleDragLeave}
-                        >
-                            { uploadedImage ? (
-                                <img src={URL.createObjectURL(uploadedImage)} alt="Uploaded" className={style.imgUploaded} />
-                            ) : ( 
-                                'Drag & drop an image here.'
-                            )}
-                        </div>
-                        <input 
-                            type="file"
-                            accept="image/*"
-                            onChange={handleUploadImageChange}
-                            style={{ display: 'none' }}
+                        <p>{currentClass?.classCode}</p>
+                    </> 
+                }
+                
+            </div>
+            
+            <div className='w-100 h-100 d-flex align-items-center flex-column mt-4'>
+                {
+                    sideBarMenuList.map((item, index) => {
+                    
+                        const isActive = choose === item.name ? true : false
+                        if (userDetails.acctype === 'faculty' && item.type !== 'faculty' && item.type !== 'all') return
 
+                        return(
+                            <button 
+                                key={index}
+                                className={isActive ? style.buttonSideBarActive : style.buttonSideBar} 
+                                style={{ 
+                                    gap: isHideSideBar? 0 : 10, 
+                                    padding: isHideSideBar? 0 : 20,
+                                    borderRadius: isHideSideBar? '50%': 5, 
+                                    justifyContent: isHideSideBar? 'center': 'start',
+                                    width: isHideSideBar? 50 : '80%',
+                                }}
+                                onClick={() => handleSelectMenu(item.name)}
+                            >
+                                {item.icon}
+                                {!isHideSideBar && item.name}
+                            </button>
+                        )
+                    })
+                }
+            </div>
+        </div>
+        <div 
+            className={style.rightContent}
+            style={{ width: isHideSideBar? '100%' : '100%', }}
+        >
+            {
+                showLoading && (
+                    <div className={style.loadingContainer}>
+                        <ProgressBar
+                            id={style.progressBar}
+                            visible={true}
+                            height="80"
+                            width="80"
+                            color="green"
+                            barColor= '#3E3F40'
+                            borderColor= '#099AED'
+                            ariaLabel="progress-bar-loading"
+                            wrapperStyle={{}}
+                            wrapperClass=""
                         />
-                        <div className='d-flex flex-column w-100'>
-                            <p id={style.titleSetting}>Class Name</p>
-                            <input type="text" value={updatedClassName} onChange={(e) => setupdatedClassName(e.target.value)}/>
-                            <p id={style.titleSetting}>Class Code</p>
-                            <input type="text" ref={inputRef} value={updatedClassCode} onChange={handleEditedClassCode}/>
-                            {isShowErrorMessage && <p className={style.errorMessage}>Class code already exist.</p>}
-                            
-                            <p id={style.titleSetting}>Description</p>
-                            <textarea type="text" value={updatedClassDesc} placeholder='input class description...' onChange={(e) => setupdatedClassDesc(e.target.value)}/>
-                            <div className='d-flex gap-2'>
-                                <button onClick={handleSaveSetting}>Save</button>
-                                <button onClick={() => setisShowSettings(true)} style={{ backgroundColor: '#3E3F40' }}>Back</button>
-                            </div>
-                        </div>
+                        <p>Loading...</p>
                     </div>
                 )
             }
-        </div>
-        <div className={style.rightContent}>
-            
-            {
-                choose === 'home' && (
-                    <>
-                        <div className={style.card}>
-                            <div className='d-flex flex-column gap-2'>
-                                <div className='d-flex align-items-center gap-2'>
-                                    <img src={imageUserPost(userAccount.acctID)} alt="profile" id={style.imgDp}/>
-                                    <div className={style.postBotton} onClick={() => setshowPostModal(true)}>Share your thoughts here...</div>
-                                    <FaRegImages size={20} title='View Draft Scheduled Post' onClick={() => setShowSchedPost(!showSchedPost)}/>
-                                </div>
-                            </div>
-                        </div>
-                        <div className={style.listPostContainer}>
-                        {
-                            currentPost ? (
-                                currentPost.slice().reverse().map((post, index) => (
-                                    <div className={style.card} key={index}>
-                                        <div className={style.top}>
-                                            <img src={imageUserPost(post.acctID)} alt="profile" id={style.imgDp}/>
-                                            <h2>{post.name}</h2>
-                                            <p>{post.timePosted +' ('+post.datePosted+')'}</p>
-                                                {
-                                                    deleteShow(post.acctID) && <AiOutlineDelete id={style.deleteBtn} title='delete' onClick={() => handleDeletePost(post.postID, post.imageID, post.fileID)}/>
-                                                }
-                                        </div>
-                                        <div className={style.body}>
-                                            <p>{post.postContent}</p>
-                                            <div className={style.imgListInPost}>
-                                                {
-                                                    post.imageID !== 'none' && (
-                                                        getImageUrlsByImageID(post.imageID) &&
-                                                        getImageUrlsByImageID(post.imageID).map((data, index) => (
-                                                            <div key={index} className={style.imgContainer} onClick={() => handleViewImage(data)}>
-                                                                <img src={data} alt="photo" id={style.imgSend}/>
-                                                            </div>
-                                                        ))
-                                                    )
-                                                }
-                                            </div>
-                                            
-                                            {
-                                                post.fileID !== 'none'  && (
-                                                    getFilesUrlsByFileID(post.fileID) &&
-                                                    getFilesUrlsByFileID(post.fileID).map((data, index) => (
-                                                        <div id={style.filePdf}>
-                                                            <SiFiles size={30} color='#F45050'/>
-                                                            <p>{shortenFileName(data.name)}</p>
-                                                            {
-                                                                checkIfPDFfile(data.data) && <div id={style.viewFile} onClick={() =>handleViewFile(data.data)}>View</div>
-                                                            }
-                                                            
-                                                            <FiDownload size={20} cursor={'pointer'} color='#3E3F40' onClick={() =>handleDownload(data.data)}/>
-                                                        </div>
-                                                    ))
-                                                )
-                                            }
 
-                                            {
-                                                post.quizID !== 'none' && (
-                                                        <div id={style.quizBox}>
-                                                            <div className='d-flex gap-2'>
-                                                                <GiNotebook size={20} color='#186F65'/>
-                                                                <p>{quiz?.filter((q) => q.quizID === post.quizID).map((q)=> q.quizTitle)}</p>
-                                                            </div>
-                                                            {
-                                                                post.dueStatus === 'yes' &&
-                                                                <div id={style.due}>Due</div>
-                                                            }
-
-                                                            {
-                                                                post.closeStatus === 'yes' &&
-                                                                <div id={style.closed}>Closed</div>
-                                                            }
-                                                            
-                                                            {
-                                                        
-                                                                userAccount?.acctype === 'student' && post.closeStatus === 'no' && (
-                                                                    !ifAlreadyTaken(post.quizID) ? (
-                                                                        <button className={style.btnView} onClick={() => handleTakeQuiz(post.quizID, post.postID)}>Take</button>
-                                                                    ):(
-                                                                        <button className={style.btnView} style={{ backgroundColor: '#4F6F52' }} onClick={() =>handleViewScore(post.quizID)}>Score</button>
-                                                                    )
-                                                                )
-                                                            }
-                                                            
-                                                        </div>
-                                                )
-                                            }
-
-                                        </div>
-                                        
-                                        <div className={style.footer}>
-                                            { 
-                                                handleIfalreadyClicked(post.postID, 'heart') ?
-                                                        <GoHeartFill 
-                                                            onClick={() => unClickReact(post.postID, 'heart')}
-                                                            cursor={'pointer'}
-                                                            size={20}
-                                                            color='#F45050'
-                                                        />
-                                                     : 
-                                                        <GoHeart 
-                                                            cursor={'pointer'}
-                                                            size={20}
-                                                            color='#3E3F40'
-                                                            onClick={() => clickReact(post.postID, 'heart')}
-                                                        />
-                                                         
-                                            }
-                                            <p>{handleCalculateReact(post.postID, 'heart')}</p>
-                        
-                                            {
-                                                handleIfalreadyClicked(post.postID, 'like') ? 
-                                                    <AiFillLike
-                                                        onClick={() => unClickReact(post.postID, 'like')}
-                                                        cursor={'pointer'}
-                                                        size={20}
-                                                        color='#3081D0'
-                                                    /> :
-                                                    <AiOutlineLike
-                                                        onClick={() => clickReact(post.postID, 'like')}
-                                                        cursor={'pointer'}
-                                                        size={20}
-                                                        color='#3E3F40'
-                                                    />
-                                            }
-                                            <p>{handleCalculateReact(post.postID, 'like')}</p>
-                                            
-                                            <BiSolidMessageDetail 
-                                                cursor={'pointer'}
-                                                size={20}
-                                                color='#508D69'
-                                                onClick={() =>handleShowComments(post.postID)}
-                                            />
-                                                
-                                            
-                                            
-                                        </div>
-                                        
-                                    </div>
-                                    
-                                ))
-                           
-                             ) : ('no post')
-                        }
-                        </div>
-                    </>
-                )
-            } 
-            { choose === 'files' && <FilesClass classCode={classCode}/> }
-            { choose === 'leaderboard' && <LeaderBoard/> }
-            { choose === 'quizSetup' && <ClassQuizSetup subjectName={subjectName} navigateClass={navigateClass} postType={postType} classCode={classCode}/> }
-            { choose === 'members' && <ClassMembers memberID={memberID} currentClassCode={currentClassCode}/>}
+            {renderArea()}
 
         </div>
     </div>

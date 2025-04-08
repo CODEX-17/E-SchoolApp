@@ -13,6 +13,7 @@ import { ToastContainer } from 'react-toastify';
 import { NavigationContext } from '../../context/NavigationContext'
 import QuizMenu from '../Instructor/Quiz/QuizMenu/QuizMenu'
 import QuizGeneratorLayout from '../Instructor/Quiz/QuizGeneratorLayout/QuizGeneratorLayout'
+import ClassHome from '../ClassPage/ClassHome/ClassHome'
 
 const HomePage = () => {
 
@@ -37,6 +38,7 @@ const HomePage = () => {
           </div>
           <div className={style.renderArea}>
             {currentRoute === 'class' && <ClassPage/>}
+            {currentRoute === 'classHome' && <ClassHome/>}
             {currentRoute === 'activity' && <ActivityPage/>}
             {currentRoute === 'chat' && <ChatPage/>}
             {currentRoute === 'quizMenu' && <QuizMenu/>}

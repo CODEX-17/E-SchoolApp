@@ -20,6 +20,24 @@ router.get('/getAccounts', (req, res) => {
     })
 })
 
+//API get accounts form database
+router.get('/getProfileDataByAcctID/:acctID', (req, res) => {
+    
+    const { acctID } = req.params
+    console.log(acctID)
+    const query = 'SELECT accounts.*, files.data FROM accounts INNER JOIN files ON accounts.fileID = files.fileID WHERE accounts.acctID = ?'
+
+    db.query(query, [acctID],(error, data, fields) => {
+        if (error) {
+            console.error(`Error in getting the account info.`)
+            res.status(404).send(error)
+        } else {
+            console.error(`Successfully get the account info.`)
+            res.status(200).json(data)
+        }
+    })
+})
+
 //API DELETE ACCOUNT BY ACCTID
 router.post('/deleteAccount/:acctID', (req, res) => {
     

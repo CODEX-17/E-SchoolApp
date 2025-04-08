@@ -22,6 +22,7 @@
     "howler": "^2.2.4",
     "html2pdf.js": "^0.10.1",
     "lodash": "^4.17.21",
+    "lucide-react": "^0.487.0",
     "mammoth": "^1.6.0",
     "react": "^18.2.0",
     "react-doc-viewer": "^0.1.5",

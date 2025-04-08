@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import style from './ClassPage.module.css'
 import { AiFillEyeInvisible } from "react-icons/ai"
 import { VscTriangleUp, VscTriangleDown } from "react-icons/vsc"
-import ClassHome from '../ClassHome'
+import ClassHome from './ClassHome/ClassHome'
 import { ProgressBar } from  'react-loader-spinner';
 import { NotificationContext } from '../../context/NotificationContext'
 import { UserDetailContext } from '../../context/UserDetailContext'
@@ -11,6 +11,7 @@ import ImageRender from '../../components/ImageRender/ImageRender'
 import AddClass from './AddClass/AddClass'
 import { ClassContext } from '../../context/ClassContext'
 import io from 'socket.io-client'
+import { NavigationContext } from '../../context/NavigationContext'
 const socket = io.connect('http://localhost:5001')
 
 const ClassPage = () => {
@@ -37,6 +38,7 @@ const [classesList, setClassesList] = useState([])
 
 const { notify } = useContext(NotificationContext)
 const { setCurrentClass } = useContext(ClassContext)
+const { setCurrentRoute } = useContext(NavigationContext)
 
 useEffect(() => {
 
@@ -117,22 +119,15 @@ const backToHomePage = (choose) => {
     setshowPreview(choose)
 }
 
+const handleSelectClass = (data) => {
+    if (!data) return
+    console.log('data', data)
+    setCurrentClass(data)
+    setCurrentRoute('classHome')
+}
+
   return (
     <>
-        {
-            showPreview === 'classHome' && (
-                <ClassHome 
-                   currentClassName={currentClassName}
-                   classCodeCurrent={currentClassCode}
-                   currentMemberID={currentMemberID}
-                   backToHomePage={backToHomePage}
-                   currentImageClass={currentImageClass}
-                   classDesc={classDesc}
-                   currentclassID={currentclassID}
-                />
-            )
-        }
-
         {
             showPreview === 'loading' && (
                 <div className={style.loadingContainer}>
@@ -222,7 +217,7 @@ const backToHomePage = (choose) => {
                                                                     </div>
                                                                     <div 
                                                                         className='w-100 h-100 d-flex flex-column align-items-center justify-content-center'
-                                                                        onClick={() => setCurrentClass(data)}
+                                                                        onClick={() => handleSelectClass(data)}
                                                                     >
                                                                         <div id='roundedImage'  style={{ width: 50, height: 50, overflow: 'hidden',}}>
                                                                             <ImageRender image={data.fileID}/>

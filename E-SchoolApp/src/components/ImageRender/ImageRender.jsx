@@ -5,7 +5,7 @@ import { getFileByFileID } from '../../services/fileServices'
 const ImageRender = ({ image }) => {
 
   if (!image) return null
-
+  
   const [renderImage, setRenderImage] = useState(defaultImage)
 
   useEffect(() => {
