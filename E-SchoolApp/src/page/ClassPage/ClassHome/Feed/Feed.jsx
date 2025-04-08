@@ -100,7 +100,7 @@ const Feed = () => {
     <div className={style.container}>
         
         { isShowModal && 
-            <div className='position-absolute w-100 h-100'>
+            <div className='position-absolute w-100 h-100 z-3'>
                 <Modal 
                     setIsShowModal={setIsShowModal}
                 />
@@ -124,13 +124,14 @@ const Feed = () => {
                 postList.reverse().map((post, index) =>(
                     <div className={style.postCard} key={index}>
                         <div className='d-flex w-100 align-items-center justify-content-between'>
-                            <div className='d-flex w-50 align-items-center justify-content-between'>
+                            <div className='d-flex w-50 align-items-center justify-content-start gap-2'>
                                 <div className={style.imageContainer}>
                                     <ImageRender image={getFileIDByAccountID(post?.acctID)} />
                                 </div>
-
-                                <h2>{post.name}</h2>
-                                <p>{post.timePosted +' ('+post.datePosted+')'}</p>
+                                <div className='d-flex flex-column'>
+                                    <h2>{post.name}</h2>
+                                    <p>{post.timePosted +' ('+post.datePosted+')'}</p>
+                                </div>
                             </div>
                             <div className='d-flex w-50 justify-content-end'>
                                 {

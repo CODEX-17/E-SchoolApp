@@ -15,11 +15,14 @@ const Modal = ({ setIsShowModal }) => {
     const { userDetails } = useContext(UserDetailContext)
 
     const [postContent, setPostContent] = useState('')
+    const [docxFiles, setdocxFiles] = useState(null)
+    const [file, setFile] = useState(null)
+
     const inputImageFileRef = useRef(null)
     const inputFilesRef = useRef(null)
     const inputImageFileRefComment = useRef(null)
     const inputFilesRefComment = useRef(null)
-    const [docxFiles, setdocxFiles] = useState(null)
+    
     
     const handleUploadFilesClick = () => {
         inputFilesRef.current.click()
@@ -29,15 +32,18 @@ const Modal = ({ setIsShowModal }) => {
         inputImageFileRef.current.click()
     }
 
-    const handleGetFiles = (e) => {
-        e.preventDefault()
+    const handleGetFiles = (e, type) => {
         const file = e.target.files
         const fileList = Array.from(file)
-        console.log(fileList)
-        setdocxFiles(fileList)
-    }
-    
 
+        if (type === 'file') {
+            setFile(fileList)
+        }else {
+            setdocxFiles(fileList)
+        }
+
+        
+    }
     
     // // Submit new post
     // const handlePost = () => {
@@ -174,32 +180,31 @@ const Modal = ({ setIsShowModal }) => {
 
   return (
     <div className={style.container}>
-        <div className={style.postModalBackgroundDIV}>
-            <div className={style.postModalContainer}>
-                <div className={style.headerPostModal}>
-                    <div className='d-flex gap-2 align-items-center'>
-                        <div className={style.imageContainer}>
-                            <ImageRender image={userDetails?.fileID} />
-                        </div>
-                        <p id={style.nameInPostModal}>{generateFullname()}</p>
+        <div className={style.modal}>
+            <div className='d-flex w-100 align-items-center justify-content-between'>
+                <div className='d-flex gap-2 align-items-center'>
+                    <div className={style.imageContainer}>
+                        <ImageRender image={userDetails?.fileID} />
                     </div>
-                    <BiExit 
-                        size={20} 
-                        title='closed' 
-                        cursor={'pointer'} 
-                        onClick={() => setIsShowModal(false)}
-                    />
+                    <p>{generateFullname()}</p>
                 </div>
-                <div className={style.bodyPostModal}>
-                {/* {
+                <BiExit 
+                    size={20} 
+                    title='closed' 
+                    cursor={'pointer'} 
+                    onClick={() => setIsShowModal(false)}
+                />
+            </div>
+            <div className={style.bodyPostModal}>
+                {
                     file && 
                     <div className={style.fileListPost}>
                         {
                             file.map((data, index) => (
-                            <div className={style.imageDivPreview} key={index}>
-                                <IoCloseCircle id={style.deleteImagePreview} size={25} onClick={() => deleteImageInPostModal(index)}/>
-                                <img src={URL.createObjectURL(data)}></img>
-                            </div>
+                                <div className={style.imageContainer}>
+                                    <IoCloseCircle id={style.deleteImagePreview} size={25} onClick={() => deleteImageInPostModal(index)}/>
+                                    <ImageRender image={data} />
+                                </div>
                             ))
                         }
                     </div>
@@ -219,37 +224,47 @@ const Modal = ({ setIsShowModal }) => {
                         }
                     </div>
                 }
-                     */}
-                    <textarea placeholder='Share your thoughts here...' onChange={(e) => setPostContent(e.target.value)}></textarea>
-                    <div className='d-flex w-100 mt-2 mb-5 gap-2'>
-                        <div id={style.addImageUploadLayout} onClick={handleUploadImageClick}>
-                            <input 
-                                type="file"
-                                ref={inputImageFileRef}
-                                accept='image/*'
-                                onChange={handleGetFiles}
-                                style={{ display:'none'}}
-                                multiple
-                            />
-                            <FaRegImages color='#099AED' size={23} />
-                            <h2>Add Image</h2>
-                        </div>
-                        <div id={style.addImageUploadLayout} onClick={handleUploadFilesClick}>
-                            <input 
-                                type="file"
-                                ref={inputFilesRef}
-                                accept=".doc, .docx, .pdf, .txt, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-                                onChange={handleGetFiles}
-                                style={{ display:'none'}}
-                                multiple
-                            />
-                            <MdOutlineAttachment color='#099AED' size={23} />
-                            <h2>Add File</h2>
-                        </div>
+                   
+                <textarea 
+                    placeholder='Share your thoughts here...' 
+                    value={postContent}
+                    onChange={(e) => setPostContent(e.target.value)}
+                ></textarea>
+
+                <div className='d-flex w-100 mt-2 mb-3 gap-2 justify-content-end'>
+                    <div 
+                        className={style.uploadContainer} 
+                        onClick={handleUploadImageClick}
+                        title='Upload Image'
+                    >
+                        <input 
+                            type="file"
+                            ref={inputImageFileRef}
+                            accept='image/*'
+                            onChange={(e) => handleGetFiles(e, 'file')}
+                            style={{ display:'none'}}
+                            multiple
+                        />
+                        <FaRegImages color='#099AED' size={15} />
                     </div>
-                    
-                    <button className={style.btnPostModal} onClick={handlePost}>Post</button>
+                    <div 
+                        className={style.uploadContainer} 
+                        onClick={handleUploadFilesClick}
+                        title='Upload Docs'
+                    >
+                        <input 
+                            type="file"
+                            ref={inputFilesRef}
+                            accept=".doc, .docx, .pdf, .txt, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                            onChange={(e) => handleGetFiles(e, 'docs')}
+                            style={{ display:'none'}}
+                            multiple
+                        />
+                        <MdOutlineAttachment color='#099AED' size={15} />
+                    </div>
                 </div>
+                
+                <button className={style.btnPostModal} onClick={handlePost}>Post</button>
             </div>
         </div>      
     </div>
