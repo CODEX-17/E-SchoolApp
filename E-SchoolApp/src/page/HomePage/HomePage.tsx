@@ -1,7 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import Navbar from '../../components/Navbar/Navbar'
 import style from './HomePage.module.css'
-import Sidebar from '../../components/Sidebar/Sidebar'
 import ClassPage from '../ClassPage/ClassPage'
 import ChatPage from '../ChatPage'
 import ActivityPage from '../ActivityPage'
@@ -15,10 +13,18 @@ import QuizMenu from '../Instructor/Quiz/QuizMenu/QuizMenu'
 import QuizGeneratorLayout from '../Instructor/Quiz/QuizGeneratorLayout/QuizGeneratorLayout'
 import ClassHome from '../ClassPage/ClassHome/ClassHome'
 import { useNavigate } from 'react-router-dom'
+import Navbar from '../../components/Navbar/Navbar'
+import SidebarComponent from '../../components/Sidebar/Sidebar'
 
 const HomePage = () => {
 
-  const { currentRoute } = useContext(NavigationContext)
+  const navigation = useContext(NavigationContext)
+
+  if (!navigation) {
+    return null
+  }
+
+  const { currentRoute } = navigation
 
   const navigate = useNavigate()
   
@@ -37,15 +43,15 @@ const HomePage = () => {
         </div>
         <div className={style.content}>
           <div className={style.sidebar}>
-            <Sidebar/>
+            <SidebarComponent/>
           </div>
           <div className={style.renderArea}>
-            {currentRoute === 'class' && <ClassPage/>}
+            {currentRoute === 'classPage' && <ClassPage/>}
             {currentRoute === 'classHome' && <ClassHome/>}
             {currentRoute === 'activity' && <ActivityPage/>}
             {currentRoute === 'chat' && <ChatPage/>}
             {currentRoute === 'quizMenu' && <QuizMenu/>}
-            {currentRoute === 'quizGeneratorLayout' && <QuizGeneratorLayout/>} 
+            {currentRoute === 'quizGenerator' && <QuizGeneratorLayout/>} 
             {currentRoute === 'quizTake' && <QuizTake/>}
             {currentRoute === 'manageAccount' && <ManageAccout/>}
             {currentRoute === 'file' && <FilePage/>}

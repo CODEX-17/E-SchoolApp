@@ -4,15 +4,17 @@ import { AiFillEyeInvisible } from "react-icons/ai"
 import { VscTriangleUp, VscTriangleDown } from "react-icons/vsc"
 import ClassHome from './ClassHome/ClassHome'
 import { ProgressBar } from  'react-loader-spinner';
-import { NotificationContext } from '../../context/NotificationContext'
 import { UserDetailContext } from '../../context/UserDetailContext'
 import { getClassesByAccount, updateClassVisibility } from '../../services/classServices'
 import ImageRender from '../../components/ImageRender/ImageRender'
 import AddClass from './AddClass/AddClass'
-import { ClassContext } from '../../context/ClassContext'
 import io from 'socket.io-client'
+import { NotificationContext } from '../../context/NotificationContext'
+import { ClassContext } from '../../context/ClassContext'
 import { NavigationContext } from '../../context/NavigationContext'
-const socket = io.connect('http://localhost:5001')
+import { Class } from '../../types/interfaces'
+
+const socket = io('http://localhost:5001')
 
 const ClassPage = () => {
 
@@ -33,15 +35,24 @@ const [currentClassCode, setcurrentClassCode] = useState()
 const [currentclassID, setcurrentclassID] =useState()
 const [currentMemberID, setcurrentMemberID] = useState()
 
-const { userDetails } = useContext(UserDetailContext)
-const [classesList, setClassesList] = useState([])
+const accountContext = useContext(UserDetailContext)
+const notifContext = useContext(NotificationContext)
+const classContext = useContext(ClassContext)
+const navigationContext = useContext(NavigationContext)
 
-const { notify } = useContext(NotificationContext)
-const { setCurrentClass } = useContext(ClassContext)
-const { setCurrentRoute } = useContext(NavigationContext)
+if (!accountContext || !notifContext || !classContext || !navigationContext) {
+    return null
+}
+
+const { notify } = notifContext
+const { userDetails } = accountContext
+const { setCurrentClass } = classContext
+const { setCurrentRoute } = navigationContext
+
+const [classesList, setClassesList] = useState<Class[]>([])
 
 useEffect(() => {
-
+ 
     const acctID = userDetails?.acctID
 
     //Socket for account Online
@@ -59,7 +70,7 @@ useEffect(() => {
                     setshowPreview('classPage')
 
                     //Join room as acctID will becomes roomID for notifications
-                    response.forEach(classes => socket.emit('joinRoom', classes.classCode))
+                    response.forEach((classes: Class) => socket.emit('joinRoom', classes.classCode))
 
                     setClassesList(response)
                 }, 3000)
@@ -76,7 +87,7 @@ useEffect(() => {
 
 },[])
 
-const handleClassVisibility = async (id, status) => {
+const handleClassVisibility = async (id: number, status: boolean) => {
     
     try {
 
@@ -115,12 +126,9 @@ const handleCreateClass = () => {
     }
 }
 
-const backToHomePage = (choose) => {
-    setshowPreview(choose)
-}
-
-const handleSelectClass = (data) => {
+const handleSelectClass = (data: Class) => {
     if (!data) return
+
     console.log('data', data)
     setCurrentClass(data)
     setCurrentRoute('classHome')
@@ -132,11 +140,9 @@ const handleSelectClass = (data) => {
             showPreview === 'loading' && (
                 <div className={style.loadingContainer}>
                     <ProgressBar
-                        id={style.progressBar}
                         visible={true}
                         height="80"
                         width="80"
-                        color="green"
                         barColor= '#3E3F40'
                         borderColor= '#099AED'
                         ariaLabel="progress-bar-loading"

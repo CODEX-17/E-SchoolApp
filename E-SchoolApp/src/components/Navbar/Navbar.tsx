@@ -7,29 +7,17 @@ import { IoNotifications } from "react-icons/io5";
 import { BsFilePost } from "react-icons/bs";
 import { GiNotebook } from "react-icons/gi";
 import { AiOutlineDelete } from "react-icons/ai"
-import axios from 'axios';
 import io from 'socket.io-client'
 import ImageRender from '../ImageRender/ImageRender';
 import { UserDetailContext } from '../../context/UserDetailContext';
 import generateFullname from '../../utils/generateFullname';
 import { deleteAllNotification, deleteNotification, getNotificationsByAcctID } from '../../services/notificationServices';
 import { NavigationContext } from '../../context/NavigationContext';
+import { Notification } from '../../types/interfaces'
 
 const socket = io('http://localhost:5001')
 
 const Navbar = () => {
-
-
-  interface Notification {
-    notificationID: string;
-    acctID: string;
-    title: string;
-    data: string;
-    content: string;
-    date: string;
-    time: string;
-    type: string;
-  }
 
   const navigate = useNavigate()
 
@@ -48,14 +36,14 @@ const Navbar = () => {
   }
 
   if (!userContext || !userContext.userDetails) {
-    return navigate('/')
+    return null
   }
 
   const { userDetails } = userContext
   const { setCurrentRoute } = navigationContext;
 
   if (!userDetails) {
-    return navigate('/')
+    return null
   }
 
   const acctID = userDetails.acctID

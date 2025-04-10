@@ -1,8 +1,9 @@
 import { createContext, useState, ReactNode } from "react";
+import { Routes } from "../types/types";
 
-interface NavigationContextType {
-    currentRoute: string | null;
-    setCurrentRoute: React.Dispatch<React.SetStateAction<string | null>>
+export interface NavigationContextType {
+    currentRoute: Routes | null;
+    setCurrentRoute: React.Dispatch<React.SetStateAction<Routes | null>>
 }
 
 interface NavigationProviderProps {
@@ -13,7 +14,7 @@ export const NavigationContext = createContext<NavigationContextType | null>(nul
 
 export const NavigationProvider: React.FC<NavigationProviderProps> = ({ children }) => {
 
-    const [currentRoute, setCurrentRoute] = useState<string | null> ('class')
+    const [currentRoute, setCurrentRoute] = useState<Routes | null>('class' as Routes)
 
     return (
         <NavigationContext.Provider value={{ currentRoute, setCurrentRoute }}>

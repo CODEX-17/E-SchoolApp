@@ -1,16 +1,5 @@
 import { createContext, useState, ReactNode } from "react";
-
-export interface Class {
-    acctID: string,
-    acctype: string,
-    email: string,
-    password: string,
-    firstname: string,
-    middlename: string,
-    lastname: string,
-    status: string,
-    fileID: string,
-}
+import { Class } from '../types/interfaces'
 
 interface ClassContextType {
     currentClass: Class | null;

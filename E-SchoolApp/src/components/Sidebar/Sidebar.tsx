@@ -5,11 +5,21 @@ import { RiTeamFill } from "react-icons/ri";
 import { PiNotebookFill } from "react-icons/pi";
 import { FaUserFriends } from "react-icons/fa";
 import { NavigationContext } from '../../context/NavigationContext';
+import { UserDetailContext } from '../../context/UserDetailContext';
 
 
 const SidebarComponent = () => {
-  const { setCurrentRoute, currentRoute } = useContext(NavigationContext)
-  const currentAccount = JSON.parse(localStorage.getItem('user'))
+
+  const navigation = useContext(NavigationContext)
+  const currentAccount = useContext(UserDetailContext)
+
+  if (!navigation || !currentAccount) {
+    return null
+  }
+
+  const { currentRoute, setCurrentRoute } = navigation
+
+  const { userDetails } = currentAccount
 
   return (
     <div className={style.sidebar}>
@@ -21,8 +31,8 @@ const SidebarComponent = () => {
         </div>
         
         {
-          currentAccount &&
-          currentAccount.acctype === 'faculty' && (
+          userDetails &&
+          userDetails.acctype === 'faculty' && (
             <div className={ currentRoute === 'quizMenu' ? style.activedGroup : style.iconGroup} onClick={() => setCurrentRoute('quizMenu')}>
               <PiNotebookFill className={ currentRoute === 'quizMenu' ? style.activedIcon : style.icon} size={20}/>
               <p className={ currentRoute === 'quizMenu' ? style.activedText : style.text}>Quiz</p>

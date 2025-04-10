@@ -1,10 +1,26 @@
-import { createContext } from "react";
+import { createContext, ReactNode } from "react";
 import { toast } from "react-toastify";
 
-export const NotificationContext = createContext();
+export interface Notification {
+  message: string,
+  status: boolean
+}
 
-export const NotificationProvider = ({ children }) => {
-  const notify = (message, status) => {
+export interface NotificationContextType {
+  notify: ({ message, status }: Notification) => void;
+}
+
+interface NotificationProviderProps {
+  children: ReactNode
+}
+
+export const NotificationContext = createContext<NotificationContextType | null>(null);
+
+
+export const NotificationProvider: React.FC<NotificationProviderProps> = ({ children }) => {
+  
+  const notify = ({message, status}: Notification) => {
+    
     if (status) {
       toast.success(message, {
         position: "top-right",

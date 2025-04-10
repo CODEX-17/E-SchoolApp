@@ -1,10 +1,6 @@
 import axios from "axios"
 const BASE_URL = 'http://localhost:5001'
 
-export interface Notification {
-    acctID: string,
-    notificationID: string,
-}
 
 export const getNotificationsByAcctID = async (acctID: string) => {
     try {
@@ -24,8 +20,12 @@ export const getNotificationsByAcctID = async (acctID: string) => {
         return null
     }
 }
+export interface NotificationProps {
+    acctID: string,
+    notificationID: string,
+}
 
-export const deleteNotification = async (data: Notification) => {
+export const deleteNotification = async (data: NotificationProps) => {
     try {
         const response = await axios.post(`${BASE_URL}/notification/deleteOneNotification`, data)
 

@@ -1,18 +1,13 @@
-import React, { createContext, useState, ReactNode, useEffect } from "react";
+import React, { 
+    createContext,
+    useState,
+    ReactNode,
+    useEffect 
+} from "react";
 
-export interface UserDetails {
-    acctID: string,
-    acctype: string,
-    email: string,
-    password: string,
-    firstname: string,
-    middlename: string,
-    lastname: string,
-    status: string,
-    fileID: string,
-}
+import { UserDetails } from '../types/interfaces'
 
-interface UserDetailContextType {
+export interface UserDetailContextType {
     userDetails: UserDetails | null;
     handleSetUserDetails: (value: UserDetails) => void;
 }
