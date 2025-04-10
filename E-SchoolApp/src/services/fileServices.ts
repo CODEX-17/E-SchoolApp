@@ -1,7 +1,7 @@
 import axios from "axios"
 const BASE_URL = 'http://localhost:5001'
 
-export const getFileByFileID = async (fileID) => {
+export const getFileByFileID = async (fileID: string) => {
     try {
         const response = await axios.get(`${BASE_URL}/files/getFileByFileID/${fileID}`)
 

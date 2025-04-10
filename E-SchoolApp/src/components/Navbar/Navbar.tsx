@@ -3,9 +3,7 @@ import style from './Navbar.module.css';
 import logo from '../../../public/assets/logo-white.png'
 import titleLogo from '../../../public/assets/title.png'
 import { useNavigate } from 'react-router-dom';
-import { useNavigateStore } from '../../stores/useNavigateStore';
 import { IoNotifications } from "react-icons/io5";
-import generateFullname from '../../utils/generateFullname';
 import { BsFilePost } from "react-icons/bs";
 import { GiNotebook } from "react-icons/gi";
 import { AiOutlineDelete } from "react-icons/ai"
@@ -13,53 +11,89 @@ import axios from 'axios';
 import io from 'socket.io-client'
 import ImageRender from '../ImageRender/ImageRender';
 import { UserDetailContext } from '../../context/UserDetailContext';
-const socket = io.connect('http://localhost:5001')
+import generateFullname from '../../utils/generateFullname';
+import { deleteAllNotification, deleteNotification, getNotificationsByAcctID } from '../../services/notificationServices';
+import { NavigationContext } from '../../context/NavigationContext';
+
+const socket = io('http://localhost:5001')
 
 const Navbar = () => {
+
+
+  interface Notification {
+    notificationID: string;
+    acctID: string;
+    title: string;
+    data: string;
+    content: string;
+    date: string;
+    time: string;
+    type: string;
+  }
+
   const navigate = useNavigate()
 
-  const { updateRouteChoose } = useNavigateStore()
   const [isShowProfile, setisShowProfile] = useState(false)
   const [userImage, setUserImage] = useState(null)
-  const user = JSON.parse(localStorage.getItem('user'))
   const [isShowManageAcct, setIsShowManageAcct] = useState(false)
   const [isShowNotification, setIsShowNotification] = useState(false)
-  const [notificationList, setNotificationList] = useState([])
+  const [notificationList, setNotificationList] = useState<Notification[] | null>([])
   const [isShowRedDots, setIsShowRedDots] = useState(false)
+
+  const userContext = useContext(UserDetailContext);
+  const navigationContext = useContext(NavigationContext);
+
+  if (!navigationContext || !navigationContext.setCurrentRoute) {
+    throw new Error("NavigationContext is not properly initialized.");
+  }
+
+  if (!userContext || !userContext.userDetails) {
+    return navigate('/')
+  }
+
+  const { userDetails } = userContext
+  const { setCurrentRoute } = navigationContext;
+
+  if (!userDetails) {
+    return navigate('/')
+  }
+
+  const acctID = userDetails.acctID
 
   useEffect(() => {
 
-    //Join room as acctID will becomes roomID for notifications
-    socket.emit('joinRoom', user.acctID)
     
+
+    //Join room as acctID will becomes roomID for notifications
+    socket.emit('joinRoom', acctID)
+
     //Listen to add notification sockets
-    socket.on('receivedNotification', (data) => {
+    socket.on('receivedNotification', (data: any) => {
       setIsShowRedDots(true)
-      setNotificationList((oldData) => [...oldData, data])
+      setNotificationList((oldData) => [...(oldData || []), data])
     })
     
-    if (user) {
-      const acctID = user.acctID
+    const getData = async () => {
+      try {
+        
+        const result = await getNotificationsByAcctID(acctID)
 
-      setUserImage('http://localhost:5001/' + user.data)
-
-      //API get notifications
-      axios.get('http://localhost:5001/notification/getNotification/' + acctID)
-      .then((res) => {
-        if (res.data) {
-          setNotificationList(res.data)
+        if (result) {
+          setNotificationList(result)
         }
-      })
-      .catch((err) => console.log(err)) 
-    }
-    
 
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
+    getData()
     
   },[])
 
-  const { userDetails } = useContext(UserDetailContext)
+  // Removed duplicate declaration of userDetails
 
-  const generateImages = (data) => {
+  const generateImages = (data: string) => {
     if (data) {
         const url = 'http://localhost:5001/'
       return url + data
@@ -67,7 +101,7 @@ const Navbar = () => {
   }
 
   const handleLogout = () => { 
-    updateRouteChoose('class')
+    setCurrentRoute('class')
     localStorage.clear()
     navigate('/')
   }
@@ -81,47 +115,59 @@ const Navbar = () => {
     
   }
 
-  const handleManageAccount = (route) => {
-    updateRouteChoose(route)
+  const handleManageAccount = (route: string) => {
+    setCurrentRoute(route)
     setIsShowManageAcct(!isShowManageAcct)
   }
 
-  const handleDeleteAllNotification = () => {
+  const handleDeleteAllNotification = async (notificationID: string) => {
 
-    //API delete all notifications
-    axios.post('http://localhost:5001/notification/deleteAllNotification/' + user.acctID)
-    .then((res) => {
-      const result = res.data
-      console.log(result.message)
+    try {
+      
+      const result = await deleteAllNotification(notificationID)
 
-      //delete all notifications value in variable
-      setNotificationList([])
-    })
-    .catch((err) => console.log(err))
+      if (result) {
+        console.log(result)
+
+        //delete all notifications value in variable
+        setNotificationList([])
+      }
+
+      
+    } catch (error) {
+      console.log(error)
+    }
 
   }
 
-  const handleDeleteNotification = (notificationID) => {
+  const handleDeleteNotification = async (notificationID: string) => {
 
     const data = {
-      acctID: user.acctID,
+      acctID: userDetails.acctID,
       notificationID: notificationID,
     }
 
-    //API delete specific notifications
-    axios.post('http://localhost:5001/notification/deleteOneNotification', data)
-    .then((res) => {
-      const result = res.data
-      console.log(result.message)
-
-      //delete specific notifications value in variable
-      setNotificationList((oldData) => {
-        const newData = oldData.filter((data) => data.notificationID !== notificationID)
-        return newData
-      })
+    try {
       
-    })
-    .catch((err) => console.log(err))
+      const result = await deleteNotification(data)
+
+      if (result) {
+        console.log(result)
+
+        //delete specific notifications value in variable
+        setNotificationList((oldData) => {
+          const newData = (oldData || []).filter((data) => data.notificationID !== notificationID)
+          return newData
+        })
+      }
+
+      
+    } catch (error) {
+      console.log(error)
+    }
+
+
+    
 
   }
 
@@ -138,7 +184,7 @@ const Navbar = () => {
             <IoNotifications id={style.notif} onClick={() => {setIsShowNotification(!isShowNotification), setIsShowRedDots(false)}}/>
           </div>
           <div id={style.profile} onClick={handleProfile}>
-            <ImageRender image={userDetails?.fileID} alt="profile"/>
+            <ImageRender image={userDetails?.fileID}/>
           </div>
           
         </div>
@@ -148,13 +194,13 @@ const Navbar = () => {
               <div id={style.dropDown}>
                 <div className={style.horizontal}>
                     <span className={style.profileIcon}>
-                      <ImageRender image={userDetails?.fileID} alt="profile"/>
+                      <ImageRender image={userDetails?.fileID}/>
                     </span>
                     <div className={style.vertical}>
                       <p>Name:</p>
                       <h1>{generateFullname()}</h1>
                       <p>Email:</p>
-                      <h2>{user?.email}</h2>
+                      <h2>{userDetails?.email}</h2>
                     </div>
                 </div>
                 <div className='d-flex w-100 gap-2 align-items-center justify-content-center mt-2'>
@@ -171,16 +217,16 @@ const Navbar = () => {
               <div id={style.notifContainer}>
                 <div className={style.head}>
                   <h2 id={style.title}>Notification</h2>
-                  <p onClick={handleDeleteAllNotification}>Clear All</p>
+                  <p onClick={() => handleDeleteAllNotification(acctID)}>Clear All</p>
                 </div>
                 
                 <div className={style.listNotif}>
                   {
-                    notificationList.length > 0 ? (
-                      notificationList.map((data) => (
+                    notificationList ? (
+                      notificationList.map((data, index) => (
                         <>
                           {data.type === 'quiz' && (
-                            <div className={style.card} key={data.id}>
+                            <div className={style.card} key={index}>
                               <GiNotebook size={25} color='#508D4E'/>
                               <div className={style.contentText}>
                                 <h2>Quiz posted</h2>
@@ -191,7 +237,7 @@ const Navbar = () => {
                           )}
 
                           {data.type === 'post' && (
-                            <div className={style.card} key={data.id}>
+                            <div className={style.card} key={index}>
                               <BsFilePost size={25} color='#EB5B00'/>
                               <div className={style.contentText}>
                                 <h2>{data.title}</h2>
@@ -203,7 +249,7 @@ const Navbar = () => {
                           )}
 
                           {data.type === 'profile' && (
-                            <div className={style.card} key={data.id}>
+                            <div className={style.card} key={index}>
                               <img src={generateImages(data.data)} alt="profile pic"/>
                               <div className={style.contentText}>
                                 <h2>{data.title}</h2>

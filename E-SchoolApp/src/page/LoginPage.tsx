@@ -1,25 +1,32 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 import style from './LoginPage.module.css'
-import { useAccountStore } from '../stores/useAccountsStore'
-import axios from 'axios'
 import bg from '../../public/assets/sign-in-text.png'
+import { verifyAccount } from '../services/accountServices'
+import { UserDetailContext, UserDetails } from '../context/UserDetailContext'
 
 const LoginPage = () => {
 
   const navigate = useNavigate()
 
-    const [urlImage, seturlImage] = useState(true)
     const [isChecked, setisChecked] = useState(false)
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [error, setError] = useState(false)
-    const { getAccounts, account } = useAccountStore()
+    
+    const userDetailContext = useContext(UserDetailContext)
+
+    if (!userDetailContext) {
+        throw new Error('UserDetailContext is not provided')
+    }
+
+    const { handleSetUserDetails } = userDetailContext
 
   useEffect(() => {
 
     if (localStorage.getItem('user')) {
-        const user = JSON.parse(localStorage.getItem('user'))
+
+        const user = JSON.parse(localStorage.getItem('user') || '{}')
 
         if (user.acctype === 'admin') {
             navigate('/adminPage')
@@ -32,43 +39,40 @@ const LoginPage = () => {
 
 
 const handleShowPass = () => {
-    setisChecked(!isChecked);
+    setisChecked(!isChecked)
 }
 
-const handleSubmit = (e) => {
+const handleSubmit = async (e: any) => {
     e.preventDefault()
 
-    axios.post('http://localhost:5001/accounts/verifyAccount', {email, password})
-    .then((res) => {
-        const result = res.data
-        if (result.length > 0) {
-            localStorage.setItem('user', JSON.stringify(result[0]))
-            console.log(result)
-            if (result[0].acctype === 'admin') {
-                console.log('admin here!')
-                navigate('/adminPage')
-            }else{
-                navigate('/home')
-            }
+    try {
+        const result = await verifyAccount(email, password)
+
+        if (result) {
+
+            console.log('result', result)
+
+            localStorage.setItem('user', JSON.stringify(result))
+            handleSetUserDetails(result)
+
+            if (result.acctype === 'admin') navigate('/adminPage')
+       
+            navigate('/home')
             
-        }else{
-            setError(true)
-            setTimeout(() => {
-                setError(false)
-            }, 3000)
         }
-        
-    })
-    .catch((err) => console.log(err))
+
+    } catch (error) {
+        console.log(error)
+    }
 
 }
 
-const handlePassword = (e) => {
+const handlePassword = (e: any) => {
     setPassword(e.target.value)
     setError(false)
 }
 
-const handleEmail = (e) => {
+const handleEmail = (e: any) => {
     setEmail(e.target.value)
     setError(false)
 }

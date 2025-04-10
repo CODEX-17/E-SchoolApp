@@ -21,6 +21,26 @@ export const getProfileDataByAcctID = async (acctID: string) => {
     }
 }
 
+export const verifyAccount = async (email: string, password: string) => {
+    try {
+        
+        const response = await axios.post(`${BASE_URL}/accounts/verifyAccount`, { email, password })
+
+        if (!response || !Array.isArray(response.data) || response.data.length === 0) {
+            return null
+        }
+        
+        if (response) {
+            console.log('Successfully verify this account.')
+            return response.data[0]
+        }
+
+    } catch (error) {
+        console.log('Server error', error)
+        return null
+    }
+}
+
 
 
  

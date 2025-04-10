@@ -2,7 +2,12 @@ import React, { useEffect, useState } from 'react'
 import defaultImage from '../../../public/assets/default.png'
 import { getFileByFileID } from '../../services/fileServices'
 
-const ImageRender = ({ image }) => {
+
+interface ImageRenderProps {
+  image: string | File;
+}
+
+const ImageRender: React.FC<ImageRenderProps> = ({ image }) => {
 
   if (!image) return null
   

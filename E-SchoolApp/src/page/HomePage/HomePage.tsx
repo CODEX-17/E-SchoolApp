@@ -14,10 +14,13 @@ import { NavigationContext } from '../../context/NavigationContext'
 import QuizMenu from '../Instructor/Quiz/QuizMenu/QuizMenu'
 import QuizGeneratorLayout from '../Instructor/Quiz/QuizGeneratorLayout/QuizGeneratorLayout'
 import ClassHome from '../ClassPage/ClassHome/ClassHome'
+import { useNavigate } from 'react-router-dom'
 
 const HomePage = () => {
 
   const { currentRoute } = useContext(NavigationContext)
+
+  const navigate = useNavigate()
   
   useEffect(() =>  {
     if (!localStorage.getItem('user')) {
@@ -47,7 +50,6 @@ const HomePage = () => {
             {currentRoute === 'manageAccount' && <ManageAccout/>}
             {currentRoute === 'file' && <FilePage/>}
             {currentRoute === 'friends' && <FriendsPage/>}
-            
           </div>
         </div>
       </div>
