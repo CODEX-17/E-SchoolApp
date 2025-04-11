@@ -2,17 +2,16 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import style from './ClassPage.module.css'
 import { AiFillEyeInvisible } from "react-icons/ai"
 import { VscTriangleUp, VscTriangleDown } from "react-icons/vsc"
-import ClassHome from './ClassHome/ClassHome'
 import { ProgressBar } from  'react-loader-spinner';
 import { UserDetailContext } from '../../context/UserDetailContext'
 import { getClassesByAccount, updateClassVisibility } from '../../services/classServices'
 import ImageRender from '../../components/ImageRender/ImageRender'
-import AddClass from './AddClass/AddClass'
 import io from 'socket.io-client'
 import { NotificationContext } from '../../context/NotificationContext'
 import { ClassContext } from '../../context/ClassContext'
 import { NavigationContext } from '../../context/NavigationContext'
 import { Class } from '../../types/interfaces'
+import AddClass from './AddClass/AddClass'
 
 const socket = io('http://localhost:5001')
 
@@ -51,14 +50,18 @@ const { setCurrentRoute } = navigationContext
 
 const [classesList, setClassesList] = useState<Class[]>([])
 
+const acctID = userDetails?.acctID
+
+
+
 useEffect(() => {
- 
-    const acctID = userDetails?.acctID
 
     //Socket for account Online
     socket.emit('addOnlineList', acctID)
 
-    try {
+    try { 
+        
+        if (!acctID) return
         
         const fetchData = async () => {
 

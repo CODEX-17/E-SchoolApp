@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 
 export interface Notification {
   message: string,
-  status: boolean
+  status: boolean,
 }
 
 export interface NotificationContextType {

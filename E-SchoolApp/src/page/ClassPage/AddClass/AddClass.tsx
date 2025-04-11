@@ -8,18 +8,28 @@ import CreateClass from './CreateClass/CreateClass'
 import ImportClass from './ImportClass/ImportClass'
 import { getAllClasses, joinClassByClassCode } from '../../../services/classServices'
 import { UserDetailContext } from '../../../context/UserDetailContext'
+import { Class } from '../../../types/interfaces'
 
 
 const AddClass = () => {
 
   const [isShowCreateClass, setIsShowCreateClass] = useState(false)
   const [isShowImportClass, setIsShowImportClass] = useState(false)
-  const [classesList, setClassesList] = useState([])
+  const [classesList, setClassesList] = useState<Class[]>([])
   const [inputClassCode, setInputClassCode] = useState(null)
-  const [errorMessage, setErrorMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
-  const { notify } = useContext(NotificationContext)
-  const { userDetails } = useContext(UserDetailContext)
+  const notificationContext = useContext(NotificationContext)
+  const accountContext = useContext(UserDetailContext)
+
+  if (!notificationContext || !accountContext) {
+    return null
+  }
+
+  const { notify } = notificationContext
+  const { userDetails } = accountContext
+
+  
 
    useEffect(() => {
       
@@ -41,7 +51,7 @@ const AddClass = () => {
         setInputClassCode(null)
     }
 
-    const handleCheckClassCode = (data) => {
+    const handleCheckClassCode = (data: string) => {
 
         if (!data) return false
 
@@ -75,12 +85,22 @@ const AddClass = () => {
                         const response = await joinClassByClassCode(data)
 
                         if (response) {
-                            notify(response.message, true)
+
+                            const data = {
+                                message: response.message,
+                                status: false
+                            }
+
+                            notify(data)
                             handleReset()
                         }
 
                     } catch (error) {
-                        notify(error, false)
+                        const data = {
+                            message: error,
+                            status: false
+                        }
+                        notify(data)
                         handleReset()
                     }
                 }
@@ -90,7 +110,11 @@ const AddClass = () => {
             }
 
         }else {
-            notify('Please input Class Code!')
+            const data = {
+                message: 'Please input Class Code!',
+                status: false
+            }
+            notify(data)
         }
     }
 
