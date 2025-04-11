@@ -14,6 +14,7 @@ import generateFullname from '../../utils/generateFullname';
 import { deleteAllNotification, deleteNotification, getNotificationsByAcctID } from '../../services/notificationServices';
 import { NavigationContext } from '../../context/NavigationContext';
 import { Notification } from '../../types/interfaces'
+import { Routes } from '../../types/types';
 
 const socket = io('http://localhost:5001')
 
@@ -22,7 +23,6 @@ const Navbar = () => {
   const navigate = useNavigate()
 
   const [isShowProfile, setisShowProfile] = useState(false)
-  const [userImage, setUserImage] = useState(null)
   const [isShowManageAcct, setIsShowManageAcct] = useState(false)
   const [isShowNotification, setIsShowNotification] = useState(false)
   const [notificationList, setNotificationList] = useState<Notification[] | null>([])
@@ -35,22 +35,14 @@ const Navbar = () => {
     throw new Error("NavigationContext is not properly initialized.");
   }
 
-  if (!userContext || !userContext.userDetails) {
-    return null
-  }
-
-  const { userDetails } = userContext
+  const userDetails = userContext?.userDetails
   const { setCurrentRoute } = navigationContext;
 
-  if (!userDetails) {
-    return null
-  }
-
-  const acctID = userDetails.acctID
+  const acctID = userDetails?.acctID
 
   useEffect(() => {
 
-    
+    if (!acctID) return
 
     //Join room as acctID will becomes roomID for notifications
     socket.emit('joinRoom', acctID)
@@ -79,6 +71,12 @@ const Navbar = () => {
     
   },[])
 
+  
+  if (!userContext || !userContext.userDetails || !acctID || !userDetails) {
+    return null
+  }
+
+
   // Removed duplicate declaration of userDetails
 
   const generateImages = (data: string) => {
@@ -89,7 +87,7 @@ const Navbar = () => {
   }
 
   const handleLogout = () => { 
-    setCurrentRoute('class')
+    setCurrentRoute('classPage')
     localStorage.clear()
     navigate('/')
   }
@@ -103,7 +101,7 @@ const Navbar = () => {
     
   }
 
-  const handleManageAccount = (route: string) => {
+  const handleManageAccount = (route: Routes) => {
     setCurrentRoute(route)
     setIsShowManageAcct(!isShowManageAcct)
   }

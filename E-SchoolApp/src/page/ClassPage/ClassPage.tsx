@@ -52,8 +52,6 @@ const [classesList, setClassesList] = useState<Class[]>([])
 
 const acctID = userDetails?.acctID
 
-
-
 useEffect(() => {
 
     //Socket for account Online

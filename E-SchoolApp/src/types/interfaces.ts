@@ -1,3 +1,4 @@
+import { AccountType } from "./types";
 
 export interface Notification {
     notificationID: string;
@@ -12,7 +13,7 @@ export interface Notification {
 
 export interface UserDetails {
     acctID: string,
-    acctype: string,
+    acctype: AccountType,
     email: string,
     password: string,
     firstname: string,

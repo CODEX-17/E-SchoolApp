@@ -6,6 +6,7 @@ import { PiNotebookFill } from "react-icons/pi";
 import { FaUserFriends } from "react-icons/fa";
 import { NavigationContext } from '../../context/NavigationContext';
 import { UserDetailContext } from '../../context/UserDetailContext';
+import { AccountType, Routes } from '../../types/types';
 
 
 const SidebarComponent = () => {
@@ -21,38 +22,72 @@ const SidebarComponent = () => {
 
   const { userDetails } = currentAccount
 
+  const currentAcctType = userDetails?.acctype
+
+  interface tabsListType {
+    name: string,
+    icon: any,
+    route: Routes,
+    type: AccountType,
+  }
+
+  const tabsList: tabsListType[] = [
+    {
+      name: 'Class',
+      icon: <RiTeamFill size={20} color='#fff'/>,
+      route: 'classPage',
+      type: 'General'
+    },
+    {
+      name: 'Quiz',
+      icon: <PiNotebookFill size={20} color='#fff'/>,
+      route: 'quizMenu',
+      type: 'Faculty'
+    },
+    {
+      name: 'Friends',
+      icon: <FaUserFriends size={20} color='#fff'/>,
+      route: 'friends',
+      type: 'General'
+    },
+    {
+      name: 'Chat',
+      icon: <BsFillChatDotsFill size={20} color='#fff'/>,
+      route: 'chat',
+      type: 'General'
+    },
+  ]
+
   return (
     <div className={style.sidebar}>
+      
       <div className={style.list}>
-   
-        <div className={ currentRoute === 'class' ? style.activedGroup : style.iconGroup} onClick={() => setCurrentRoute('class')}>
-          <RiTeamFill className={ currentRoute === 'class' ? style.activedIcon : style.icon} size={20}/>
-          <p className={ currentRoute === 'class' ? style.activedText : style.text}>Class</p>
-        </div>
-        
-        {
-          userDetails &&
-          userDetails.acctype === 'faculty' && (
-            <div className={ currentRoute === 'quizMenu' ? style.activedGroup : style.iconGroup} onClick={() => setCurrentRoute('quizMenu')}>
-              <PiNotebookFill className={ currentRoute === 'quizMenu' ? style.activedIcon : style.icon} size={20}/>
-              <p className={ currentRoute === 'quizMenu' ? style.activedText : style.text}>Quiz</p>
-          </div>
-          )
-        }
-        
-        <div className={ currentRoute === 'friends' ? style.activedGroup : style.iconGroup} onClick={() => setCurrentRoute('friends')}>
-          <FaUserFriends className={ currentRoute === 'friends' ? style.activedIcon : style.icon} size={20}/>
-          <p className={ currentRoute === 'friends' ? style.activedText : style.text}>Friends</p>
-        </div>
 
-        <div className={ currentRoute === 'chat' ? style.activedGroup : style.iconGroup} onClick={() => setCurrentRoute('chat')}>
-          <BsFillChatDotsFill className={ currentRoute === 'chat' ? style.activedIcon : style.icon} size={20}/>
-          <p className={ currentRoute === 'chat' ? style.activedText : style.text}>Chat</p>
-        </div>
-       
-        
-        
-        
+        {
+          tabsList.map((item, index) => {
+
+            const isActived = item.route === currentRoute ? true : false
+
+            //Restrict the menu defends on account type.
+            if (currentAcctType === 'Faculty' && item.type === 'Student') {
+              return null
+            }else if (currentAcctType === 'Student' && item.type === 'Faculty') {
+              return null
+            }
+
+            return(
+              <div 
+                key={index}
+                className={ isActived ? style.activedGroup : style.iconGroup} 
+                onClick={() => setCurrentRoute(item.route)}
+              >
+                {item.icon}
+                <p className={ isActived ? style.activedText : style.text}>{item.name}</p>
+              </div>
+            )
+          })
+        }
+  
       </div>
     </div>
   )

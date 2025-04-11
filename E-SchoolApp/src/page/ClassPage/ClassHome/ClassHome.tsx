@@ -1,21 +1,13 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import style from './ClassHome.module.css'
-import { GoHeart } from "react-icons/go"
-import { GoHeartFill } from "react-icons/go"
-
-import { AiFillLike } from "react-icons/ai"
-import { FaFileImage, FaRegImages } from "react-icons/fa6"
 import { MdSend, MdOutlineAttachment } from "react-icons/md"
 import { FaFilePdf, FaFileWord, FaFileExcel } from "react-icons/fa"
-import { FiDownload } from "react-icons/fi"
 import FilesClass from '../../../components/FilesClass'
-import { RiSendPlaneFill } from "react-icons/ri"
 import { BiExit } from "react-icons/bi"
 import ClassMembers from '../../../components/ClassMembers';
 import { useNavigateStore } from '../../../stores/useNavigateStore';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios'
-import { IoMdSettings } from "react-icons/io";
 import ClassQuizSetup from '../../ClassQuizSetup';
 import { GiNotebook } from "react-icons/gi";
 import { useFilesStore } from '../../../stores/useFilesStore';
@@ -23,8 +15,6 @@ import { SiFiles } from "react-icons/si";
 import { ProgressBar } from  'react-loader-spinner';
 import { IoCloseCircle } from "react-icons/io5";
 import LeaderBoard from '../../LeaderBoard';
-import { BiSolidMessageDetail } from "react-icons/bi";
-
 import { FaFolderOpen } from "react-icons/fa";
 
 import { 
