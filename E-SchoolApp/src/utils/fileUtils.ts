@@ -1,4 +1,10 @@
-export const fileTypeChecker = (file, type) => {
+import { FileType } from "../types/types";
+
+interface FileWithType {
+    type: string;
+}
+
+export const fileTypeChecker = (file: FileWithType, type: FileType) => {
     if (!file) return false; // Ensure file exists
 
     console.log(file)

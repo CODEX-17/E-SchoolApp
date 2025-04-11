@@ -1,6 +1,6 @@
 
 
-export const shortenSentence = (sentence, limit) => {
+export const shortenSentence = (sentence: string, limit: number) => {
     
     if (!sentence || !limit) return false
 

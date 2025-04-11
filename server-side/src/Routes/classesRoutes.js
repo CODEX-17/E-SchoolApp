@@ -17,7 +17,7 @@ router.get('/getClasses', (req, res) => {
 
     db.query(query, (error, data, fields) => {
         if (error) {
-            return res.status(404).send(error)
+            return res.status(404).send({ message: error.message })
         }else {
             return res.status(200).json(data)
         }

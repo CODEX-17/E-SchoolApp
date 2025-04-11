@@ -6,19 +6,44 @@ import { fileTypeChecker } from '../../../../utils/fileUtils';
 import { read, utils } from 'xlsx';
 import { NotificationContext } from '../../../../context/NotificationContext';
 import { shortenSentence } from '../../../../utils/textUtils';
-import { addClass, getAllClasses } from '../../../../services/classServices';
+import { addClass, ClassInfo, getAllClasses } from '../../../../services/classServices';
 import { UserDetailContext } from '../../../../context/UserDetailContext';
+import { Class } from '../../../../types/interfaces';
 
 
-const ImportClass = ({ setIsShowImportClass }) => {
+interface ImportClassProps {
+  setIsShowImportClass: (value: boolean) => void;
+}
 
-  const inputFileRef = useRef(null)   
-  const [excel, setExcel] = useState(null)
-  const [excelPreview, setExcelPreview] = useState(null)
-  const [classesList, setClassesList] = useState([])
+interface ExcelData {
+    className?: string;
+    classCode?: string;
+    [key: string]: any;
+}
 
-  const { notify } = useContext(NotificationContext)
-  const { userDetails } = useContext(UserDetailContext) 
+const ImportClass: React.FC<ImportClassProps> = ({ setIsShowImportClass }) => {
+
+  const inputFileRef = useRef<any>(null)   
+  const [excel, setExcel] = useState<File | null>(null)
+  const [excelPreview, setExcelPreview] = useState<ExcelData[] | null>(null)
+  const [classesList, setClassesList] = useState<Class[]>([])
+
+
+  const notifContext = useContext(NotificationContext)
+  const accountContext = useContext(UserDetailContext)
+
+  if (!notifContext || !accountContext) {
+    return null
+  }
+
+  const { notify } = notifContext
+  const { userDetails } = accountContext
+
+  const acctID = userDetails?.acctID
+
+  if (!acctID) {
+    return null
+  }
  
   useEffect(() => {
     
@@ -35,7 +60,7 @@ const ImportClass = ({ setIsShowImportClass }) => {
 
   },[])
 
-  const handleCheckClass = (data) => {
+  const handleCheckClass = (data: string) => {
 
     if (!data) return false
 
@@ -44,44 +69,56 @@ const ImportClass = ({ setIsShowImportClass }) => {
     }
   }
 
-  const handleFileUpload = (e) => {
+  const handleFileUpload = (e: any) => {
 
     const file = e.target.files[0]
 
     if (fileTypeChecker(file, 'excel')) {
         setExcel(file)
     }else {
-        notify('Invalid file type.', false)
+        const data = {
+            message: 'Invalid file type.',
+            status: false
+        }
+        notify(data)
     }
 
   }
 
   const handleRenderExcel = async () => {
 
-    const ab = await excel.arrayBuffer()
+    if (!excel) {
+        const data = {
+            message: 'No file selected.',
+            status: false
+        }
+        notify(data)
+        return
+    }
+
+    const ab = await excel.arrayBuffer();
     const wb = read(ab)
     const ws = wb.Sheets[wb.SheetNames[0]] // get the first worksheet
     const result = utils.sheet_to_json(ws) // generate objects
 
-    let finalData = []
+    let finalData: ExcelData[] = [];
 
-    result.forEach(data => {
+    (result as ExcelData[]).forEach(data => {
         if (data?.className && data?.classCode) {
         
             if (handleCheckClass(data.classCode)) {
-                const updated = {...data, status: 'duplicate'}
-                finalData.push(updated)
-            }else {
-                const updated = {...data, status: 'success'}
-                finalData.push(updated)
+                const updated = {...data, status: 'duplicate'};
+                finalData.push(updated);
+            } else {
+                const updated = {...data, status: 'success'};
+                finalData.push(updated);
             }
 
-            
-        }else {
-            const updated = {...data, status: 'failed'}
-            finalData.push(updated)
+        } else {
+            const updated = {...data, status: 'failed'};
+            finalData.push(updated);
         }
-    })
+    });
 
     setExcelPreview(finalData)
 
@@ -91,9 +128,16 @@ const ImportClass = ({ setIsShowImportClass }) => {
 
     try {
         
-        let finalData = []
+        let finalData: ExcelData = []
 
-        if (!excelPreview) return notify('No data.', false)
+        if (!excelPreview) {
+            const data = {
+                message: 'No Data.',
+                status: false
+            }
+            notify(data)
+            return 
+        }
 
         //Insert null to all blank
         if (excelPreview) {
@@ -105,7 +149,7 @@ const ImportClass = ({ setIsShowImportClass }) => {
             finalData = cleanDate
         }
 
-        const sendQuery = async (data) => {
+        const sendQuery = async (data: ClassInfo) => {
             try {
                 const response = await addClass(data)
 
@@ -124,19 +168,27 @@ const ImportClass = ({ setIsShowImportClass }) => {
         //Submit into database
         if (finalData) {
 
+            interface ItemType { 
+                status: string; 
+                className: string; 
+                classCode: string; 
+                classDesc: string | null; 
+            }
+
             let successImport = 0
 
-            finalData.forEach(data => {
+            finalData.forEach(async (items: ItemType) => {
 
-                if (data.status === 'success') {
-                    const formData = new FormData()
+                if (items.status === 'success') {
 
-                    formData.append('className', data?.className)
-                    formData.append('classCode', data?.classCode)
-                    formData.append('classDesc', data?.classDesc)
-                    formData.append('acctID', data?.acctID)
-
-                    if(sendQuery(formData)) {
+                    const datas = {
+                        className: items?.className,
+                        classCode: items?.classCode,
+                        classDesc: items?.classDesc,
+                        acctID,
+                    }
+                    
+                    if(await sendQuery(datas)) {
                         successImport++
                     }
                     
@@ -148,9 +200,20 @@ const ImportClass = ({ setIsShowImportClass }) => {
             handleReset()
 
             if (successImport > 0) {
-                notify('Successfully imported classes.', true)
+
+                const data = {
+                    message: 'Successfully imported classes.',
+                    status: true
+                }
+
+                notify(data)
             }else {
-                notify('Failed to imported classes.', false)
+                const data = {
+                    message: 'Failed to imported classes.',
+                    status: false
+                }
+
+                notify(data)
             }
         }
 
@@ -253,17 +316,17 @@ const ImportClass = ({ setIsShowImportClass }) => {
                                 <div className='row w-100'>
                                     <div className='col d-flex flex-column'>
                                         <label>Class Name</label>
-                                        <p>{shortenSentence(data?.className, 10)}</p>
+                                        <p>{shortenSentence(data?.className ?? '', 10)}</p>
                                     </div>
                                     <div className='col d-flex flex-column'>
                                         <label>Class Code</label>
-                                        <p>{shortenSentence(data?.classCode, 10)}</p>
+                                        <p>{shortenSentence(data?.classCode ?? '', 10)}</p>
                                     </div>
                                     <div className='col d-flex flex-column'>
                                         <label>Status</label>
                                         <p className={
-                                            (data?.status === 'duplicate' ||  data?.status === 'failed') && 'text-danger' ||
-                                            data?.status === 'success' && 'text-success'
+                                            (data?.status === 'duplicate' || data?.status === 'failed') ? 'text-danger' :
+                                            data?.status === 'success' ? 'text-success' : undefined
                                         }>{data?.status}</p>
                                     </div>
                                 </div>

@@ -1,24 +1,50 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import style from './CreateClass.module.css'
-import { useForm } from "react-hook-form"; 
+import { useForm, SubmitHandler } from "react-hook-form"; 
 import ImageRender from '../../../../components/ImageRender/ImageRender';
 import { IoCloseSharp } from "react-icons/io5";
 import { fileTypeChecker } from '../../../../utils/fileUtils';
 import { NotificationContext } from '../../../../context/NotificationContext';
 import { UserDetailContext } from '../../../../context/UserDetailContext';
 import { addClass, getAllClasses } from '../../../../services/classServices';
+import { Class } from '../../../../types/interfaces';
 
 
-const CreateClass = ({ setIsShowCreateClass }) => {
+interface CreateClassProps {
+  setIsShowCreateClass: (value: boolean) => void;
+}
+
+interface FormType {
+    className: string,
+    classDesc: string | null,
+    classCode: string,
+}
+
+
+const CreateClass: React.FC<CreateClassProps> = ({ setIsShowCreateClass }) => {
 
   const [image, setImage] = useState(null)
-  const [classesList, setClassesList] = useState(null)
-  const inputFileRef = useRef(null)
+  const [classesList, setClassesList] = useState<Class[] | null>(null)
+  const inputFileRef = useRef<any | null>(null)
 
-  const { notify } = useContext(NotificationContext)
-  const { userDetails } = useContext(UserDetailContext)
+  const notifContext = useContext(NotificationContext)
+  const accountContext = useContext(UserDetailContext)
+  
+
+  if (!notifContext || !accountContext) {
+    return null
+  }
+
+  const { notify } = notifContext
+  const { userDetails } = accountContext
+
+  const acctID = userDetails?.acctID
+
+  if (!acctID) return
+
 
   useEffect(() => {
+
     const fetchData = async () => {
         try {
             const response = await getAllClasses()
@@ -27,9 +53,16 @@ const CreateClass = ({ setIsShowCreateClass }) => {
                 setClassesList(response)
             }
 
-        } catch (error) {
-            console.log(error)
-            notify(error, false)
+        } catch (error: any) {
+
+            const errorMessage = error.response?.data?.message || error.message || 'An unexpected error occurred';
+
+            const data = {
+                message: errorMessage,
+                status: false
+            }
+            
+            notify(data)
         }
     }
 
@@ -41,47 +74,72 @@ const CreateClass = ({ setIsShowCreateClass }) => {
     reset, 
     register, 
     formState: { errors } 
-  } = useForm()
+  } = useForm<FormType>()
 
-  const handleCheckClass = (data) => {
-    if (classesList.some((cls) => cls.classCode == data)) {
+  const handleCheckClass = (classCode: string) => {
+
+    if (!classesList) return
+
+    if (classesList.some((cls) => cls.classCode == classCode)) {
         return 'Class code already exist.'
     }
+
   }
 
-  const handleFile = (e) => {
+  const handleFile = (e: any) => {
     const file = e.target.files[0]
   
     if(fileTypeChecker(file, 'image')) {
         setImage(file)
     }else {
-        notify('Invalid File type.', false)
+
+        const data = {
+            message: 'Invalid File type.',
+            status: false
+        }
+
+        notify(data)
     }
 
   }
+
   
-  const handleCreateClass = async (data) => {
+  const handleCreateClass: SubmitHandler<FormType> = async (data: FormType) => {
 
     try {
-        const formData = new FormData
 
-        formData.append('className', data?.className)
-        formData.append('classDesc', data?.classDesc)
-        formData.append('classCode', data?.classCode)
-        formData.append('acctID', userDetails?.acctID)
+        const formValues = {
+            className: data?.className,
+            classDesc: data?.classDesc,
+            classCode: data?.classCode,
+            acctID,
+            file: image,
+        } 
 
-        if (image) formData.append('file', image)
-
-        const response = await addClass(formData)
+        const response = await addClass(formValues)
 
         if (response) {
-            notify(response.message, true)
+
+            const data = {
+                message: response.message,
+                status: true
+            }
+
+            notify(data)
             setIsShowCreateClass(false)
             reset()
         }
 
-    } catch (error) {
-        notify('Failed to add class.', false)
+    } catch (error: any) {
+
+        const errorMessage = error.response?.data?.message || error.message || 'An unexpected error occurred';
+
+        const data = {
+            message: errorMessage,
+            status: false
+        }
+
+        notify(data)
     }
 
   }   
@@ -163,7 +221,6 @@ const CreateClass = ({ setIsShowCreateClass }) => {
                     <div className='d-flex flex-column mb-3'>
                         <label>Description ( optional ):</label>
                         <textarea 
-                            type="text"
                             placeholder='Class Description...'
                             {...register('classDesc')}
                         ></textarea>

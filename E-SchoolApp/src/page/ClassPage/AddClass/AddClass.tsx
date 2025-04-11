@@ -13,10 +13,10 @@ import { Class } from '../../../types/interfaces'
 
 const AddClass = () => {
 
-  const [isShowCreateClass, setIsShowCreateClass] = useState(false)
-  const [isShowImportClass, setIsShowImportClass] = useState(false)
+  const [isShowCreateClass, setIsShowCreateClass] = useState<boolean>(false)
+  const [isShowImportClass, setIsShowImportClass] = useState<boolean>(false)
   const [classesList, setClassesList] = useState<Class[]>([])
-  const [inputClassCode, setInputClassCode] = useState(null)
+  const [inputClassCode, setInputClassCode] = useState<string | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   const notificationContext = useContext(NotificationContext)
@@ -29,7 +29,11 @@ const AddClass = () => {
   const { notify } = notificationContext
   const { userDetails } = accountContext
 
-  
+  const acctID = userDetails?.acctID
+
+  if (!acctID) {
+    return null
+  }
 
    useEffect(() => {
       
@@ -79,7 +83,7 @@ const AddClass = () => {
 
                         const data = {
                             classCode: inputClassCode,
-                            acctID: userDetails?.acctID
+                            acctID
                         }
 
                         const response = await joinClassByClassCode(data)
@@ -96,11 +100,14 @@ const AddClass = () => {
                         }
 
                     } catch (error) {
+                        
                         const data = {
-                            message: error,
+                            message: 'Error in joining Class.',
                             status: false
                         }
+
                         notify(data)
+
                         handleReset()
                     }
                 }
@@ -173,7 +180,7 @@ const AddClass = () => {
                 </div>                
                 <button 
                     style={{ width: 180, }}
-                    value={inputClassCode}
+                    value={inputClassCode || ''}
                     onClick={handleJoinClass}
                 >Join</button>
             </div>

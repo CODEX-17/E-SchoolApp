@@ -1,6 +1,10 @@
-import axios from "axios"
+import axios, { AxiosError } from "axios"
 import { Class } from "../types/interfaces"
 const BASE_URL = 'http://localhost:5001'
+
+interface ErrorResponse {
+    message: string;
+}
 
 export const getClassesByAccount = async (acctID: string) => {
     try {
@@ -44,13 +48,33 @@ export const updateClassVisibility = async (id: number, status: boolean) => {
     }
 }
 
-export const addClass = async (data: Class) => {
+interface ClassInfo {
+    className: string,
+    classDesc: string | null,
+    classCode: string,
+    acctID: string,
+    file?: File | null,
+}
+
+export const addClass = async (data: ClassInfo) => {
+    
     try {
+
+        const formData = new FormData
+
+        formData.append('className', data?.className)
+        formData.append('classDesc', data?.classDesc ?? '')
+        formData.append('classCode', data?.classCode)
+        formData.append('acctID', data?.acctID)
         
-        const response = await axios.post(`${BASE_URL}/classes/addClass`, data)
+        if (data?.file) {
+            formData.append('file', data.file);
+        }
+        
+        const response = await axios.post(`${BASE_URL}/classes/addClass`, formData)
 
         if (!response || !response.data || response.data.length === 0) {
-            return null
+            return { message: 'No data store.' }
         }
         
         if (response) {
@@ -60,7 +84,7 @@ export const addClass = async (data: Class) => {
 
     } catch (error) {
         console.log('Server error', error)
-        return null
+        return { message: 'An error occurred while fetching classes.' }
     }
 }
 
@@ -79,8 +103,27 @@ export const getAllClasses = async () => {
         }
 
     } catch (error) {
-        console.log('Server error', error)
-        return null
+
+        const axiosError = error as AxiosError<ErrorResponse>;
+
+        // Log the error to understand where it failed
+        if (axiosError.response) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx
+            console.error('Server responded with error:', axiosError.response.data);
+            console.error('Status:', axiosError.response.status);
+            console.error('Headers:', axiosError.response.headers);
+            return axiosError.response.data; // return server error message
+        } else if (axiosError.request) {
+            // The request was made but no response was received
+            console.error('No response received:', axiosError.request);
+        } else {
+            // Something happened in setting up the request that triggered an Error
+            console.error('Error setting up request:', axiosError.message);
+        }
+
+        return { message: 'An error occurred while fetching classes.' };
+    
     }
 }
 
