@@ -37,22 +37,121 @@ import ImageRender from "../../../components/ImageRender/ImageRender";
 import Feed from "./Feed/Feed";
 import { ClassContext } from "../../../context/ClassContext";
 import Navbar from "./Navbar/Navbar";
+import Sidebar from "./Sidebar/Sidebar";
+import { ClassRoutes, Routes } from "../../../types/types";
 const socket = io.connect("http://localhost:5001");
 
+interface IconPropsType {
+  isActive: boolean;
+  color?: string;
+  activeColor?: string;
+  size?: number;
+}
+
 const ClassHome = () => {
-  const { userDetails } = useContext(UserDetailContext);
-  const { setCurrentRoute } = useContext(NavigationContext);
-  const { currentClass } = useContext(ClassContext);
+  const menuList = [
+    {
+      name: "Home",
+      icon: ({
+        isActive,
+        color = "#3e3f40",
+        activeColor = "#0d6efd",
+        size = 20,
+      }: IconPropsType) => (
+        <House color={isActive ? activeColor : color} size={size} />
+      ),
+      type: "all",
+    },
+    {
+      name: "Create Quiz",
+      icon: ({
+        isActive,
+        color = "#3e3f40",
+        activeColor = "#0d6efd",
+        size = 20,
+      }: IconPropsType) => (
+        <NotebookPen color={isActive ? activeColor : color} size={size} />
+      ),
+      type: "faculty",
+    },
+    {
+      name: "Class Members",
+      icon: ({
+        isActive,
+        color = "#3e3f40",
+        activeColor = "#0d6efd",
+        size = 20,
+      }: IconPropsType) => (
+        <Users color={isActive ? activeColor : color} size={size} />
+      ),
+      type: "all",
+    },
+    {
+      name: "Manage Class",
+      icon: ({
+        isActive,
+        color = "#3e3f40",
+        activeColor = "#0d6efd",
+        size = 20,
+      }: IconPropsType) => (
+        <SquareChartGantt color={isActive ? activeColor : color} size={size} />
+      ),
+      type: "faculty",
+    },
+    {
+      name: "Leaderboard",
+      icon: ({
+        isActive,
+        color = "#3e3f40",
+        activeColor = "#0d6efd",
+        size = 20,
+      }: IconPropsType) => (
+        <AlignStartVertical
+          color={isActive ? activeColor : color}
+          size={size}
+        />
+      ),
+      type: "faculty",
+    },
+    {
+      name: "Files",
+      icon: ({
+        isActive,
+        color = "#3e3f40",
+        activeColor = "#0d6efd",
+        size = 20,
+      }: IconPropsType) => (
+        <FolderClosed color={isActive ? activeColor : color} size={size} />
+      ),
+      type: "faculty",
+    },
+    {
+      name: "Exit",
+      icon: ({
+        isActive,
+        color = "#3e3f40",
+        activeColor = "#0d6efd",
+        size = 20,
+      }: IconPropsType) => (
+        <LogOut color={isActive ? activeColor : color} size={size} />
+      ),
+      type: "all",
+    },
+  ];
 
-  type TabType =
-    | "Home"
-    | "Create Quiz"
-    | "Class Members"
-    | "Manage Class"
-    | "Leaderboard"
-    | "Files";
+  const classContext = useContext(ClassContext);
+  const userDetailsContext = useContext(UserDetailContext);
+  const navigationContext = useContext(NavigationContext);
 
-  const [currentTab, setCurrentTab] = useState<TabType>("Home");
+  if (!classContext || !userDetailsContext || !navigationContext) {
+    return null;
+  }
+
+  const { currentClass } = classContext;
+  const { userDetails } = userDetailsContext;
+  const { currentRoute, setCurrentRoute } = navigationContext;
+
+  const [currentTab, setCurrentTab] = useState<ClassRoutes>("Home");
 
   const [isHideSideBar, setIsHideSideBar] = useState(false);
 
@@ -380,9 +479,10 @@ const ClassHome = () => {
 
   //  },[])
 
-  const handleSelectMenu = (item) => {
+  const handleSelectMenu = (item: ClassRoutes) => {
     if (item === "Exit") {
-      setCurrentRoute("class");
+      setCurrentRoute("classPage");
+      setChoose(item);
       return;
     }
 
@@ -1340,124 +1440,59 @@ const ClassHome = () => {
         </div>
       )}
 
-      <div className="border-bottom">
-        <Navbar />
-      </div>
-
-      {/* <div
-        className={style.sideBarContainer}
-        style={{
-          maxWidth: isHideSideBar ? 70 : 400,
-          width: isHideSideBar ? 70 : 400,
-          padding: isHideSideBar ? 2 : 20,
-          flexDirection: screenSize <= 425 ? "column" : "row",
-        }}
-      >
-        {screenSize <= 1024 && (
-          <div
-            className="d-flex w-100 pb-4"
-            style={{
-              justifyContent: isHideSideBar ? "center" : "end",
-              paddingTop: isHideSideBar ? 20 : 0,
-            }}
-          >
-            {isHideSideBar ? (
-              <PanelLeftOpen
-                size={20}
-                cursor={"pointer"}
-                onClick={() => setIsHideSideBar(!isHideSideBar)}
-              />
-            ) : (
-              <PanelRightOpen
-                size={20}
-                cursor={"pointer"}
-                onClick={() => setIsHideSideBar(!isHideSideBar)}
-              />
-            )}
-          </div>
-        )}
-
-        <div
-          className="w-100 h-auto d-flex flex-column align-items-center justify-content-center mt-3"
-          style={{ height: 10 }}
-        >
-          <div
-            className={style.imageContainer}
-            style={{
-              width: isHideSideBar ? 50 : 200,
-              height: isHideSideBar ? 50 : 200,
-              backgroundColor: "red",
-            }}
-          >
-            <ImageRender image={currentClass?.fileID} />
-          </div>
-          {!isHideSideBar && (
-            <>
-              <h2>{currentClass?.className}</h2>
-              <p>{currentClass?.classCode}</p>
-            </>
-          )}
+      {/* Navbar will display only in mobile view */}
+      {screenSize <= 768 && (
+        <div className="border-bottom">
+          <Navbar
+            userDetails={userDetails}
+            menuList={menuList}
+            screenSize={screenSize}
+            currentClass={currentClass}
+            currentTab={currentTab}
+            handleSelectMenu={handleSelectMenu}
+          />
         </div>
-
-        <div
-          className="w-100 h-auto d-flex align-items-center mt-4"
-          style={{ flexDirection: "row" }}
-        >
-          {sideBarMenuList.map((item, index) => {
-            const isActive = choose === item.name ? true : false;
-            if (
-              userDetails.acctype === "faculty" &&
-              item.type !== "faculty" &&
-              item.type !== "all"
-            )
-              return;
-
-            return (
-              <button
-                key={index}
-                className={
-                  isActive ? style.buttonSideBarActive : style.buttonSideBar
-                }
-                style={{
-                  gap: isHideSideBar ? 0 : 10,
-                  padding: isHideSideBar ? 0 : 20,
-                  borderRadius: isHideSideBar ? "50%" : 5,
-                  justifyContent: isHideSideBar ? "center" : "start",
-                  width: isHideSideBar ? 50 : "80%",
-                }}
-                onClick={() => handleSelectMenu(item.name)}
-              >
-                {item.icon}
-                {!isHideSideBar && item.name}
-              </button>
-            );
-          })}
-        </div>
-      </div> */}
+      )}
 
       <div
         className={style.rightContent}
         style={{ width: isHideSideBar ? "100%" : "100%" }}
       >
-        {showLoading && (
-          <div className={style.loadingContainer}>
-            <ProgressBar
-              id={style.progressBar}
-              visible={true}
-              height="80"
-              width="80"
-              color="green"
-              barColor="#3E3F40"
-              borderColor="#099AED"
-              ariaLabel="progress-bar-loading"
-              wrapperStyle={{}}
-              wrapperClass=""
+        {/* Sidebar will display only in web */}
+        {screenSize > 768 && (
+          <div className={style.sideBarContainer}>
+            <Sidebar
+              userDetails={userDetails}
+              menuList={menuList}
+              screenSize={screenSize}
+              currentClass={currentClass}
+              currentTab={currentTab}
+              handleSelectMenu={handleSelectMenu}
             />
-            <p>Loading...</p>
           </div>
         )}
 
-        {renderArea()}
+        <div className="d-flex w-100 h-100 p-3">
+          {showLoading && (
+            <div className={style.loadingContainer}>
+              <ProgressBar
+                id={style.progressBar}
+                visible={true}
+                height="80"
+                width="80"
+                color="green"
+                barColor="#3E3F40"
+                borderColor="#099AED"
+                ariaLabel="progress-bar-loading"
+                wrapperStyle={{}}
+                wrapperClass=""
+              />
+              <p>Loading...</p>
+            </div>
+          )}
+
+          {renderArea()}
+        </div>
       </div>
     </div>
   );
