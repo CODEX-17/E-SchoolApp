@@ -1,0 +1,27 @@
+.container {
+  display: flex;
+  width: 100%;
+  height: auto;
+  padding: 10px;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.container h1 {
+  font-size: 1rem;
+  margin: 0;
+  font-family: bold;
+  color: #3e3f40;
+}
+
+.imageContainer {
+  width: 200px;
+  height: 200px;
+  border-radius: 100px;
+  position: relative;
+  overflow: hidden;
+}
+
+.menuItem {
+  color: #3e3f40;
+}
