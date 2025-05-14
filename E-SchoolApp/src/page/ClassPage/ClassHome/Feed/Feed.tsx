@@ -11,10 +11,13 @@ import {
 import Modal from "./Modal/Modal";
 import { AiOutlineLike, AiFillFilePpt, AiOutlineDelete } from "react-icons/ai";
 import { getFileByFileID } from "../../../../services/fileServices";
-import { getProfileDataByAcctID } from "../../../../services/accountServices";
 import generateFullname from "../../../../utils/generateFullname";
 import ImageRender from "../../../../components/ImageRender/ImageRender";
 import { NotificationContext } from "../../../../context/NotificationContext";
+import {
+  convertDateFormatIntoString,
+  formatTime,
+} from "../../../../utils/dateUtils";
 
 export interface PostType {
   id?: number;
@@ -59,31 +62,43 @@ const Feed = () => {
   const { notify } = notifContext;
 
   const [postList, setPostList] = useState<PostType[] | []>([]);
-  const [imageList, setImageList] = useState([]);
-  const [isShowModal, setIsShowModal] = useState(true);
+  const [isShowModal, setIsShowModal] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const classCode = currentClass?.classCode;
 
   if (!classCode || !userDetails || !userDetails?.fileID) return null;
 
+  const sortItemByDate = (item: PostType[]) => {
+    const updated = item.map((items) => ({
+      ...items,
+      datetime: `${items.timePosted} ${items.datePosted}`,
+    }));
+
+    return updated.sort((a, b) => {
+      const dateA: Date = new Date(a.datetime);
+      const dateB = new Date(b.datetime);
+      return dateB.getTime() - dateA.getTime();
+    });
+  };
+
   useEffect(() => {
+    setIsLoading(true);
     const getData = async () => {
       try {
         //Get post JOIN reactions
         const result = await getPostByClassCode(classCode);
-
-        console.log(result);
-
         if (result) {
           const finalResult = result;
 
           for (let i = 0; i < finalResult.length; i++) {
             // If file exist
-            if (finalResult.fileID) {
-              const files = await getFileByFileID(finalResult.fileID);
-
-              if (files) {
-                finalResult[i].images = files;
+            if (finalResult[i].fileID) {
+              const file_result = await getFileByFileID(finalResult[i].fileID);
+              if (file_result) {
+                finalResult[i].images = Array.isArray(file_result)
+                  ? file_result
+                  : [file_result]; // Ensure it's always an array
               }
             }
 
@@ -96,7 +111,10 @@ const Feed = () => {
             //Continue the comment later...
           }
 
-          setPostList(finalResult);
+          const sortedData = sortItemByDate(finalResult);
+          console.log(sortedData);
+          setPostList(sortedData);
+          setIsLoading(false);
         }
       } catch (error) {
         console.log(error);
@@ -104,7 +122,7 @@ const Feed = () => {
     };
 
     getData();
-  }, []);
+  }, [isLoading]);
 
   // Delete post by postID
   const handleDeletePost = async ({
@@ -160,8 +178,13 @@ const Feed = () => {
   return (
     <div className={style.container}>
       {isShowModal && (
-        <div className="position-absolute w-100 h-100 z-3">
-          <Modal setIsShowModal={setIsShowModal} />
+        <div className="position-absolute d-flex align-items-center justify-content-center w-100 h-100 z-3">
+          <Modal
+            setIsShowModal={setIsShowModal}
+            classCode={classCode}
+            setPostList={setPostList}
+            setIsLoading={setIsLoading}
+          />
         </div>
       )}
 
@@ -180,56 +203,72 @@ const Feed = () => {
         />
       </div>
 
-      <div className={style.listPostContainer}>
-        {postList.length > 0
-          ? postList.reverse().map((post, index) => (
-              <div className={style.postCard} key={index}>
-                <div className="d-flex w-100 align-items-center justify-content-between">
-                  <div className="d-flex w-50 align-items-center justify-content-start gap-2">
-                    <div className={style.imageContainer}>
-                      <ImageRender image={post.account_photo_fileID} />
+      {isLoading ? (
+        <div className="w-100 h-100 d-flex align-items-center justify-content-center">
+          Loading...
+        </div>
+      ) : (
+        <div className={style.listPostContainer}>
+          {postList.length > 0
+            ? postList.reverse().map((post, index) => (
+                <div className={style.postCard} key={index}>
+                  <div className="d-flex w-100 align-items-center justify-content-between">
+                    <div className="d-flex w-50 align-items-center justify-content-start gap-2">
+                      <div className={style.imageContainer}>
+                        <ImageRender image={post.account_photo_fileID} />
+                      </div>
+                      <div className="d-flex flex-column">
+                        <h2>{post.fullname}</h2>
+                        <p>
+                          {formatTime(post.timePosted) +
+                            " : " +
+                            convertDateFormatIntoString(post.datePosted)}
+                        </p>
+                      </div>
                     </div>
-                    <div className="d-flex flex-column">
-                      <h2>{post.fullname}</h2>
-                      <p>{post.timePosted + " (" + post.datePosted + ")"}</p>
+                    <div className="d-flex w-50 justify-content-end">
+                      {userDetails?.acctID === post.acctID && (
+                        <AiOutlineDelete
+                          size={20}
+                          id={style.deleteIcon}
+                          title="delete post"
+                          onClick={() =>
+                            handleDeletePost({
+                              postID: post.postID,
+                              fileID: post.fileID,
+                              replyID: post.replyID,
+                              reactionID: post.reactionID,
+                              schedID: post.schedID,
+                            })
+                          }
+                        />
+                      )}
                     </div>
                   </div>
-                  <div className="d-flex w-50 justify-content-end">
-                    {userDetails?.acctID === post.acctID && (
-                      <AiOutlineDelete
-                        id={style.deleteBtn}
-                        title="delete"
-                        onClick={() =>
-                          handleDeletePost({
-                            postID: post.postID,
-                            fileID: post.fileID,
-                            replyID: post.replyID,
-                            reactionID: post.reactionID,
-                            schedID: post.schedID,
-                          })
-                        }
-                      />
+                  <hr />
+                  <div className={style.body}>
+                    <p>{post.postContent}</p>
+
+                    {post.images && (
+                      <div className={style.imgListInPost}>
+                        {post.images.map((item: string, index: number) => (
+                          <div
+                            className={style.imageContainer}
+                            key={index}
+                            style={{
+                              width: 200,
+                              height: 200,
+                              borderRadius: 5,
+                              cursor: "pointer",
+                            }}
+                          >
+                            <ImageRender image={item} />
+                          </div>
+                        ))}
+                      </div>
                     )}
-                  </div>
-                </div>
-                <div className={style.body}>
-                  <p>{post.postContent}</p>
 
-                  {/* <div className={style.imgListInPost}>
-                    {post.imageID !== "none" &&
-                      getImageUrlsByImageID(post.imageID) &&
-                      getImageUrlsByImageID(post.imageID).map((data, index) => (
-                        <div
-                          key={index}
-                          className={style.imgContainer}
-                          onClick={() => handleViewImage(data)}
-                        >
-                          <img src={data} alt="picture" id={style.imgSend} />
-                        </div>
-                      ))}
-                  </div>
-
-                  {post.fileID !== "none" &&
+                    {/* {post.fileID !== "none" &&
                     getFilesUrlsByFileID(post.fileID) &&
                     getFilesUrlsByFileID(post.fileID).map((data, index) => (
                       <div id={style.filePdf}>
@@ -293,11 +332,12 @@ const Feed = () => {
                         ))}
                     </div>
                   )} */}
+                  </div>
                 </div>
-              </div>
-            ))
-          : "no post"}
-      </div>
+              ))
+            : "no post"}
+        </div>
+      )}
     </div>
   );
 };

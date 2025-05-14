@@ -572,18 +572,6 @@ const ClassHome = () => {
     setshowPostModal(false);
   };
 
-  const deleteImageInPostModal = (currentIndex) => {
-    const oldImages = file;
-    const filter = oldImages.filter((data, index) => index !== currentIndex);
-    setFile(filter);
-  };
-
-  const deleteFilesInPostModal = (currentIndex) => {
-    const oldFiles = docxFiles;
-    const filter = oldFiles.filter((data, index) => index !== currentIndex);
-    setdocxFiles(filter);
-  };
-
   const navigateClass = (choose, type, obj) => {
     setQuizObj(obj["quiz"]);
     setChoose(choose);
@@ -776,77 +764,6 @@ const ClassHome = () => {
         return filter[0].quizTitle;
       }
       return "";
-    }
-  };
-
-  // Delete post by postID
-  const handleDeletePost = (postID, imageID, fileID) => {
-    if (postID && currentPost) {
-      //API delete post in table post
-      axios
-        .delete("http://localhost:5001/post/deletePostByPostID/" + postID)
-        .then((res) => {
-          const result = res.data;
-          const message = result.message;
-          console.log(message);
-
-          //check if the imageID is not equal to none
-          if (imageID !== "none") {
-            //Get the image name by imageID
-            const imageName = imageList
-              .filter((image) => image.imageID === imageID)
-              .map((image) => image.data);
-
-            const imageDetails = {
-              name: imageName,
-              imageID,
-            };
-
-            //Delete image from database
-            axios
-              .delete("http://localhost:5001/images/deleteImage", {
-                data: imageDetails,
-              })
-              .then((res) => {
-                const result = res.data;
-                const message = result.message;
-                console.log(message);
-              })
-              .catch((err) => console.log(err));
-          }
-
-          //If fileID is not equal to none
-          if (fileID !== "none") {
-            //Get the file name by fileID
-            const fileName = filesLists
-              .filter((files) => files.fileID === fileID)
-              .map((files) => files.data);
-
-            const fileDetails = {
-              name: fileName,
-              fileID,
-            };
-
-            //Delete image from database
-            axios
-              .delete("http://localhost:5001/files/deleteFiles", {
-                data: fileDetails,
-              })
-              .then((res) => {
-                const result = res.data;
-                const message = result.message;
-                console.log(message);
-              })
-              .catch((err) => console.log(err));
-          }
-        })
-        .catch((err) => console.log(err));
-
-      //Update post
-      socket.emit("UpdatePost", currentClassCode);
-
-      const filter = currentPost.filter((data) => data.postID !== postID);
-      setCurrentPost(filter);
     }
   };
 
@@ -1472,7 +1389,7 @@ const ClassHome = () => {
           </div>
         )}
 
-        <div className="d-flex w-100 h-100 p-3">
+        <div className="d-flex w-100 h-100">
           {showLoading && (
             <div className={style.loadingContainer}>
               <ProgressBar

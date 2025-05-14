@@ -11,18 +11,24 @@ interface ImageRenderProps {
  * This component takes either a `File` object or a file ID string.
  * It fetches and displays the image using a fallback if needed.
  *
- * @param image - Either a File or a string (file ID or "default")
+ * @param image - Either a File or a string (fileID, FILE or "default")
  * @returns Rendered <img> tag with proper source
  */
 
-//fileID or fileType for Props
 export default function ImageRender({ image }: ImageRenderProps) {
   if (!image) return null;
 
-  const [renderImage, setRenderImage] = useState(defaultImage);
+  const [renderImage, setRenderImage] = useState<string | File | string[]>(
+    defaultImage
+  );
 
   useEffect(() => {
     if (typeof image == "string") {
+      if (image.includes("http://")) {
+        setRenderImage(image);
+        return;
+      }
+
       if (image === "default") {
         setRenderImage(defaultImage);
       } else {
@@ -50,7 +56,7 @@ export default function ImageRender({ image }: ImageRenderProps) {
 
   return (
     <img
-      src={renderImage}
+      src={typeof renderImage === "string" ? renderImage : ""}
       title="Insert Image FileType or FileID"
       alt="image"
       style={{

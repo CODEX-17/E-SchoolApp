@@ -1,6 +1,15 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../db");
+const { v4: uuidv4 } = require("uuid");
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
+
+//generates a unique identifier
+const generateUniqueId = () => {
+  return uuidv4();
+};
 
 // GET ALL POST INNER JOIN IN SHEDULE TABLE
 router.get("/getPostInnerJoinSchedule", (req, res) => {
@@ -180,79 +189,128 @@ router.post("/postNowTheSchedule", (req, res) => {
     }
   });
 });
+const storageImage = multer.diskStorage({
+  destination: "./uploads",
+  filename: (req, file, cb) => {
+    cb(
+      null,
+      file.fieldname + "_" + Date.now() + path.extname(file.originalname)
+    );
+  },
+});
 
-// Add post in database
-router.post("/addPost", (req, res) => {
-  const {
-    postID,
+const upload = multer({ storage: storageImage });
+
+// Add POST
+router.post("/addPost", upload.array("file"), async (req, res) => {
+  const { acctID, postContent, postType, classCode } = req.body;
+  console.log(acctID, postContent, postType, classCode);
+  const fileList = req.files;
+
+  const quizID = req.body.quizID || null;
+  const schedID = req.body.schedID || null;
+
+  const GENERATED_ID = generateUniqueId();
+  const fileID = fileList && fileList.length > 0 ? GENERATED_ID : null;
+
+  const postQuery = `
+    INSERT INTO post(
+      postID, acctID, timePosted, datePosted, postContent,
+      replyID, fileID, classCode, postType, quizID, schedID, reactionID
+    ) VALUES (?, ?, CURTIME(), CURDATE(), ?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+
+  const reactionQuery = `
+    INSERT INTO reactions(
+      reactionID, postID, acctID, \`like\`, heart
+    ) VALUES (?, ?, ?, ?, ?)
+  `;
+
+  const post_query_values = [
+    GENERATED_ID,
     acctID,
-    name,
-    timePosted,
-    datePosted,
     postContent,
-    replyID,
-    imageID,
+    GENERATED_ID,
     fileID,
-    heartCount,
-    likeCount,
     classCode,
-    subjectName,
     postType,
     quizID,
     schedID,
-    schedStatus,
-    dueStatus,
-    closeStatus,
-    duration,
-    random,
-  } = req.body;
+    GENERATED_ID,
+  ];
 
-  const postQuery =
-    "INSERT INTO post(postID, acctID, name, timePosted, datePosted, postContent, replyID, imageID, fileID, heartCount, likeCount, classCode, subjectName, postType, quizID, schedID, schedStatus, dueStatus, closeStatus, duration, random) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-  const updateDraftQuizQuery =
-    "UPDATE quiz SET postStatus='posted' WHERE quizID=?";
+  const react_query_values = [GENERATED_ID, GENERATED_ID, acctID, 0, 0];
 
-  db.query(
-    postQuery,
-    [
-      postID,
-      acctID,
-      name,
-      timePosted,
-      datePosted,
-      postContent,
-      replyID,
-      imageID,
-      fileID,
-      heartCount,
-      likeCount,
-      classCode,
-      subjectName,
-      postType,
-      quizID,
-      schedID,
-      schedStatus,
-      dueStatus,
-      closeStatus,
-      duration,
-      random,
-    ],
-    (error, data, field) => {
-      if (error) {
-        console.log(error);
-        res.status(404).send(error);
-      } else {
-        db.query(updateDraftQuizQuery, [quizID], (err, data, field) => {
-          if (err) {
-            console.log(err);
-            res.status(404).send(err);
-          }
+  try {
+    const promiseVariables = [];
 
-          res.status(200).json({ message: "Succefully add post." });
+    // Insert post
+    const postProcess = new Promise((resolve, reject) => {
+      db.query(postQuery, post_query_values, (error) => {
+        if (error) {
+          console.log(error);
+          reject("Error adding post.");
+        } else {
+          console.log("Post inserted.");
+          resolve("Post inserted.");
+        }
+      });
+    });
+    promiseVariables.push(postProcess);
+
+    // Insert reaction
+    const reactProcess = new Promise((resolve, reject) => {
+      db.query(reactionQuery, react_query_values, (error) => {
+        if (error) {
+          console.log(error);
+          reject("Error adding reaction.");
+        } else {
+          console.log("Reaction inserted.");
+          resolve("Reaction inserted.");
+        }
+      });
+    });
+    promiseVariables.push(reactProcess);
+
+    // Insert uploaded files
+    if (fileList && fileList.length > 0) {
+      for (const file of fileList) {
+        const { originalname, mimetype, filename } = file;
+        const fileInsertQuery = `
+          INSERT INTO files(name, type, data, dateUploaded, timeUploaded, acctID, fileID)
+          VALUES (?, ?, ?, CURDATE(), CURTIME(), ?, ?)
+        `;
+        const file_query_values = [
+          originalname,
+          mimetype,
+          filename,
+          acctID,
+          fileID,
+        ];
+
+        const fileProcess = new Promise((resolve, reject) => {
+          db.query(fileInsertQuery, file_query_values, (error) => {
+            if (error) {
+              console.log(error);
+              reject("Error inserting file.");
+            } else {
+              console.log(`File inserted: ${originalname}`);
+              resolve("File inserted.");
+            }
+          });
         });
+
+        promiseVariables.push(fileProcess);
       }
     }
-  );
+
+    await Promise.all(promiseVariables);
+    console.log("Successfully added post and all related data.");
+    res.status(200).json({ message: "Successfully added post." });
+  } catch (error) {
+    console.log("Server error:", error);
+    res.status(400).send(error);
+  }
 });
 
 module.exports = router;

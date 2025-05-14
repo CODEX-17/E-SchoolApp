@@ -1,4 +1,10 @@
-import React, { useState, useRef, useContext } from "react";
+import React, {
+  useState,
+  useRef,
+  useContext,
+  memo,
+  SetStateAction,
+} from "react";
 import style from "./Modal.module.css";
 import { getFileByFileID } from "../../../../../services/fileServices";
 import { BiExit } from "react-icons/bi";
@@ -8,175 +14,158 @@ import { MdSend, MdOutlineAttachment } from "react-icons/md";
 import { UserDetailContext } from "../../../../../context/UserDetailContext";
 import generateUserFullname from "../../../../../utils/generateUserFullname";
 import ImageRender from "../../../../../components/ImageRender/ImageRender";
+import { NotificationContext } from "../../../../../context/NotificationContext";
+import { shortenSentence } from "../../../../../utils/textUtils";
+import { PostType } from "../../../../../types/types";
+import { addPost } from "../../../../../services/postServices";
 
-const Modal = ({ setIsShowModal }) => {
-  const { userDetails } = useContext(UserDetailContext);
+interface ModalProps {
+  setIsShowModal: (value: boolean) => void;
+  classCode: string;
+  setPostList: React.Dispatch<SetStateAction<any>>;
+  setIsLoading: React.Dispatch<SetStateAction<boolean>>;
+}
 
-  const [postContent, setPostContent] = useState("");
-  const [docxFiles, setdocxFiles] = useState(null);
-  const [file, setFile] = useState(null);
+export interface PostSubmitType {
+  acctID: string;
+  postContent: string | null;
+  fileList: File[] | null;
+  docxList: File[] | null;
+  postType: PostType;
+  classCode: string;
+  quizID: string | null;
+  schedID: string | null;
+}
 
-  const inputImageFileRef = useRef(null);
-  const inputFilesRef = useRef(null);
-  const inputImageFileRefComment = useRef(null);
-  const inputFilesRefComment = useRef(null);
+type FileType = "Docs" | "File";
 
-  const handleUploadFilesClick = () => {
-    inputFilesRef.current.click();
-  };
+const Modal = ({
+  setIsShowModal,
+  classCode,
+  setPostList,
+  setIsLoading,
+}: ModalProps) => {
+  const userDetailsContext = useContext(UserDetailContext);
+  const notifContext = useContext(NotificationContext);
 
-  const handleUploadImageClick = () => {
-    inputImageFileRef.current.click();
-  };
+  const limitFileCount = 5;
 
-  const handleGetFiles = (e, type) => {
+  if (!userDetailsContext || !notifContext) {
+    return null;
+  }
+
+  const { userDetails } = userDetailsContext;
+  const { notify } = notifContext;
+
+  if (!userDetails) return null;
+
+  const [postContent, setPostContent] = useState<string | null>("");
+  const [docxFiles, setdocxFiles] = useState<File[] | null>(null);
+  const [fileList, setFileList] = useState<File[] | null>(null);
+
+  const inputImageFileRef = useRef<any>(null);
+  const inputFilesRef = useRef<any>(null);
+
+  const handleGetFiles = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    type: FileType
+  ) => {
     const file = e.target.files;
-    const fileList = Array.from(file);
+    console.log(file);
+    if (!file) return;
 
-    if (type === "file") {
-      setFile(fileList);
+    if (type === "File") {
+      if (fileList && limitFileCount === fileList.length) {
+        notify({
+          message: `Reach the limit number of File: ${limitFileCount}`,
+          status: false,
+        });
+
+        return null;
+      }
+
+      setFileList((oldData) =>
+        oldData ? [...oldData, ...Array.from(file)] : Array.from(file)
+      );
     } else {
-      setdocxFiles(fileList);
+      if (docxFiles && limitFileCount === docxFiles.length) {
+        notify({
+          message: `Reach the limit number of docs: ${limitFileCount}`,
+          status: false,
+        });
+
+        return null;
+      }
+
+      setdocxFiles((oldData) =>
+        oldData ? [...oldData, ...Array.from(file)] : Array.from(file)
+      );
+    }
+  };
+
+  const deleteFileUpload = (data: File, type: FileType) => {
+    if (fileList && type === "File") {
+      setFileList((oldData) =>
+        oldData ? oldData.filter((item) => data != item) : null
+      );
+    } else if (docxFiles && type === "Docs") {
+      setdocxFiles((oldData) =>
+        oldData ? oldData.filter((item) => data != item) : null
+      );
     }
   };
 
   // // Submit new post
-  // const handlePost = () => {
+  const handleSubmitPost = async () => {
+    setIsLoading(true);
 
-  //     // insert current post in variable
-  //     let updated = [...currentPost]
+    if (!postContent && !fileList && !docxFiles) {
+      notify({ message: `Please Fill the blank to post.`, status: false });
+      return null;
+    }
 
-  //     let updatedPost = {
-  //         postID: generateID(),
-  //         acctID: userAccount.acctID,
-  //         name: generateFullname(),
-  //         timePosted: time,
-  //         datePosted: date,
-  //         postContent,
-  //         replyID: generateID(),
-  //         image: file,
-  //         file: docxFiles,
-  //         heartCount,
-  //         likeCount,
-  //         classCode: currentClassCode,
-  //         subjectName,
-  //         postType: 'normal',
-  //         quizID: 'none',
-  //         schedID: 'none',
-  //         schedStatus: 'no',
-  //         dueStatus: 'no',
-  //         closeStatus: 'no',
-  //         duration: 0,
-  //         random: 'none',
-  //     }
+    let data: PostSubmitType = {
+      acctID: userDetails.acctID,
+      postContent,
+      fileList: fileList,
+      docxList: docxFiles,
+      classCode,
+      postType: "Post",
+      quizID: null,
+      schedID: null,
+    };
 
-  //     // if image is not null it return unique id
-  //     if (updatedPost.image) {
-  //         updatedPost.imageID = generateID()
-  //     }else {
-  //         updatedPost.imageID = 'none'
-  //     }
-
-  //     // if file is not null it return unique id
-  //     if (updatedPost.file) {
-  //         updatedPost.fileID = generateID()
-  //     }else {
-  //         updatedPost.fileID = 'none'
-  //     }
-
-  //     // add post in variable
-  //     updated.push(updatedPost)
-  //     // setCurrentPost(updated)
-
-  //     console.log('updatedPost', updatedPost)
-
-  //     // API for adding post
-  //     axios.post('http://localhost:5001/post/addPost', updatedPost )
-  //     .then((res) => {
-  //         const data = res.data
-  //         console.log(data.message)
-
-  //         //API for adding image of post
-  //         if (updatedPost.image) {
-
-  //             const images = updatedPost.image
-  //             const formData = new FormData
-  //             formData.append('imageID', updatedPost.imageID)
-  //             formData.append('dateUploaded', updatedPost.datePosted)
-  //             formData.append('timeUploaded', updatedPost.timePosted)
-  //             formData.append('acctID', updatedPost.acctID)
-  //             formData.append('classCode', updatedPost.classCode)
-
-  //             for (let i = 0; i < images.length; i++) {
-  //                 formData.append('image', images[i])
-  //             }
-
-  //             axios.post('http://localhost:5001/images/addImage', formData )
-  //             .then((res) => {
-  //                 const data = res.data
-  //                 setshowLoading(true)
-  //                 getImagesByClassCode()
-  //                 console.log(data.message)
-  //             })
-  //             .catch((err) => {
-  //                 console.log(err)
-  //             })
-
-  //         }
-
-  //         //API for adding docs of post
-  //         if (updatedPost.file) {
-
-  //             const files = updatedPost.file
-  //             const formData = new FormData
-  //             formData.append('fileID', updatedPost.fileID)
-  //             formData.append('dateUploaded', updatedPost.datePosted)
-  //             formData.append('timeUploaded', updatedPost.timePosted)
-  //             formData.append('acctID', updatedPost.acctID)
-  //             formData.append('classCode', updatedPost.classCode)
-
-  //             for (let i = 0; i < files.length; i++) {
-  //                 formData.append('file', files[i])
-  //             }
-
-  //             axios.post('http://localhost:5001/files/addFiles', formData)
-  //             .then((res) => {
-  //                 const data = res.data
-  //                 getFilesByClassCode()
-  //                 console.log(data.message)
-  //             })
-  //             .catch((err) => {
-  //                 console.log(err)
-  //             })
-
-  //         }
-
-  //         // reset variables
-  //         setPostContent('')
-  //         setFile(null)
-  //         setdocxFiles(null)
-  //         setshowPostModal(false)
-
-  //         //Update post
-  //         socket.emit('UpdatePost', currentClassCode)
-
-  //         // notification for success
-  //         const message = 'posted successfully'
-  //         notify(message, 'success')
-
-  //     })
-  //     .catch((err) => console.log(err))
-
-  // }
-
-  const handlePost = () => {};
+    try {
+      const result = await addPost(data);
+      setIsShowModal(false);
+      if (result) {
+        setPostList((oldData: any) => [...oldData, data]);
+        notify({
+          message: result.message,
+          status: true,
+        });
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 3000);
+      }
+    } catch (error) {
+      console.log(error);
+      notify({
+        message: `Server Error`,
+        status: false,
+      });
+    }
+  };
 
   return (
     <div className={style.container}>
       <div className={style.modal}>
         <div className="d-flex w-100 align-items-center justify-content-between">
           <div className="d-flex gap-2 align-items-center">
-            <div className={style.imageContainer}>
+            <div
+              className={style.imageContainer}
+              style={{ borderRadius: "50%" }}
+            >
               <ImageRender image={userDetails?.fileID} />
             </div>
             <p>{generateUserFullname()}</p>
@@ -188,80 +177,89 @@ const Modal = ({ setIsShowModal }) => {
             onClick={() => setIsShowModal(false)}
           />
         </div>
-        <div className={style.bodyPostModal}>
-          {file && (
-            <div className={style.fileListPost}>
-              {file.map((data, index) => (
-                <div className={style.imageContainer}>
+        <div className={style.body}>
+          <div className="mb-2">
+            <textarea
+              placeholder="Share your thoughts here..."
+              value={postContent ?? ""}
+              onChange={(e) => setPostContent(e.target.value)}
+            ></textarea>
+          </div>
+
+          {fileList && (
+            <div className={style.fileListPost} style={{ overflow: "hidden" }}>
+              {fileList.map((data, index) => (
+                <div className="position-relative" key={index}>
                   <IoCloseCircle
                     id={style.deleteImagePreview}
-                    size={25}
-                    onClick={() => deleteImageInPostModal(index)}
+                    size={17}
+                    color="#099aed"
+                    title="Delete Image"
+                    onClick={() => deleteFileUpload(data, "File")}
                   />
-                  <ImageRender image={data} />
+                  <div className={style.imageContainer}>
+                    <ImageRender image={data} />
+                  </div>
                 </div>
               ))}
             </div>
           )}
 
           {docxFiles && (
-            <div className={style.fileListPost}>
+            <div
+              className={style.fileListPost}
+              style={{ flexDirection: "column", overflowX: "hidden" }}
+            >
               {docxFiles.map((data, index) => (
                 <div className={style.fileDivPreview} key={index}>
                   <IoCloseCircle
                     id={style.deleteImagePreview}
-                    size={25}
-                    onClick={() => deleteFilesInPostModal(index)}
+                    color="#099aed"
+                    size={17}
+                    onClick={() => deleteFileUpload(data, "Docs")}
                   />
                   <IoDocumentText size={25} color="white" />
-                  <p>{data.name}</p>
+                  <p>{shortenSentence(data.name, 20)}</p>
                 </div>
               ))}
             </div>
           )}
 
-          <textarea
-            placeholder="Share your thoughts here..."
-            value={postContent}
-            onChange={(e) => setPostContent(e.target.value)}
-          ></textarea>
-
           <div className="d-flex w-100 mt-2 mb-3 gap-2 justify-content-end">
+            <button className={style.btnPostModal} onClick={handleSubmitPost}>
+              Post
+            </button>
             <div
               className={style.uploadContainer}
-              onClick={handleUploadImageClick}
+              onClick={() => inputImageFileRef.current.click()}
               title="Upload Image"
             >
               <input
                 type="file"
                 ref={inputImageFileRef}
                 accept="image/*"
-                onChange={(e) => handleGetFiles(e, "file")}
+                onChange={(e) => handleGetFiles(e, "File")}
                 style={{ display: "none" }}
                 multiple
               />
-              <FaRegImages color="#099AED" size={15} />
+              <FaRegImages color="#099AED" size={17} />
             </div>
             <div
               className={style.uploadContainer}
-              onClick={handleUploadFilesClick}
+              onClick={() => inputFilesRef.current.click()}
               title="Upload Docs"
             >
               <input
                 type="file"
                 ref={inputFilesRef}
                 accept=".doc, .docx, .pdf, .txt, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-                onChange={(e) => handleGetFiles(e, "docs")}
+                onChange={(e) => handleGetFiles(e, "Docs")}
                 style={{ display: "none" }}
                 multiple
               />
-              <MdOutlineAttachment color="#099AED" size={15} />
+              <MdOutlineAttachment color="#099AED" size={17} />
             </div>
           </div>
-
-          <button className={style.btnPostModal} onClick={handlePost}>
-            Post
-          </button>
         </div>
       </div>
     </div>

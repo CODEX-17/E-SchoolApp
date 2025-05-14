@@ -1,148 +1,165 @@
 .container {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow-y: hidden;
 }
 
 .imageContainer {
-    width: 50px;
-    height: 50px;
-    border-radius: 100px;
-    position: relative;
-    overflow: hidden;
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+  border: 0.8px solid rgba(128, 128, 128, 0.345);
+  box-shadow: -1px -2px 14px -9px rgba(0, 0, 0, 1);
+  -webkit-box-shadow: -1px -2px 14px -9px rgba(0, 0, 0, 1);
+  -moz-box-shadow: -1px -2px 14px -9px rgba(0, 0, 0, 1);
 }
 
-  
-  .modal {
-    animation: pop 0.5s ease;
-    background-color: #ffffff;
-    width: 400px;
-    height: auto;
-    max-height: 80%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    gap: 10px;
-    overflow: hidden;
-  }
+.modal {
+  animation: pop 0.5s ease;
+  background-color: #ffffff;
+  width: 400px;
+  height: auto;
+  max-height: 80%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  gap: 10px;
+  overflow: hidden;
+}
 
-  .modal p {
-    font-size: 1rem;
-    font-family: bold;
-    margin: 0;
-  }
-  
-  .bodyPostModal {
-    margin-top: 10px;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-  }
+.modal p {
+  font-size: 1rem;
+  font-family: bold;
+  margin: 0;
+}
 
-  .modal textarea {
-    border-radius: 5px;
-    font-size: 10pt;
-    padding: 2%;
-    min-height: 150px;
-    height: 150px;
-    max-height: 300px;
-    font-family: normal;
-  }
+.body {
+  margin-top: 10px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
 
-  .modal textarea::placeholder {
-    font-size: 1rem;
-  }
+.body textarea {
+  border-radius: 5px;
+  font-size: 10pt;
+  padding: 2%;
+  min-height: 100px;
+  height: 100px;
+  max-height: 300px;
+  font-family: normal;
+}
 
-  
-  .uploadContainer {
-    border: 1px solid #099AED;
-    padding: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 5px;
-    width: auto;
-    height: auto;
-  }
+.body textarea::placeholder {
+  font-size: 1rem;
+}
 
-  .uploadContainer:hover {
-    opacity: 0.5;
-  }
+.uploadContainer {
+  border: 1px solid #099aed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  width: 50px;
+  height: 40px;
+  cursor: pointer;
+}
 
-  .uploadContainer input[type="file"] {
-    display: none;
-  }
+.uploadContainer:hover {
+  opacity: 0.5;
+}
 
-  .uploadContainer h2 {
-    font-size: 10pt;
-    font-family: bold;
-    color: #099AED;
-    margin: 0;
-  }
+.uploadContainer input[type="file"] {
+  display: none;
+}
 
-  .fileListPost {  
-    margin-bottom: 20px;
-    width: 100%;
-    height: auto;
-    display: flex;
-    overflow: auto;
-    padding: 2%;
-    white-space: nowrap;
-  }
+.uploadContainer h2 {
+  font-size: 10pt;
+  font-family: bold;
+  color: #099aed;
+  margin: 0;
+}
 
-  
-  .imageDivPreview {
-    border: 2px solid #099AED;
-    border-radius: 10px;
-    flex: 0 0 auto;
-    width: 200px;
-    margin-right: 10px;
-    position: relative;
-    animation: pop 0.5s ease-in-out;
-  }
+.fileListPost {
+  margin-bottom: 10px;
+  width: 100%;
+  height: auto;
+  display: flex;
+  overflow: auto;
+  padding: 2%;
+  white-space: nowrap;
+  gap: 10px;
+}
 
-  .imageDivPreview img {
-    width: 100%;
-    object-fit: contain;
-    height: auto;
-  }
+.imageDivPreview {
+  border: 2px solid #099aed;
+  border-radius: 10px;
+  flex: 0 0 auto;
+  width: 200px;
+  margin-right: 10px;
+  position: relative;
+  animation: pop 0.5s ease-in-out;
+}
 
-  #deleteImagePreview {
-    position: absolute;
-    top: -10px;
-    right: -10px;
-    cursor: pointer;
-    color: white;
-    z-index: 3  ;
-    border: 1px solid #099AED;
-    border-radius: 100%;
-    background-color: #099AED;
-  }
+.imageDivPreview img {
+  width: 100%;
+  object-fit: contain;
+  height: auto;
+}
 
+#deleteImagePreview {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  cursor: pointer;
+  color: white;
+  z-index: 100;
+  background-color: white;
+  border-radius: 100%;
+}
 
+.btnPostModal {
+  border: none;
+  background-color: #099aed;
+  font-size: 10pt;
+  color: white;
+  width: 100%;
+  height: 40px;
+  font-family: bold;
+  border-radius: 5px;
+}
 
-  .btnPostModal {
-        border: none;
-        background-color: #099AED;
-        font-size: 10pt;
-        color: white;
-        width: 100%;
-        height: 40px;
-        font-family: bold;
-        border-radius: 5px;
-    }
-    
-    .btnPostModal:hover {
-        background-color: #b9b9b9;
-    }
+.btnPostModal:hover {
+  background-color: #b9b9b9;
+}
 
+.fileDivPreview {
+  gap: 10px;
+  border: 2px solid #099aed;
+  background-color: #099aed;
+  border-radius: 5px;
+  padding: 5px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+  position: relative;
+  animation: pop 0.5s ease-in-out;
+}
 
-  
-
-
+.fileDivPreview p {
+  margin: 0;
+  color: white;
+  font-size: 0.7rem;
+  font-family: bold;
+}

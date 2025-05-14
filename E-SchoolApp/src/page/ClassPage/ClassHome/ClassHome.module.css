@@ -553,21 +553,6 @@
   animation: pop 0.5s ease;
 }
 
-.body {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: auto;
-  padding-top: 1%;
-  padding-left: 2%;
-  padding-bottom: 1%;
-  gap: 10px;
-}
-
-.body p {
-  margin: 0;
-}
-
 .imgListInPost {
   display: flex;
   width: 800px;
