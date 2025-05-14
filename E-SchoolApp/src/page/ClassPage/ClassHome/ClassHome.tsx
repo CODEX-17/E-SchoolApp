@@ -1334,7 +1334,7 @@ const ClassHome = () => {
                 style={{ display: "none" }}
                 onChange={handleGetFiles}
               />
-              <button size={29} id={style.sendBtnComs} onClick={submitReply}>
+              <button id={style.sendBtnComs} onClick={submitReply}>
                 Reply
               </button>
             </div>
@@ -1476,11 +1476,9 @@ const ClassHome = () => {
           {showLoading && (
             <div className={style.loadingContainer}>
               <ProgressBar
-                id={style.progressBar}
                 visible={true}
                 height="80"
                 width="80"
-                color="green"
                 barColor="#3E3F40"
                 borderColor="#099AED"
                 ariaLabel="progress-bar-loading"

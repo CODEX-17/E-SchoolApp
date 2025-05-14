@@ -1,29 +1,15 @@
-import { UserDetails } from './../context/UserDetailContext';
-import { useContext } from "react"
-import { UserDetailContext } from "../context/UserDetailContext"
+/**
+ * `Fullname` Untils
+ * This Untility generates Fullname.
+ *
+ * @param Firstname @param Middlename @param Lastname
+ * @returns Fullname string
+ */
 
-export default () => {
-
-    const userDetailContext = useContext(UserDetailContext)
-   
-    if (!userDetailContext) {
-        throw new Error('UserDetailContext is not provided')
-    }
-
-    const { userDetails } = userDetailContext
-
-    if (!userDetails) {
-        return 'no user available'
-    }
-
-    const firstname = userDetails.firstname
-    const middlename = userDetails.middlename
-    const lastname = userDetails.lastname
-
-    if (userDetails) {
-        return ( firstname + ' ' + middlename.substring(0, 1) + '. ' + lastname)
-    }else {
-        return 'no user available'
-    }
-
+export default function generateFullname(
+  firstname: string,
+  middlename: string,
+  lastname: string
+) {
+  return firstname + " " + middlename.substring(0, 1) + ". " + lastname;
 }

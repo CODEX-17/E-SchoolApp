@@ -1,64 +1,63 @@
-import React, { useEffect, useState } from 'react'
-import defaultImage from '../../../public/assets/default.png'
-import { getFileByFileID } from '../../services/fileServices'
-
+import React, { useEffect, useState } from "react";
+import defaultImage from "../../../public/assets/default.png";
+import { getFileByFileID } from "../../services/fileServices";
 
 interface ImageRenderProps {
   image: string | File;
 }
 
-const ImageRender: React.FC<ImageRenderProps> = ({ image }) => {
+/**
+ * 📸 `ImageRender` component
+ * This component takes either a `File` object or a file ID string.
+ * It fetches and displays the image using a fallback if needed.
+ *
+ * @param image - Either a File or a string (file ID or "default")
+ * @returns Rendered <img> tag with proper source
+ */
 
-  if (!image) return null
-  
-  const [renderImage, setRenderImage] = useState(defaultImage)
+//fileID or fileType for Props
+export default function ImageRender({ image }: ImageRenderProps) {
+  if (!image) return null;
+
+  const [renderImage, setRenderImage] = useState(defaultImage);
 
   useEffect(() => {
+    if (typeof image == "string") {
+      if (image === "default") {
+        setRenderImage(defaultImage);
+      } else {
+        const getImage = async () => {
+          try {
+            const response = await getFileByFileID(image);
 
-    if (typeof(image) == 'string') {
-        
-        if (image === 'default') {
-            setRenderImage(defaultImage)
-        }else {
-
-            const getImage = async () => {
-                try {
-                    const response = await getFileByFileID(image)
-                  
-                    if (response) {
-                        setRenderImage(response)
-                    }else {
-                        setRenderImage(defaultImage)
-                    }
-
-                } catch (error) {
-                    setRenderImage(defaultImage)
-                }
+            if (response) {
+              setRenderImage(response);
+            } else {
+              setRenderImage(defaultImage);
             }
+          } catch (error) {
+            setRenderImage(defaultImage);
+          }
+        };
 
-            getImage()
-
-        }
-    
-    }else {
-        const convertedImage = URL.createObjectURL(image)
-        return setRenderImage(convertedImage)
+        getImage();
+      }
+    } else {
+      const convertedImage = URL.createObjectURL(image);
+      return setRenderImage(convertedImage);
     }
-
-  },[])
+  }, []);
 
   return (
-      <img 
-        src={renderImage} 
-        alt="image"
-        style={{ 
-            width: '100%', 
-            height: '100%',
-            position: 'relative',
-
-        }}
+    <img
+      src={renderImage}
+      title="Insert Image FileType or FileID"
+      alt="image"
+      style={{
+        width: "100%",
+        height: "100%",
+        position: "relative",
+      }}
     />
-  )
+  );
 }
-
-export default ImageRender

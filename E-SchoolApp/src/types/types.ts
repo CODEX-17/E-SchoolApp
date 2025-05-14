@@ -30,3 +30,5 @@ export type ClassRoutes =
   | "Leaderboard"
   | "Files"
   | "Exit";
+
+export type PostType = "Post" | "Quiz";

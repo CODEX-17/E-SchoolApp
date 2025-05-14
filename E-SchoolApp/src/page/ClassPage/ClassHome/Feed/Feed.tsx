@@ -1,59 +1,88 @@
 import React, { useEffect, useState } from "react";
 import style from "./Feed.module.css";
-import ImageRender from "../../../../components/ImageRender/ImageRender";
 import { useContext } from "react";
 import { UserDetailContext } from "../../../../context/UserDetailContext";
-import { FaFileImage, FaRegImages } from "react-icons/fa6";
+import { FaRegImages } from "react-icons/fa6";
 import { ClassContext } from "../../../../context/ClassContext";
 import { getPostByClassCode } from "../../../../services/postServices";
 import Modal from "./Modal/Modal";
 import { AiOutlineLike, AiFillFilePpt, AiOutlineDelete } from "react-icons/ai";
 import { getFileByFileID } from "../../../../services/fileServices";
 import { getProfileDataByAcctID } from "../../../../services/accountServices";
+import generateFullname from "../../../../utils/generateFullname";
+import ImageRender from "../../../../components/ImageRender/ImageRender";
+
+export interface PostType {
+  id?: number;
+  acctID: string;
+  postID: string;
+  fileID: string | null;
+  quizID: string | null;
+  schedID: string | null;
+  reactionID: string;
+  replyID: string;
+  classCode: string;
+  fullname: string;
+  postContent: string | null;
+  postType: "Post" | "Quiz";
+  datePosted: string;
+  timePosted: string;
+  heart: number;
+  like: number;
+  images?: any;
+  account_photo_fileID: string;
+}
 
 const Feed = () => {
-  const { userDetails } = useContext(UserDetailContext);
-  const { currentClass } = useContext(ClassContext);
-  const [postList, setPostList] = useState([]);
+  const classContext = useContext(ClassContext);
+  const userDetailsContext = useContext(UserDetailContext);
+
+  if (!classContext || !userDetailsContext) {
+    return null;
+  }
+
+  const { currentClass } = classContext;
+  const { userDetails } = userDetailsContext;
+
+  const [postList, setPostList] = useState<PostType[] | []>([]);
   const [imageList, setImageList] = useState([]);
   const [isShowModal, setIsShowModal] = useState(true);
+
   const classCode = currentClass?.classCode;
 
-  const [accountImagesList, setAcountImagesList] = useState(null);
+  if (!classCode || !userDetails || !userDetails?.fileID) return null;
 
   useEffect(() => {
     const getData = async () => {
       try {
+        //Get post JOIN reactions
         const result = await getPostByClassCode(classCode);
 
+        console.log(result);
+
         if (result) {
-          setPostList(result);
+          const finalResult = result;
 
-          const imageMap = {};
+          for (let i = 0; i < finalResult.length; i++) {
+            // If file exist
+            if (finalResult.fileID) {
+              const files = await getFileByFileID(finalResult.fileID);
 
-          await Promise.all(
-            result.map(async (post) => {
-              const res = await getProfileDataByAcctID(post.acctID);
-              if (res?.fileID) {
-                imageMap[post.acctID] = res.fileID;
+              if (files) {
+                finalResult[i].images = files;
               }
-            })
-          );
+            }
 
-          const fileIDList = [];
+            finalResult[i].fullname = generateFullname(
+              finalResult[i].firstname,
+              finalResult[i].middlename,
+              finalResult[i].lastname
+            );
 
-          await Promise.all(
-            result.map(async (post) => {
-              if (post.fileID) {
-                const res = await getFileByFileID(post.fileID);
-                fileIDList.push(res);
-              }
-            })
-          );
+            //Continue the comment later...
+          }
 
-          setImageList(fileIDList);
-          setAcountImagesList(imageMap);
-          setPostList(result);
+          setPostList(finalResult);
         }
       } catch (error) {
         console.log(error);
@@ -63,34 +92,24 @@ const Feed = () => {
     getData();
   }, []);
 
-  const handleIfalreadyClicked = (postID, type) => {
-    if (reactionsList) {
-      const filter = reactionsList.filter(
-        (data) =>
-          data.postID === postID &&
-          data.reactType === type &&
-          data.acctID === userAccount.acctID
-      );
-      if (filter.length > 0) {
-        return true;
-      } else {
-        return false;
+  const handleGetFullname = async (acctID: string) => {
+    try {
+      const result = await getProfileDataByAcctID(acctID);
+
+      if (result) {
+        const fullname = generateFullname(
+          result.firstname,
+          result.middlename,
+          result.lastname
+        );
+
+        return fullname;
       }
-    }
-  };
 
-  const getFileIDByAccountID = (acctID) => {
-    if (!acctID) return "default-avatar.png";
-    return accountImagesList?.[acctID];
-  };
-
-  const getImageUrlsByImageID = (imageID) => {
-    if (imageID && imageList) {
-      const url = "http://localhost:5001/";
-      const filter = imageList
-        .filter((data) => data.imageID === imageID)
-        .map((data) => url + data.data);
-      return filter;
+      return null;
+    } catch (error) {
+      console.log(error);
+      return null;
     }
   };
 
@@ -104,7 +123,7 @@ const Feed = () => {
 
       <div className={style.card}>
         <div className={style.imageContainer}>
-          <ImageRender image={userDetails?.fileID} alt="profile" />
+          <ImageRender image={userDetails?.fileID} />
         </div>
         <div className={style.postBotton} onClick={() => setIsShowModal(true)}>
           Share your thoughts here...
@@ -112,25 +131,26 @@ const Feed = () => {
         <FaRegImages
           size={20}
           title="View Draft Scheduled Post"
-          onClick={() => setShowSchedPost(!showSchedPost)}
+          //onClick={() => setShowSchedPost(!showSchedPost)}
+          onClick={() => alert("asds")}
         />
       </div>
 
       <div className={style.listPostContainer}>
-        {postList
+        {postList.length > 0
           ? postList.reverse().map((post, index) => (
               <div className={style.postCard} key={index}>
                 <div className="d-flex w-100 align-items-center justify-content-between">
                   <div className="d-flex w-50 align-items-center justify-content-start gap-2">
                     <div className={style.imageContainer}>
-                      <ImageRender image={getFileIDByAccountID(post?.acctID)} />
+                      <ImageRender image={post.account_photo_fileID} />
                     </div>
                     <div className="d-flex flex-column">
-                      <h2>{post.name}</h2>
+                      <h2>{post.fullname}</h2>
                       <p>{post.timePosted + " (" + post.datePosted + ")"}</p>
                     </div>
                   </div>
-                  <div className="d-flex w-50 justify-content-end">
+                  {/* <div className="d-flex w-50 justify-content-end">
                     {userDetails?.acctID === post.acctID && (
                       <AiOutlineDelete
                         id={style.deleteBtn}
@@ -144,11 +164,12 @@ const Feed = () => {
                         }
                       />
                     )}
-                  </div>
+                  </div> */}
                 </div>
                 <div className={style.body}>
                   <p>{post.postContent}</p>
-                  <div className={style.imgListInPost}>
+
+                  {/* <div className={style.imgListInPost}>
                     {post.imageID !== "none" &&
                       getImageUrlsByImageID(post.imageID) &&
                       getImageUrlsByImageID(post.imageID).map((data, index) => (
@@ -225,57 +246,8 @@ const Feed = () => {
                           </button>
                         ))}
                     </div>
-                  )}
+                  )} */}
                 </div>
-
-                {/* <div className={style.footer}>
-                            { 
-                                handleIfalreadyClicked(post.postID, 'heart') ?
-                                        <GoHeartFill 
-                                            onClick={() => unClickReact(post.postID, 'heart')}
-                                            cursor={'pointer'}
-                                            size={20}
-                                            color='#F45050'
-                                        />
-                                        : 
-                                        <GoHeart 
-                                            cursor={'pointer'}
-                                            size={20}
-                                            color='#3E3F40'
-                                            onClick={() => clickReact(post.postID, 'heart')}
-                                        />
-                                            
-                            }
-                            <p>{handleCalculateReact(post.postID, 'heart')}</p>
-        
-                            {
-                                handleIfalreadyClicked(post.postID, 'like') ? 
-                                    <AiFillLike
-                                        onClick={() => unClickReact(post.postID, 'like')}
-                                        cursor={'pointer'}
-                                        size={20}
-                                        color='#3081D0'
-                                    /> :
-                                    <AiOutlineLike
-                                        onClick={() => clickReact(post.postID, 'like')}
-                                        cursor={'pointer'}
-                                        size={20}
-                                        color='#3E3F40'
-                                    />
-                            }
-                            <p>{handleCalculateReact(post.postID, 'like')}</p>
-                            
-                            <BiSolidMessageDetail 
-                                cursor={'pointer'}
-                                size={20}
-                                color='#508D69'
-                                onClick={() =>handleShowComments(post.postID)}
-                            />
-                                
-                            
-                            
-                        </div>
-                        */}
               </div>
             ))
           : "no post"}
