@@ -4,13 +4,17 @@ import { useContext } from "react";
 import { UserDetailContext } from "../../../../context/UserDetailContext";
 import { FaRegImages } from "react-icons/fa6";
 import { ClassContext } from "../../../../context/ClassContext";
-import { getPostByClassCode } from "../../../../services/postServices";
+import {
+  deletePostByPostID,
+  getPostByClassCode,
+} from "../../../../services/postServices";
 import Modal from "./Modal/Modal";
 import { AiOutlineLike, AiFillFilePpt, AiOutlineDelete } from "react-icons/ai";
 import { getFileByFileID } from "../../../../services/fileServices";
 import { getProfileDataByAcctID } from "../../../../services/accountServices";
 import generateFullname from "../../../../utils/generateFullname";
 import ImageRender from "../../../../components/ImageRender/ImageRender";
+import { NotificationContext } from "../../../../context/NotificationContext";
 
 export interface PostType {
   id?: number;
@@ -33,16 +37,26 @@ export interface PostType {
   account_photo_fileID: string;
 }
 
+export interface DeletePostPropsType {
+  postID: string;
+  replyID: string;
+  reactionID: string;
+  fileID: string | null;
+  schedID: string | null;
+}
+
 const Feed = () => {
   const classContext = useContext(ClassContext);
   const userDetailsContext = useContext(UserDetailContext);
+  const notifContext = useContext(NotificationContext);
 
-  if (!classContext || !userDetailsContext) {
+  if (!classContext || !userDetailsContext || !notifContext) {
     return null;
   }
 
   const { currentClass } = classContext;
   const { userDetails } = userDetailsContext;
+  const { notify } = notifContext;
 
   const [postList, setPostList] = useState<PostType[] | []>([]);
   const [imageList, setImageList] = useState([]);
@@ -92,24 +106,54 @@ const Feed = () => {
     getData();
   }, []);
 
-  const handleGetFullname = async (acctID: string) => {
+  // Delete post by postID
+  const handleDeletePost = async ({
+    postID,
+    fileID,
+    replyID,
+    reactionID,
+    schedID,
+  }: DeletePostPropsType) => {
+    console.log(
+      "postID",
+      postID,
+      "file",
+      fileID,
+      "reply",
+      replyID,
+      "react",
+      reactionID,
+      "sched",
+      schedID
+    );
+
+    if (!postID || !replyID || !reactionID) {
+      console.log("Invalid Data.");
+      return null;
+    }
+
     try {
-      const result = await getProfileDataByAcctID(acctID);
+      const result = await deletePostByPostID({
+        postID,
+        fileID,
+        replyID,
+        reactionID,
+        schedID,
+      });
 
       if (result) {
-        const fullname = generateFullname(
-          result.firstname,
-          result.middlename,
-          result.lastname
+        console.log(result);
+        notify({ message: result.message, status: true });
+
+        setPostList((oldData) =>
+          oldData.filter((item) => item.postID !== postID)
         );
-
-        return fullname;
       }
-
-      return null;
     } catch (error) {
-      console.log(error);
-      return null;
+      if (error instanceof Error && error.message) {
+        console.log(error.message);
+        notify({ message: error.message, status: false });
+      }
     }
   };
 
@@ -150,21 +194,23 @@ const Feed = () => {
                       <p>{post.timePosted + " (" + post.datePosted + ")"}</p>
                     </div>
                   </div>
-                  {/* <div className="d-flex w-50 justify-content-end">
+                  <div className="d-flex w-50 justify-content-end">
                     {userDetails?.acctID === post.acctID && (
                       <AiOutlineDelete
                         id={style.deleteBtn}
                         title="delete"
                         onClick={() =>
-                          handleDeletePost(
-                            post.postID,
-                            post.imageID,
-                            post.fileID
-                          )
+                          handleDeletePost({
+                            postID: post.postID,
+                            fileID: post.fileID,
+                            replyID: post.replyID,
+                            reactionID: post.reactionID,
+                            schedID: post.schedID,
+                          })
                         }
                       />
                     )}
-                  </div> */}
+                  </div>
                 </div>
                 <div className={style.body}>
                   <p>{post.postContent}</p>

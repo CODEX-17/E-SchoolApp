@@ -62,19 +62,96 @@ router.get("/getPostByClassCode/:classCode", (req, res) => {
 });
 
 // Delete post by postID
-router.delete("/deletePostByPostID/:postID", (req, res) => {
-  const postID = req.params.postID;
-  const fileID = req.body.fileID;
-  const imageID = req.body.imageID;
-  const query = "DELETE FROM `post` WHERE postID =?";
+router.delete("/deletePostByPostID", async (req, res) => {
+  console.log(req.body);
+  console.log("Dasdsd");
+  const { postID, replyID, fileID, reactionID, schedID } = req.body;
 
-  db.query(query, [postID], (error, data, field) => {
-    if (error) {
-      res.status(404).send(error);
-    } else {
-      res.status(200).json({ message: "Delete post successfully." });
-    }
-  });
+  const postQuery = "DELETE FROM post WHERE postID=?";
+  const commentQuery = `DELETE FROM comments WHERE replyID=?`;
+  const fileQuery = "DELETE FROM files WHERE fileID=?";
+  const reactionQuery = `DELETE FROM reactions WHERE reactionID=?`;
+  const schedQuery = `DELETE FROM schedule WHERE schedID=?`;
+
+  //Required Values
+  if (!postID || !replyID || !reactionID) {
+    console.log(`Invalid Data passes.`);
+    return null;
+  }
+
+  try {
+    const postProcess = new Promise((resolve, reject) => {
+      db.query(postQuery, [postID], (error, data, field) => {
+        if (error) {
+          console.log(error);
+          reject("Error deleting post.");
+        } else {
+          console.log("Successfully deleted post.");
+          resolve("Successfully deleted post.");
+        }
+      });
+    });
+
+    const commentProcess = new Promise((resolve, reject) => {
+      db.query(commentQuery, [replyID], (error, data, field) => {
+        if (error) {
+          console.log(error);
+          reject("Error deleting comment.");
+        } else {
+          console.log("Successfully deleted comment.");
+          resolve("Successfully deleted comment.");
+        }
+      });
+    });
+
+    const reactionProcess = new Promise((resolve, reject) => {
+      db.query(reactionQuery, [reactionID], (error, data, field) => {
+        if (error) {
+          console.log(error);
+          reject("Error deleting reaction.");
+        } else {
+          console.log("Successfully deleted reaction.");
+          resolve("Successfully deleted reaction.");
+        }
+      });
+    });
+
+    const fileProcess = new Promise((resolve, reject) => {
+      db.query(fileQuery, [fileID], (error, data, field) => {
+        if (error) {
+          console.log(error);
+          reject("Error deleting file.");
+        } else {
+          console.log("Successfully deleted file.");
+          resolve("Successfully deleted file.");
+        }
+      });
+    });
+
+    const schedProcess = new Promise((resolve, reject) => {
+      db.query(schedQuery, [schedID], (error, data, field) => {
+        if (error) {
+          console.log(error);
+          reject("Error deleting schedule.");
+        } else {
+          console.log("Successfully deleted schedule.");
+          resolve("Successfully deleted schedule.");
+        }
+      });
+    });
+
+    let promiseVariables = [postProcess, commentProcess, reactionProcess];
+
+    if (fileID) promiseVariables.push(fileProcess);
+    if (schedQuery) promiseVariables.push(schedProcess);
+
+    await Promise.all(promiseVariables);
+    console.log("Successfully deleted post. Done all process.");
+    res.status(200).json({ message: "Successfully deleted post." });
+  } catch (error) {
+    console.log("Error in server:", error);
+    res.status(400).send(error);
+  }
 });
 
 // Update post and remove the schedule
